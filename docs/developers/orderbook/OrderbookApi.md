@@ -210,13 +210,85 @@ This endpoint provides a JWT token that remains valid for 24 hours. To obtain th
 
 You can use a random nonce to create a message and sign it. Alternatively, you can obtain a truly random nonce from the endpoint ([nonce](#nonce)).
 
-## Subscribing to Orders
+## Subscribe to Orderbook
 
-<ApiHeader method="WSS" path="https://api.garden.finance/orders" description="subscribe to orders"/>
+<ApiHeader method="WSS" path="https://api.garden.finance/" description="subscribe to orders"/>
+
+To receive updates from the orderbook, you can connect to the websocket endpoint and use the subscription texts provided below. If there are no updates, the server will send a ping message every 60 seconds to keep the connection alive. You can send multiple subscription texts in a single websocket connection to receive updates for various criteria simultaneously.
+
+- The ping message object is
+
+```js
+{
+  "type": "ping",
+  "msg": "ping"
+}
+```
+
+### Types of subscribe texts
+
+- **Subscribe to updated orders:**
+  Initially provides all orders associated with the given address (this address can be either the maker's or taker's in the [order object](#order-object)). Subsequent responses will include orders associated with the given address that have updates or are newly created.
+
+  - Regex: `^0x[0-9a-fA-F]{40}$`
+  - Example: `subscribe::0x3139C33b7218237Bbd22235C78078731216fD05b`
+
+- **Subscribe to pending and updated orders:**
+  Initially provides all pending orders associated with the given address (this address can be either the maker's or taker's in the [order object](#order-object)). Subsequent responses will include orders associated with the given address that have updates or are newly created.
+
+  - Regex: `^0x[0-9a-fA-F]{40}-onlyPending$`
+  - Example: `subscribe::0x3139C33b7218237Bbd22235C78078731216fD05b-onlyPending`
+
+- **Subscribe to order updates:**
+  This will take an orderId in the subscribe text and only respond/send updates if there is an update in that order.
+
+  - Regex: `^[0-9]+$`
+  - Example: `subscribe::20000`
+
+- **Subscribe to open orders:**
+  This subscription takes a chain name and direction as input and sends all newly created orders in that direction.
+
+  - Regex: `^[a-zA-Z_]+(:0x[0-9a-fA-F]{40})?-[a-zA-Z_]+(:0x[0-9a-fA-F]{40})?`
+  - Example: `subscribe::bitcoin-ethereum`
+  - In the above example, clients will receive all orders created in the direction between Bitcoin and Ethereum.
+
+  For more information about supported chains, visit [supported-chains](#assets).
+
+:::note
+Regex is valid for the text after `subscribe::`
+:::
+
+### Response Types
+
+| Subscription Type              | Response Structure                                                               |
+| ------------------------------ | -------------------------------------------------------------------------------- |
+| **Updated Orders**             | `{ "type": "rest.UpdatedOrders", "msg": { "orders": [], "error": "string" } }`   |
+| **Pending and Updated Orders** | `{ "type": "rest.UpdatedOrders", "msg": { "orders": [], "error": "string" } }`   |
+| **Order Updates**              | `{ "type": "rest.UpdatedOrder", "msg": { "order": {}, "error": "string" } }`     |
+| **Open Orders**                | `{ "type": "rest.OpenOrders", "msg": { "orders": [], "error": "string" } }`      |
+| **Error**                      | `{ "type": "rest.WebSocketError", "msg": { "code": "int", "error": "string" } }` |
+
+:::note
+The `orders` in the table above are of type [_Order_](#order-object).
+:::
 
 ## Fill Order
 
-<ApiHeader method="POST" path="https://api.garden.finance/orders/:id" description="fill an order"/>
+<ApiHeader method="PUT" path="https://api.garden.finance/orders/:id" description="fill an order"/>
+
+This API endpoint is used to fill an order. You can get all newly created orders by [subscribing to the websocket](#subscribing-to-orders) and then fill an order using this endpoint.
+
+You must stake 210,000 SEED to be eligible to fill an order.
+
+### Payload
+
+| Field            | Type     | Description                                  |
+| :--------------- | :------- | :------------------------------------------- |
+| `sendAddress`    | `string` | Address from which filler will deposit funds |
+| `receiveAddress` | `string` | Address where filler wants to receive funds  |
+
+**Authentication:**
+Include an `Authorization` header with your request. Learn how to obtain an auth token [here](#authtoken).
 
 ## Assets
 
