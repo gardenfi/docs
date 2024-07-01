@@ -118,6 +118,7 @@ const sidebars: SidebarsConfig = {
       link: { type: "doc", id: "developers/orderbook/orderbook" },
       items: [
         "developers/orderbook/order-status",
+        "developers/orderbook/orderbook-api",
         {
           type: "category",
           label: "API Reference",

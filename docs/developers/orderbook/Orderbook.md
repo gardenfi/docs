@@ -4,9 +4,9 @@ id: orderbook
 
 # Orderbook
 
-Orderbook is a order matching engine for [garden.finance](https://garden.finance). Garden Finance is a decentralized exchange which supports atomic swaps, enabling seamless cross-chain bridging. Through this Orderbook API, users can create orders, track the progress of orders, and complete swaps, while market makers/counterparties can accept orders and complete the trades.
+Orderbook is an order matching engine for [garden.finance](https://garden.finance). Garden Finance is a decentralized Bitcoin exchange which supports atomic swaps, enabling seamless cross-chain bridging. Through this Orderbook API, users can create orders, find a counterparty and complete the trade, while market makers/counterparties can accept and finalize the trades.
 
-Orderbook serves as the intermediary between users and counterparties during swaps. It facilitates transactions by supporting different order types: market orders for immediate execution, limit orders for specific prices(wip), and Dutch auction orders for dynamic price discovery(wip).
+Orderbook serves as the intermediary between users and counterparties during swaps. It facilitates transactions by supporting different order types: market orders for immediate execution, limit orders for specific prices(WIP), and Dutch auction orders for dynamic price discovery(WIP).
 
 # AtomicSwap
 
@@ -14,7 +14,7 @@ Atomic swaps are a method to exchange cryptocurrencies between different block c
 
 ## How does AtomicSwaps work?
 
-Atomic swaps rely on something called as HTLC's (Hash Time-Locked Contracts) to ensure both parties fulfil the terms of the trade.An HTLC (Hash Time-Locked Contract) is a contract or script that holds funds and requires the recipient to provide a cryptographic proof of receipt before a specified deadline to claim the funds. If the proof is not provided within the time limit, the funds are returned to the sender.
+Atomic swaps rely on HTLC's (Hashed Time-Locked Contracts) to ensure both parties fulfil the terms of the trade.An HTLC (Hashed Time-Locked Contract) is a contract or script that holds funds and requires the recipient to provide a cryptographic proof of receipt before a specified deadline to claim the funds. If the proof is not provided within the time limit, the funds are returned to the sender.
 
 #### Process of Atomic Swap
 
