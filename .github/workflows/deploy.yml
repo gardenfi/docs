@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - main
+      - feat/add-github-workflow
 
 jobs:
   deploy:
