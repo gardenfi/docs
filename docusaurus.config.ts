@@ -12,7 +12,7 @@ const config: Config = {
     url: "https://*.garden.finance",
     // Set the /<baseUrl>/ pathname under which your site is served
     // For GitHub pages deployment, it is often '/<projectName>/'
-    baseUrl: "/docs",
+    baseUrl: "/docs/",
 
     // GitHub pages deployment config.
     // If you aren't using GitHub pages, you don't need these.
@@ -49,7 +49,7 @@ const config: Config = {
             "classic",
             {
                 docs: {
-                    routeBasePath: "/docs",
+                    routeBasePath: "/docs/",
                     sidebarPath: "./sidebars.ts",
                     sidebarItemsGenerator: sidebarItemsGenerator,
                     // Please change this to your repo.
@@ -80,7 +80,7 @@ const config: Config = {
             },
             items: [
                 {
-                    to: "/docs",
+                    to: "/docs/",
                     type: "doc",
                     position: "left",
                     docId: "home/get-started",
