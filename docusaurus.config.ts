@@ -49,7 +49,7 @@ const config: Config = {
             "classic",
             {
                 docs: {
-                    routeBasePath: "/docs/",
+                    routeBasePath: "/",
                     sidebarPath: "./sidebars.ts",
                     sidebarItemsGenerator: sidebarItemsGenerator,
                     // Please change this to your repo.
@@ -80,7 +80,7 @@ const config: Config = {
             },
             items: [
                 {
-                    to: "/docs/",
+                    to: "/",
                     type: "doc",
                     position: "left",
                     docId: "home/get-started",
