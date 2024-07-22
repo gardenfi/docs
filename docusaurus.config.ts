@@ -1,12 +1,12 @@
-import { themes as prismThemes } from "prism-react-renderer";
-import type { Config } from "@docusaurus/types";
-import type * as Preset from "@docusaurus/preset-classic";
-import { sidebarItemsGenerator } from "./sidebar";
+import { themes as prismThemes } from 'prism-react-renderer';
+import type { Config } from '@docusaurus/types';
+import type * as Preset from '@docusaurus/preset-classic';
+import { sidebarItemsGenerator } from './sidebar';
 
 const config: Config = {
-    title: "Garden Docs",
-    tagline: "Bringing bitcoin based assets to your dApp.",
-    favicon: "img/flower.svg",
+  title: 'Garden Docs',
+  tagline: 'Bringing bitcoin based assets to your dApp.',
+  favicon: 'img/flower.svg',
 
     // Set the production url of your site here
     url: "https://*.garden.finance",
@@ -14,35 +14,35 @@ const config: Config = {
     // For GitHub pages deployment, it is often '/<projectName>/'
     baseUrl: "/docs/",
 
-    // GitHub pages deployment config.
-    // If you aren't using GitHub pages, you don't need these.
-    organizationName: "gardenfi", // Usually your GitHub org/user name.
-    projectName: "garden docs", // Usually your repo name.
+  // GitHub pages deployment config.
+  // If you aren't using GitHub pages, you don't need these.
+  organizationName: 'gardenfi', // Usually your GitHub org/user name.
+  projectName: 'garden docs', // Usually your repo name.
 
-    onBrokenLinks: "throw",
-    onBrokenMarkdownLinks: "warn",
+  onBrokenLinks: 'throw',
+  onBrokenMarkdownLinks: 'warn',
 
-    // Even if you don't use internationalization, you can use this field to set
-    // useful metadata like html lang. For example, if your site is Chinese, you
-    // may want to replace "en" with "zh-Hans".
-    i18n: {
-        defaultLocale: "en",
-        locales: ["en"],
-    },
+  // Even if you don't use internationalization, you can use this field to set
+  // useful metadata like html lang. For example, if your site is Chinese, you
+  // may want to replace "en" with "zh-Hans".
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en'],
+  },
 
-    plugins: [
-        async function myPlugin(context, options) {
-            return {
-                name: "docusaurus-tailwindcss",
-                configurePostCss(postcssOptions) {
-                    // Appends TailwindCSS and AutoPrefixer.
-                    postcssOptions.plugins.push(require("tailwindcss"));
-                    postcssOptions.plugins.push(require("autoprefixer"));
-                    return postcssOptions;
-                },
-            };
+  plugins: [
+    async function myPlugin(context, options) {
+      return {
+        name: 'docusaurus-tailwindcss',
+        configurePostCss(postcssOptions) {
+          // Appends TailwindCSS and AutoPrefixer.
+          postcssOptions.plugins.push(require('tailwindcss'));
+          postcssOptions.plugins.push(require('autoprefixer'));
+          return postcssOptions;
         },
-    ],
+      };
+    },
+  ],
 
     presets: [
         [
