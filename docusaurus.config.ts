@@ -62,6 +62,17 @@ const config: Config = {
   ],
 
   themeConfig: {
+    algolia: {
+      apiKey: process.env.ALGOLIA_API_KEY,
+      indexName: process.env.ALGOLIA_INDEX_NAME,
+      appId: process.env.ALGOLIA_APP_ID,
+      // Optional
+      contextualSearch: true,
+      // Optional: Algolia search parameters
+      searchParameters: {},
+      // Optional: path for search page that enabled by default (`false` to disable it)
+      searchPagePath: 'search',
+    },
     colorMode: {
       defaultMode: 'light',
       disableSwitch: false,
