@@ -15,6 +15,6 @@ Ambassadors exhibiting high-impact contributions over a minimum of three months 
 ### How is performance measured?
 You will be allocated a share of the budget based on your contributions' utility, engagement, and reach.
 ### Application Process:
-- Fill out the application form: https://019u6btszhj.typeform.com/G-ambassador 
+- Fill out the application [form](https://docs.garden.finance/community/garden-ambassador-program).
 
 If your application is selected, you will be contacted by the Garden team. 
