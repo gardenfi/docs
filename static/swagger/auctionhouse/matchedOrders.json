@@ -1,0 +1,100 @@
+{
+    "get": {
+        "operationId": "getAllMatchedIntents",
+        "summary": "Get All Matched Intents",
+        "description": "Retrieves all matched intents with optional pagination.",
+        "servers": [
+            {
+                "url": "https://evm-swapper-relay.onrender.com"
+            }
+        ],
+        "parameters": [
+            {
+                "name": "page",
+                "in": "query",
+                "schema": {
+                    "type": "integer",
+                    "default": 1
+                },
+                "description": "Page number for pagination"
+            },
+            {
+                "name": "per_page",
+                "in": "query",
+                "schema": {
+                    "type": "integer",
+                    "default": 10
+                },
+                "description": "Number of items per page"
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "The paginated matched intents.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "enum": ["Ok","Error"],
+                                    "example": "Ok"
+                                },
+                                "result": {
+                                    "type": "object",
+                                    "properties": {
+                                        "page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "per_page": {
+                                            "type": "integer",
+                                            "example": 10
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 100
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "$ref": "./components/matchedOrderVerbose.json"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "400": {
+                "description": "Bad Request. Invalid or missing parameters.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "example": "Error"
+                                },
+                                "error": {
+                                    "type": "string",
+                                    "example": "Invalid pagination parameters"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "tags": [
+            "auctionhouse"
+        ]
+    }
+}

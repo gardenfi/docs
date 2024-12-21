@@ -1,0 +1,33 @@
+{
+    "created_at": {
+        "type": "string",
+        "format": "date-time"
+    },
+    "updated_at": {
+        "type": "string",
+        "format": "date-time"
+    },
+    "deleted_at": {
+        "type": "string",
+        "format": "date-time",
+        "nullable": true
+    },
+    "source_swap": {
+        "type": "object",
+        "properties": {
+            "$ref": "./singleSwap.json"
+        }
+    },
+    "destination_swap": {
+        "type": "object",
+        "properties": {
+            "$ref": "./singleSwap.json"
+        }
+    },
+    "create_order": {
+        "type": "object",
+        "properties": {
+            "$ref": "../../components/order.json"
+        }
+    }
+}

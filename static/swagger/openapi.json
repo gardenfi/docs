@@ -1,0 +1,105 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Garden API",
+    "version": "2.0.0",
+    "description": "These are the API references for API v2.0.0. If you are looking for API v1.0.0 references, <a target='_blank' href='https://docs.garden.finance/' class='api-reference--btn'>see here</a>."
+  },
+  "servers": [
+    {
+      "url": "https://evm-swapper-relay.onrender.com"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "security": [
+    {
+      "bearer": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "auth",
+      "x-displayName": "Auth",
+      "description": "Handles user authentication via nonce generation, message verification, and JWT issuance for secure access."
+    },
+    {
+      "name": "relayer",
+      "x-displayName": "Gasless API",
+      "description": "The Gasless API enables secure initiation, redemption, and intent creation for cross-chain swaps with health monitoring."
+    },
+    {
+      "name": "auctionhouse",
+      "x-displayName": "Auction House",
+      "description": "At the core of the Garden lies the auctionhouse. It is responsible for intent creation, matching, and settlement. One can create intents, track their status, and securely settle them using Atomic Swaps."
+    },
+    {
+      "name": "quote",
+      "x-displayName": "Quote",
+      "description": "Retrieve token prices, market quotes, and actionable trading strategies for informed decision-making."
+    }
+  ],
+  "paths": {
+    "/auth/nonce": {
+      "$ref": "./auth/nonce.json"
+    },
+    "/auth/verify": {
+      "$ref": "./auth/verify.json"
+    },
+    "/gasless/intent/initiate": {
+      "$ref": "./relayer/initiateSwapWithSign.json"
+    },
+    "/gasless/intent/settlement": {
+      "$ref": "./relayer/redeemSwap.json"
+    },
+    "/gasless/intent": {
+      "$ref": "./relayer/createOrder.json"
+    },
+    "/gasless/intent/refund": {
+      "$ref": "./relayer/instantRefund.json"
+    },
+    "/health": {
+      "$ref": "./relayer/checkHealth.json"
+    },
+    "/intents/unmatched": {
+      "$ref": "./auctionhouse/unmatchedOrders.json"
+    },
+    "/intents/matched": {
+      "$ref": "./auctionhouse/matchedOrders.json"
+    },
+    "/intents/id/{id}/unmatched": {
+      "$ref": "./auctionhouse/unmatchedOrdersById.json"
+    },
+    "/intents/id/{id}/matched": {
+      "$ref": "./auctionhouse/matchedOrdersById.json"
+    },
+    "/intents/user/{user}/unmatched": {
+      "$ref": "./auctionhouse/unmatchedOrdersByUser.json"
+    },
+    "/intents/user/{user}/matched": {
+      "$ref": "./auctionhouse/matchedOrdersByUser.json"
+    },
+    "/intents/user/{user}/count": {
+      "$ref": "./auctionhouse/ordersCountByUser.json"
+    },
+    "/fiat": {
+      "$ref": "./quote/fiat.json"
+    },
+    "/quote/attested": {
+      "$ref": "./quote/quote.json"
+    },
+    "/quote/strategies": {
+      "$ref": "./quote/strategies.json"
+    },
+    "/price": {
+      "$ref": "./quote/price.json"
+    }
+  }
+}

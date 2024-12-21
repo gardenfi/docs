@@ -1,0 +1,54 @@
+---
+id: api
+---
+
+# Garden API
+
+Welcome to the Garden Protocol API documentation. This guide will walk you through the integration flow and provide details on the available API endpoints.
+
+The Garden API is designed to facilitate seamless interaction with our bridge, supporting atomic swaps between Bitcoin and EVM or non-EVM chains.
+
+## Integration flow summary
+
+Here’s a high-level overview of the integration flow:
+
+1. **Authenticate**
+    - Use the `/nonce` and `/auth` endpoints to establish a secure session for the user.
+2. **Request quote**
+    - Call `/quote` to retrieve price details for a specific trading pair.
+    - Obtain an attested quote using `/attested-quote` to prepare for order creation.
+3. **Create order**
+    - Submit the attested quote to `/create-order` to execute the swap on-chain.
+    - Retrieve an `orderId` for tracking the transaction.
+4. **Track order**
+    - Use `/get-order` with the `orderId` to monitor the status and progress of the transaction.
+
+Each step is covered in respective sessions.
+
+# User actions
+
+Swapping assets across chains typically requires user interaction at two key stages:  
+
+1. The user must sign the transaction and approve the swap on the source chain.  
+2. The user needs to redeem the assets on the destination chain.  
+
+To simplify this process and reduce the complexity for developers, we provide a **Relayer Service**.  
+
+### Relayer service  
+The Relayer Service abstracts user actions, automating the initiation and redemption steps. This eliminates the need for manual intervention, making the swap process seamless for end users.  
+
+#### How to use the relayer service  
+
+- **Initiate the swap**  
+  Call the `/initiate` endpoint to start the swap on the source chain.  
+
+- **Redeem the swap**  
+  Use the `/redeem` endpoint to finalize the swap on the destination chain.  
+
+With these endpoints, you can offload the complexities of user interactions to the Relayer Service, ensuring a smoother developer and user experience.
+
+## Next steps
+
+- Use this flow to integrate Garden Protocol’s API into your application.  
+- For advanced workflows, refer to the [Cookbook](../cookbook/Cookbook.md).  
+{/* - If you encounter any issues, don’t hesitate to [contact support](support.md). */}

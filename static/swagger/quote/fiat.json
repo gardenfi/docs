@@ -1,0 +1,96 @@
+{
+    "get": {
+        "operationId": "usdForIntentPair",
+        "summary": "Get USD prices for an intent pair",
+        "description": "Retrieves the USD prices for the input and output tokens of the specified intent pair.",
+        "servers": [
+            {
+                "url": "https://quote-knrp.onrender.com"
+            }
+        ],
+        "security": [],
+        "parameters": [
+            {
+                "name": "order_pair",
+                "in": "query",
+                "required": true,
+                "schema": {
+                    "type": "string",
+                    "description": "The intent pair for which USD prices are needed.",
+                    "example": "ethereum:USDC::arbitrum:USDT"
+                }
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "Successfully retrieved USD prices.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "description": "Specifies the source and destination chain and asset in the format {fromChain}:{fromAsset}::{toChain}:{toAsset}",
+                            "properties": {
+                                "status":{
+                                    "type": "string",
+                                    "enum": ["Ok","Error"]
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "properties": {
+                                        "input_token_price": {
+                                            "type": "number",
+                                            "format": "double",
+                                            "description": "The USD price of the input token in the intent pair.",
+                                            "example": 1.00
+                                        },
+                                        "output_token_price": {
+                                            "type": "number",
+                                            "format": "double",
+                                            "description": "The USD price of the output token in the intent pair.",
+                                            "example": 0.99
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "400": {
+                "description": "Failed to retrieve USD prices.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "enum": ["Ok","Error"],
+                                    "example": "Error"
+                                },
+                                "error": {
+                                    "type": "object",
+                                    "properties":{
+                                        "code": {
+                                            "type": "number",
+                                            "description":"The numeric status code indicating the type of error or response.",
+                                            "example": 400
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "description": "A descriptive message providing details about the error or response.",
+                                            "example": "failed to get fiat values: Asset not found : ethereum:usdc"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "tags": [
+            "quote"
+        ]
+    }
+}

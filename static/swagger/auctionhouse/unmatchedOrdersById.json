@@ -1,0 +1,75 @@
+{
+    "get": {
+        "operationId": "getUnmatchedIntentById",
+        "summary": "Retrieve Unmatched Intent by Id",
+        "description": "Retrieves an unmatched intent by its unique create ID from the intent book.",
+        "servers": [
+            {
+                "url": "https://evm-swapper-relay.onrender.com"
+            }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "123456"
+            },
+            "description": "The create ID of the unmatched intent"
+          }
+        ],
+        "responses": {
+            "200": {
+            "description": "Intent retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": ["Ok","Error"],
+                      "example": "Ok"
+                    },
+                    "result": {
+                      "type": "object",
+                      "properties": {
+                        "$ref": "../components/order.json"
+                      }
+                    }
+                  },
+                  "required": ["status", "result"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": ["Ok","Error"],
+                      "example": "Error"
+                    },
+                    "error": {
+                      "type": "string",
+                      "example": "unauthorized"
+                    }
+                  },
+                  "required": ["status", "error"]
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "auctionhouse"
+        ]
+    }
+}

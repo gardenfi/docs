@@ -1,0 +1,35 @@
+{
+    "get": {
+        "operationId": "checkHealth",
+        "summary": "Check Health",
+        "description": "Checks the operational status of the API to ensure it's online and functioning.",
+        "security": [],
+        "responses": {
+            "200": {
+                "description": "Server is working and online.",
+                "content": {
+                    "text/plain": {
+                        "schema": {
+                            "type": "string",
+                            "example": "Online"
+                        }
+                    }
+                }
+            },
+            "404": {
+                "description": "Server is down and unreachable.",
+                "content": {
+                    "text/plain": {
+                        "schema": {
+                            "type": "string",
+                            "example": "getaddrinfo ENOTFOUND"
+                        }
+                    }
+                }
+            }
+        },
+        "tags": [
+          "relayer"
+        ]
+    }
+}

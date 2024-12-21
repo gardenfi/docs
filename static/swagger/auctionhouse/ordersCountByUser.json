@@ -1,0 +1,68 @@
+{
+    "get": {
+        "operationId": "getIntentCountByUser",
+        "summary": "Get Intent Count for User",
+        "description": "Fetches the total number of intents for a specific user based on their address.",
+        "servers": [
+            {
+                "url": "https://evm-swapper-relay.onrender.com"
+            }
+        ],
+        "parameters": [
+            {
+                "name": "user",
+                "in": "path",
+                "required": true,
+                "schema": {
+                    "type": "string"
+                },
+                "description": "The user's address"
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "The total number of intents for the user.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "example": "Ok"
+                                },
+                                "result": {
+                                    "type": "integer",
+                                    "example": 15
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "400": {
+                "description": "Bad Request. Invalid or missing parameters.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "example": "Error"
+                                },
+                                "error": {
+                                    "type": "string",
+                                    "example": "Invalid user address"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "tags": [
+          "auctionhouse"
+        ]
+    }
+}

@@ -1,0 +1,12 @@
+{
+    "strategy_id": {
+        "type": "string",
+        "description": "Provided by the quote server",
+        "example": "bre112"
+    },
+    "bitcoin_optional_recipient": {
+        "type": "string",
+        "description": "An optional Bitcoin address to receive the output token, if specified.",
+        "example": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
+    }
+}

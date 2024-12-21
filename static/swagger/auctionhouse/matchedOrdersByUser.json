@@ -1,0 +1,117 @@
+{
+    "get": {
+        "operationId": "getMatchedIntentsByUser",
+        "summary": "Get Matched Intents by User",
+        "description": "Retrieves all matched intents for a specific user, with optional pagination and pending action filtering.",
+        "servers": [
+            {
+                "url": "https://evm-swapper-relay.onrender.com"
+            }
+        ],
+        "parameters": [
+            {
+                "name": "user",
+                "in": "path",
+                "required": true,
+                "schema": {
+                    "type": "string"
+                },
+                "description": "The user's address"
+            },
+            {
+                "name": "page",
+                "in": "query",
+                "schema": {
+                    "type": "integer",
+                    "default": 1
+                },
+                "description": "Page number for pagination"
+            },
+            {
+                "name": "per_page",
+                "in": "query",
+                "schema": {
+                    "type": "integer",
+                    "default": 10
+                },
+                "description": "Number of items per page"
+            },
+            {
+                "name": "pending",
+                "in": "query",
+                "schema": {
+                    "type": "boolean",
+                    "default": false
+                },
+                "description": "User pending actions"
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "The paginated matched intents for the user.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "example": "Ok"
+                                },
+                                "result": {
+                                    "type": "object",
+                                    "properties": {
+                                        "page": {
+                                            "type": "integer",
+                                            "example": 1
+                                        },
+                                        "per_page": {
+                                            "type": "integer",
+                                            "example": 10
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "example": 50
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "$ref": "./components/matchedOrderVerbose.json"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "400": {
+                "description": "Bad Request. Invalid or missing parameters.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "example": "Error"
+                                },
+                                "error": {
+                                    "type": "string",
+                                    "example": "Invalid user address or pagination parameters"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "tags": [
+          "auctionhouse"
+        ]
+    }
+}

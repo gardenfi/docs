@@ -1,0 +1,121 @@
+{
+    "post": {
+        "operationId": "attestedQuote",
+        "summary": "Get an attested quote for an intent",
+        "description": "Validates the intent and retrieves an attested quote based on token prices. The input intent includes only the `strategy_id` in the `additional_data` field, while the output includes fully populated `additional_data`.",
+        "servers": [
+            {
+                "url": "https://quote-knrp.onrender.com"
+            }
+        ],
+        "security": [],
+        "requestBody": {
+            "required": true,
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "$ref": "../components/order.json"
+                        },
+                        "required": [
+                            "source_chain",
+                            "destination_chain",
+                            "source_asset",
+                            "destination_asset",
+                            "initiator_source_address",
+                            "initiator_destination_address",
+                            "source_amount",
+                            "destination_amount",
+                            "fee",
+                            "nonce",
+                            "min_destination_confirmations",
+                            "timelock",
+                            "secret_hash"
+                        ]
+                    }
+                }
+            }
+        },
+        "responses": {
+            "200": {
+                "description": "Successfully retrieved attested quote.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "enum": [
+                                        "Ok",
+                                        "Error"
+                                    ],
+                                    "example": "Ok"
+                                },
+                                "result": {
+                                    "type": "object",
+                                    "description": "The intent object",
+                                    "properties": {
+                                        "$ref": "../components/outputOrder.json"
+                                    },
+                                    "required": [
+                                        "source_chain",
+                                        "destination_chain",
+                                        "source_asset",
+                                        "destination_asset",
+                                        "initiator_source_address",
+                                        "initiator_destination_address",
+                                        "source_amount",
+                                        "destination_amount",
+                                        "fee",
+                                        "nonce",
+                                        "min_destination_confirmations",
+                                        "timelock",
+                                        "secret_hash"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "400": {
+                "description": "Failed to retrieve attested quote.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "enum": [
+                                        "Ok",
+                                        "Error"
+                                    ],
+                                    "example": "Error"
+                                },
+                                "error": {
+                                    "type": "object",
+                                    "properties": {
+                                        "code": {
+                                            "type": "number",
+                                            "description": "The numeric status code indicating the type of error or response.",
+                                            "example": 422
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "description": "A descriptive message providing details about the error or response.",
+                                            "example": "Failed to deserialize the JSON body into the target type: missing field `source_chain` at line 5 column 1"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "tags": [
+            "quote"
+        ]
+    }
+}

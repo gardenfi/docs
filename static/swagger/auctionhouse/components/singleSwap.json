@@ -1,0 +1,77 @@
+{
+    "swap_id": {
+        "type": "string",
+        "example": "123abc456def"
+    },
+    "chain": {
+        "type": "string",
+        "example": "ethereum"
+    },
+    "asset": {
+        "type": "string",
+        "example": "0xd8a6e3fca403d79b6ad6216b60527f51cc967d39"
+    },
+    "initiator": {
+        "type": "string",
+        "example": "0x1234567890abcdef1234567890abcdef12345678"
+    },
+    "redeemer": {
+        "type": "string",
+        "example": "0xabcdef1234567890abcdef1234567890abcdef12"
+    },
+    "timelock": {
+        "type": "integer",
+        "example": 288
+    },
+    "filled_amount": {
+        "type": "string",
+        "example": "0.5"
+    },
+    "amount": {
+        "type": "string",
+        "example": "1.0"
+    },
+    "secret_hash": {
+        "type": "string",
+        "example": "9c3a1e44db094c8e5974e7b81f37208c1c9d92f2b81c18be1ff4c13db8e1e723"
+    },
+    "secret": {
+        "type": "string",
+        "nullable": true,
+        "example": "a5b9d7f1c23e53a7fd489fa1a7e084f5"
+    },
+    "initiate_tx_hash": {
+        "type": "string",
+        "nullable": true,
+        "example": "0xabcdef1234567890abcdef1234567890abcdef12abcdef1234567890abcdef12"
+    },
+    "redeem_tx_hash": {
+        "type": "string",
+        "nullable": true,
+        "example": "0x1234567890abcdef1234567890abcdef12345678abcdef1234567890abcdef12"
+    },
+    "refund_tx_hash": {
+        "type": "string",
+        "nullable": true,
+        "example": "0xfedcba0987654321fedcba0987654321fedcba0987654321fedcba0987654321"
+    },
+    "initiate_block_number": {
+        "type": "string",
+        "nullable": true,
+        "example": "10012345"
+    },
+    "redeem_block_number": {
+        "type": "string",
+        "nullable": true,
+        "example": "10012350"
+    },
+    "refund_block_number": {
+        "type": "string",
+        "nullable": true,
+        "example": "10012355"
+    },
+    "required_confirmations": {
+        "type": "integer",
+        "example": 12
+    }
+}

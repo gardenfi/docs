@@ -1,0 +1,42 @@
+{
+    "get": {
+        "operationId": "strategies",
+        "summary": "Get available strategies",
+        "description": "Retrieves a list of all available trading strategies.",
+        "servers": [
+            {
+                "url": "https://quote-knrp.onrender.com"
+            }
+        ],
+        "security": [],
+        "responses": {
+            "200": {
+                "description": "Successfully retrieved strategies.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "enum": ["Ok","Error"],
+                                    "example": "Ok"
+                                },
+                                "data": {
+                                    "type": "object",
+                                    "description": "Retrieves a hashmap of strategies",
+                                    "properties": {
+                                        "$ref": "./components/additionalProperties.json" 
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "tags": [
+            "quote"
+        ]
+    }
+}

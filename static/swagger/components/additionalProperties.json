@@ -1,0 +1,36 @@
+{
+    "strategy_id": {
+        "type": "string",
+        "description": "Provided by the quote server",
+        "example": "bre112"
+    },
+    "input_token_price": {
+        "type": "number",
+        "format": "float",
+        "description": "Provided by the quote server"
+    },
+    "output_token_price": {
+        "type": "number",
+        "format": "float",
+        "description": "Provided by the quote server"
+    },
+    "deadline": {
+        "type": "string",
+        "description": "Validity till the current quote is valid"
+    },
+    "bitcoin_optional_recipient": {
+        "type": "string",
+        "description": "An optional Bitcoin address to receive the output token, if specified.",
+        "example": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
+    },
+    "sig": {
+        "type": "string",
+        "description": "",
+        "example": "MEYCIQDYfLzU1MxP3RLlY5YXzkKcFvndv3tZyjGtHKqbrFqJ6QIhAMTytBYJ5Fb2+9NdXdHSTHz9BUEtwxE/n9VUwqP1X5fn"
+    },
+    "instant_refund_tx_bytes": {
+        "type": "string",
+        "description": "The signature used to derive the transaction hash for an instant refund in case of transaction failure.",
+        "example": "90a36c9fc942109060165b9db0ada8f6499302288d9d3698c6b4fa9431b5bf22"
+    }
+}

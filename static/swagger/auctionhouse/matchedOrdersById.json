@@ -1,0 +1,75 @@
+{
+    "get": {
+        "operationId": "getMatchedIntentById",
+        "summary": "Get Matched Intent by ID",
+        "description": "Retrieves a matched intent by its unique create ID from the intent book.",
+        "servers": [
+            {
+                "url": "https://evm-swapper-relay.onrender.com"
+            }
+        ],
+        "parameters": [
+            {
+                "name": "id",
+                "in": "path",
+                "required": true,
+                "schema": {
+                    "type": "string"
+                },
+                "description": "The create ID of the matched intent"
+            }
+        ],
+        "responses": {
+            "200": {
+                "description": "The matched intent.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "enum": [
+                                        "Ok",
+                                        "Error"
+                                    ],
+                                    "example": "Ok"
+                                },
+                                "result": {
+                                    "type": "object",
+                                    "properties": {
+                                        "$ref": "./components/matchedOrderVerbose.json"
+                                    },
+                                    "description": "Returns matched intent if a match is found or returns null"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "400": {
+                "description": "Bad Request. Invalid or missing parameters.",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "example": "Error"
+                                },
+                                "error": {
+                                    "type": "string",
+                                    "example": "Invalid ID or missing parameters"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "tags": [
+            "auctionhouse"
+        ]
+    }
+}

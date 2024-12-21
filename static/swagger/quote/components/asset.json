@@ -1,0 +1,18 @@
+{
+    "type": "object",
+    "properties": {
+        "symbol": {
+            "type": "string",
+            "description": "Symbol of the asset.",
+            "example": ""
+        },
+        "decimals": {
+            "type": "integer",
+            "description": "Number of decimals for the asset."
+        }
+    },
+    "required": [
+        "symbol",
+        "decimals"
+    ]
+}

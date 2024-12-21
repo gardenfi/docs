@@ -1,0 +1,134 @@
+{
+    "post": {
+        "operationId": "initiateSwapWithSign",
+        "summary": "Intiate swap",
+        "description": "Initiates a token swap by submitting an intent signature and specifying the execution side.",
+        "requestBody": {
+            "required": true,
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "order_id": {
+                                "type": "string",
+                                "description": "The unique intent ID",
+                                "example": 12345
+                            },
+                            "signature": {
+                                "type": "string",
+                                "description": "The signature for the swap",
+                                "example": "6fe3d5d62b9b0137b1747b2a9dbb227b09d547c1a10f0455efb2584b459f9b24"
+                            },
+                            "perform_on": {
+                                "type": "string",
+                                "enum": [
+                                    "Source",
+                                    "Destination"
+                                ],
+                                "description": "Indicates where the swap should be performed"
+                            }
+                        },
+                        "required": [
+                            "order_id",
+                            "signature",
+                            "perform_on"
+                        ]
+                    }
+                }
+            }
+        },
+        "responses": {
+            "200": {
+                "description": "Swap initiated successfully",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "enum": [
+                                        "Ok",
+                                        "Error"
+                                    ],
+                                    "example": "Ok"
+                                },
+                                "result": {
+                                    "type": "string",
+                                    "description": "Transaction hash",
+                                    "example": "0x4e9f6b8c3a3d7b92e5f789cc83dfac35f6a12348b7d0e9c1a4e5b6a8f7c123d4"
+                                }
+                            },
+                            "required": [
+                                "status",
+                                "result"
+                            ]
+                        }
+                    }
+                }
+            },
+            "400": {
+                "description": "Bad request",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "enum": [
+                                        "Ok",
+                                        "Error"
+                                    ],
+                                    "example": "Error"
+                                },
+                                "error": {
+                                    "type": "string",
+                                    "description": "Error message",
+                                    "example": "Intent already initiated"
+                                }
+                            },
+                            "required": [
+                                "status",
+                                "error"
+                            ]
+                        }
+                    }
+                }
+            },
+            "500": {
+                "description": "Internal server error",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "status": {
+                                    "type": "string",
+                                    "enum": [
+                                        "Ok",
+                                        "Error"
+                                    ],
+                                    "example": "Error"
+                                },
+                                "error": {
+                                    "type": "string",
+                                    "description": "Error message",
+                                    "example": "internal error"
+                                }
+                            },
+                            "required": [
+                                "status",
+                                "error"
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "tags": [
+          "relayer"
+        ]
+    }
+}

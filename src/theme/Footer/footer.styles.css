@@ -1,0 +1,17 @@
+.footer__links{
+    padding: 2rem!important;
+}
+.footer__copyright{
+    align-items: center;
+    width: 100%!important;
+    justify-content: space-around;
+}
+.footer__col{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column;
+}
+.footer, .footer > *{
+    max-width: 100%!important;
+}

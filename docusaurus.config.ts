@@ -19,7 +19,7 @@ const config: Config = {
   organizationName: 'gardenfi', // Usually your GitHub org/user name.
   projectName: 'garden docs', // Usually your repo name.
 
-  onBrokenLinks: 'throw',
+  onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
 
   // Even if you don't use internationalization, you can use this field to set
@@ -52,6 +52,8 @@ const config: Config = {
           routeBasePath: '/',
           sidebarPath: './sidebars.ts',
           sidebarItemsGenerator: sidebarItemsGenerator,
+          remarkPlugins: [require('remark-math')],
+          rehypePlugins: [require('rehype-katex')],
         },
         blog: false,
         theme: {
@@ -93,27 +95,20 @@ const config: Config = {
           docId: 'home/get-started',
           label: 'Home',
         },
-        {
-          to: '/developers',
-          type: 'doc',
-          position: 'left',
-          docId: 'developers/developers',
-          label: 'Developers',
-        },
-        {
-          to: '/cookbook',
-          type: 'doc',
-          position: 'left',
-          docId: 'cookbook/cookbook',
-          label: 'Cookbook',
-        },
-        {
-          to: '/community',
-          type: 'doc',
-          position: 'left',
-          docId: 'community/community',
-          label: 'Community',
-        },
+        // {
+        //   to: '/developers',
+        //   type: 'doc',
+        //   position: 'left',
+        //   docId: 'developers/developers',
+        //   label: 'Developers',
+        // },
+        // {
+        //   to: '/developers/api/garden-api',
+        //   type: 'doc',
+        //   position: 'left',
+        //   docId: 'developers/api/garden-api',
+        //   label: 'Garden API',
+        // },
         {
           href: 'https://github.com/catalogfi/garden.js',
           position: 'right',

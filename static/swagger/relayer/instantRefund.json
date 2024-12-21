@@ -1,0 +1,67 @@
+{
+    "post": {
+        "operationId": "addInstantRefund",
+        "summary": "Add instant refund sacp",
+        "description": "Add instant refund SACP for a matched intent by validating and storing the refund transaction details.",
+        "requestBody": {
+            "required": true,
+            "content": {
+                "application/json": {
+                    "schema": {
+                        "type": "object",
+                        "properties": {
+                            "order_id": {
+                                "type": "string",
+                                "description": "The ID of the intent to redeem",
+                                "example": "12345"
+                            },
+                            "instant_refund_tx_bytes": {
+                                "type": "string",
+                                "description": "The signature used to derive the transaction hash for an instant refund in case of transaction failure.",
+                                "example": "90a36c9fc942109060165b9db0ada8f6499302288d9d3698c6b4fa9431b5bf22"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "responses": {
+            "200": {
+                "description": "Returned when the instant refund SACP is successfully added and updated in the intent.",
+                "content": {
+                    "text/plain": {
+                        "schema": {
+                            "type": "string",
+                            "example": "Instant refund SACP added"
+                        }
+                    }
+                }
+            },
+            "400": {
+                "description": "Returned when a bad request is processed",
+                "content": {
+                    "text/plain": {
+                        "schema": {
+                            "type": "string",
+                            "example": "Expected source chain to be bitcoin, bitcoin_regtest or bitcoin_testnet"
+                        }
+                    }
+                }
+            },
+            "500": {
+                "description": "Returned on internal server error",
+                "content": {
+                    "text/plain": {
+                        "schema": {
+                            "type": "string",
+                            "example": "Failed to update intent"
+                        }
+                    }
+                }
+            }
+        },
+        "tags": [
+          "relayer"
+        ]
+    }
+}
