@@ -1,7 +1,7 @@
 {
     "get": {
         "operationId": "getIntentCountByUser",
-        "summary": "Get Intent Count for User",
+        "summary": "Get intent count for user.",
         "description": "Fetches the total number of intents for a specific user based on their address.",
         "servers": [
             {

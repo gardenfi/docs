@@ -1,7 +1,7 @@
 {
     "get": {
         "operationId": "usdForIntentPair",
-        "summary": "Get USD prices for an intent pair",
+        "summary": "Get USD prices for an intent pair.",
         "description": "Retrieves the USD prices for the input and output tokens of the specified intent pair.",
         "servers": [
             {

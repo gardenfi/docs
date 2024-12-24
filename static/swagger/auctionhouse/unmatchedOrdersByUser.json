@@ -1,7 +1,7 @@
 {
   "get": {
     "operationId": "getUnmatchedIntentsByUser",
-    "summary": "Get Unmatched intents by user",
+    "summary": "Get unmatched intents by user.",
     "description": "Retrieves all unmatched intents for a specific user, with optional pagination.",
     "servers": [
       {

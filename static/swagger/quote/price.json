@@ -1,7 +1,7 @@
 {
     "get": {
         "operationId": "price",
-        "summary": "Get a quote for an intent pair",
+        "summary": "Get a quote for an intent pair.",
         "description": "Retrieves a quote for the specified intent pair, considering the exact output or input amount.",
         "servers": [
             {

@@ -1,0 +1,201 @@
+---
+id: quickstart
+title: Quickstart
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import InstallAlert from "../nodejs/\_install-alert.mdx";
+
+## Installation
+
+<InstallAlert/>
+
+### Garden dependencies  
+
+<Tabs>
+    <TabItem value="npm" label="npm">
+    
+    ```bash
+    npm install @gardenfi/core @gardenfi/orderbook @gardenfi/react-hooks
+    ```
+
+    </TabItem>
+    <TabItem value="yarn" label="yarn">
+    
+    ```bash
+    yarn add @gardenfi/core @gardenfi/orderbook @gardenfi/react-hooks
+    ```
+
+    </TabItem>
+    <TabItem value="pnpm" label="pnpm">
+    
+    ```bash
+    pnpm add @gardenfi/core @gardenfi/orderbook @gardenfi/react-hooks
+    ```
+
+    </TabItem>
+</Tabs>
+
+### wagmi dependencies
+
+<Tabs>
+    <TabItem value="npm" label="npm">
+    ```bash
+    npm install @tanstack/react-query wagmi
+    ```
+
+    </TabItem>
+    <TabItem value="yarn" label="yarn">
+    
+    ```bash
+    yarn add @tanstack/react-query wagmi
+    ```
+
+    </TabItem>
+    <TabItem value="pnpm" label="pnpm">
+    
+    ```bash
+    pnpm add @tanstack/react-query wagmi
+    ```
+    </TabItem>
+</Tabs>
+ 
+Setup the Garden provider in your React app.
+
+<Tabs>
+   <TabItem value="main.tsx" label="main.tsx" default>
+```tsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { WagmiProvider } from 'wagmi';
+import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
+import { environment, GardenProvider } from '@gardenfi/react-hooks';
+import { wagmiConfig } from 'wagmi.ts';
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <WagmiProvider config={wagmiConfig}>
+      <QueryClientProvider client={new QueryClient()}>
+        <GardenProvider 
+        config={{
+                store: localStorage,
+                environment: environment.testnet,
+              }}>
+          <App />
+        </GardenProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
+  </React.StrictMode>
+);
+```
+
+</TabItem> 
+<TabItem value="wagmi.ts" label="wagmi.ts">
+```tsx
+import { createConfig, http } from 'wagmi';
+import { arbitrum, arbitrumSepolia, mainnet, sepolia } from 'wagmi/chains';
+import { injected, metaMask, safe } from 'wagmi/connectors';
+
+export const wagmiConfig = createConfig({
+  chains: [mainnet, arbitrum, sepolia, arbitrumSepolia],
+  connectors: [injected(), metaMask(), safe()],
+  transports: {
+    [mainnet.id]: http(),
+    [arbitrum.id]: http(),
+    [sepolia.id]: http(),
+    [arbitrumSepolia.id]: http(),
+  },
+});
+```
+</TabItem>
+</Tabs>
+
+## Swapping WBTC to BTC
+  
+<Tabs>
+   <TabItem value="swap.tsx" label="swap.tsx" default>
+```tsx 
+import { useGarden } from '@gardenfi/react-hooks';
+
+export const SwapComponent = () => {
+  const { initializeSecretManager, swapAndInitiate, getQuote } = useGarden();
+
+  const inputToken = SupportedAssets.ethereum_sepolia_WBTC;
+  const outputToken = SupportedAssets.bitcoin_testnet_BTC;
+  const amount = new BigNumber(0.01).multipliedBy(10 ** inputToken.decimals);
+
+  const quote = await getQuote({
+    fromAsset: inputToken,
+    toAsset: outputToken,
+    amount: amount,
+    isExactOut //OPTIONAL: if true, amount is the output amount
+  });
+
+  const [_strategy, quoteAmount] = Object.entries(quote.val.quotes)[0];
+
+  const secretManager = await initializeSecretManager();
+
+  if (secretManager.ok && secretManager.val.getMasterPrivKey()) {
+    const res = await swapAndInitiate({
+      fromAsset: inputToken,
+      toAsset: outputToken,
+      sendAmount: sendAmount.toString(),
+      receiveAmount: quoteAmount.toString(),
+      additionalData: { btcAddress, strategyId: _strategy },
+    }); //creates order and initiates the tx if source chain is EVM
+
+  }
+};
+```
+</TabItem>
+</Tabs>
+
+#### Incase of BTC to WBTC swap
+
+```tsx
+import {isBitcoin} from "@gardenfi/orderbook"
+
+if (isBitcoin(res.val.source_swap.chain)) {
+      const bitcoinAddress = res.val.source_swap.swap_id;
+        //user needs to fund the bitcoinAddress
+      }
+```
+
+:::note  
+Heads-up: The client needs to active (user needs to stay on app) during the process. If they leave, the transaction will pause and resume when they’re back.  
+:::  
+
+And that’s it! Now, wait for the transaction to complete.  
+
+### Common Questions
+
+#### What’s the secret manager for?  
+It simplifies the complexity of atomic swaps. By generating and managing secrets/secret hashes via a MasterKey, the `GardenProvider` takes care of everything securely, generating and retrieving secrets in-memory.  
+
+#### What if `swapAndInitiate` fails?  
+Occasionally initiating on EVM testnets (fund issues, gas, etc.). 
+Use the `evmInitiate` from `useGarden` hook to re-initiate the swap. 
+ 
+```ts
+evmInitiate?: (order: MatchedOrder) => AsyncResult<MatchedOrder, string>;
+```
+
+#### How can I check order status?  
+You can use the `orderBook` from `useGarden` to fetch order details:  
+
+```tsx
+import { OrderStatus } from "@gardenfi/core"
+const { orderBook } = useGarden();
+
+const getPendingOrders = async () => {
+  const res = await orderBook.fetchOrders(true, false, { per_page: 4 });
+
+  const pendingOrders = res.val.data.filter(
+        (order) =>
+          order.status !== OrderStatus.RedeemDetected &&
+          order.status !== OrderStatus.Matched
+      );
+
+  return pendingOrders;
+};
+```

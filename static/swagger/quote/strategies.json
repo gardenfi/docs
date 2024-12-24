@@ -1,7 +1,7 @@
 {
     "get": {
         "operationId": "strategies",
-        "summary": "Get available strategies",
+        "summary": "Get available strategies.",
         "description": "Retrieves a list of all available trading strategies.",
         "servers": [
             {

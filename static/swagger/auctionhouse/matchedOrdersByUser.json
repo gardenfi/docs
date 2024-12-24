@@ -1,7 +1,7 @@
 {
     "get": {
         "operationId": "getMatchedIntentsByUser",
-        "summary": "Get Matched Intents by User",
+        "summary": "Get matched intents by user.",
         "description": "Retrieves all matched intents for a specific user, with optional pagination and pending action filtering.",
         "servers": [
             {

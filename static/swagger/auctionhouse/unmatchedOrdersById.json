@@ -1,7 +1,7 @@
 {
     "get": {
         "operationId": "getUnmatchedIntentById",
-        "summary": "Retrieve Unmatched Intent by Id",
+        "summary": "Retrieve unmatched intent by ID.",
         "description": "Retrieves an unmatched intent by its unique create ID from the intent book.",
         "servers": [
             {

@@ -1,7 +1,7 @@
 {
     "post": {
         "operationId": "attestedQuote",
-        "summary": "Get an attested quote for an intent",
+        "summary": "Get an attested quote for an intent.",
         "description": "Validates the intent and retrieves an attested quote based on token prices. The input intent includes only the `strategy_id` in the `additional_data` field, while the output includes fully populated `additional_data`.",
         "servers": [
             {

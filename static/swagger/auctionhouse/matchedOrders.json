@@ -1,7 +1,7 @@
 {
     "get": {
         "operationId": "getAllMatchedIntents",
-        "summary": "Get All Matched Intents",
+        "summary": "Get all matched intents.",
         "description": "Retrieves all matched intents with optional pagination.",
         "servers": [
             {

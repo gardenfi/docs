@@ -32,13 +32,13 @@
     },
     {
       "name": "relayer",
-      "x-displayName": "Gasless API",
-      "description": "The Gasless API enables secure initiation, redemption, and intent creation for cross-chain swaps with health monitoring."
+      "x-displayName": "Gasless",
+      "description": "The gasless enables secure initiation, redemption, and intent creation for cross-chain swaps with health monitoring."
     },
     {
       "name": "auctionhouse",
       "x-displayName": "Auction House",
-      "description": "At the core of the Garden lies the auctionhouse. It is responsible for intent creation, matching, and settlement. One can create intents, track their status, and securely settle them using Atomic Swaps."
+      "description": "At the core of the Garden lies the auctionhouse. It is responsible for intent creation, matching, and settlement. One can create intents, track their status, and securely settle them using atomic swaps."
     },
     {
       "name": "quote",
