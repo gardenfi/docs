@@ -1,0 +1,290 @@
+
+
+*::selection{
+    background-color: var(--ifm-color-primary);
+    color: white!important;
+}
+/* api description - api response pairs */
+.sc-dntaoT *{
+    color: white!important;
+}
+/* total side and content panels */
+.sc-iMPxVN *{
+    color: var(--ifm-font-color-base)!important;
+}
+.sc-iRVXky *, .fbQvpV >ul >li.react-tabs__tab--selected, .sc-hSyjfr, .sc-hSyjfr > *, .sc-hPGoDJ, .sc-dHMlHb{
+    color: #333!important;
+}
+/* response buttons */
+.sc-gohMHu *{
+    color: #fff!important;
+}
+/* failure responses */
+.sc-gohMHu{
+    border: thin solid var(--ifm-failure-background-color)!important;
+}
+/* complete doc except the left navbar */
+.docItemCol_VOVn{
+    width: 100%;
+}
+.sc-dFqmTM, .sc-dntaoT{
+    border-radius: 1rem;
+}
+/* the left search layout */
+.sc-dFqmTM{
+    width: 300px!important;
+    border: thin solid var(--ifm-color-primary);
+    transition: all 0.2s ease-in;
+    padding: 0.5rem 0!important;
+    background-color: transparent!important;
+}
+.sc-dFqmTM *{
+    background-color: transparent!important;
+    color: var(--ifm-font-color-base)!important;
+}
+/* search icon */
+.sc-kBpWFy > path{
+    fill: var(--ifm-font-color-base)!important;
+}
+/* search bar */
+.sc-dtOqdk{
+    display: flex!important;
+    flex-direction: row-reverse!important;
+}
+.sc-keTIit, .sc-etPtWW, .sc-fufdwm, .sc-UblHX{
+    color: var(--ifm-invert-font-color)!important;
+}
+@media print, screen and (min-width: 75rem) {
+    .sc-fAUdSK {
+        width: 100%!important;
+        padding: 0px 1rem!important;
+    }
+}
+.sc-kLhKbu{
+    flex-direction: column!important;
+    display: flex;
+}
+.sc-ivxoEo{
+    width: 100%!important;
+    background-color: rgb(38, 50, 56)!important;
+    padding: 1rem!important;
+    border-radius: 1rem;
+    margin: 1rem 0!important;
+}
+.sc-eEVuZf{
+    display: none!important;
+}
+.sc-dntaoT{
+    background-color: transparent;
+    margin: 2%;
+}
+/* the download button - deleted page header commenting for future reference */
+/* .sc-kEsJEW{
+    transition: all 0.3s ease;
+    border-radius: 1rem;
+    border: thin solid #000!important;
+    text-decoration: underline;
+    color: black!important;
+    background-color: #fff;
+    font-weight: bold;
+    margin: 1rem;
+}
+.sc-kEsJEW:hover{
+    color: white!important;
+    background-color: #000;
+    border: thin solid #fff!important;
+} */
+/* success responses */
+div > div:first-of-type > .sc-gohMHu:first-of-type{
+    opacity: 1!important;
+    border: thin solid var(--ifm-success-background-color)!important;
+}
+/* success and failure response types  */
+div > div > .sc-gohMHu *{
+    color: var(--ifm-font-color-base)!important;
+}
+@media (min-width: 997px) {
+    .row .docItemCol_VOVn {
+        max-width: 100% !important;
+    }
+}
+/* response type expander arrow */
+.sc-cHqXqK > polygon{
+    fill: var(--ifm-font-color-base)!important;
+}
+
+/* content type mini heading */
+.sc-fufdwm{
+    background-color: var(--ifm-color-primary);
+    padding: 0 1%;
+    border-radius: 1rem;
+}
+
+/* response codes font color */
+.react-tabs__tab-list li{
+    color: #fff!important;
+}
+
+/* bearer header expanded and compact */
+.sc-bqvdXA > i{
+    background-color: #fff;
+    color: #333!important;
+    padding: 0 1%;
+    border-radius: 1rem;
+    margin: 0 1%;
+}
+
+/* target the table cells */
+td{
+    padding: 10px 10px 10px 0!important;
+    color: var(--ifm-font-color-base)!important;
+}
+/* .sc-ovuCP{
+    border-left: thin solid var(--ifm-color-primary)!important;
+} */
+/* endpoint headings */
+.sc-khLCKb, .sc-ixGGxD{
+    font-size: 2.5rem!important;
+    font-weight: 700!important;
+}
+.sc-enMaOJ{
+    font-size: 1rem!important;
+}
+/* download button */
+.sc-kEsJEW{
+    border: thin solid var(--ifm-color-primary)!important;
+    color: var(--ifm-color-primary)!important;
+}
+
+.api-reference--btn{
+    color: var(--ifm-color-primary)!important;
+    text-decoration: none;
+    font-weight: 400!important;
+}
+/* sc-etPtWW is route text */
+.sc-epnzzT, .sc-etPtWW{
+    font-size: 1rem!important;
+}
+
+/* required text */
+.sc-hGZxvd{
+    color: red!important;
+}
+
+
+/* examples */
+.sc-cSzYSJ{
+    background-color: var(--docusaurus-highlighted-code-line-bg)!important;
+}
+
+table, td{
+    border: none!important;
+}
+table tr{
+    background-color: transparent!important;
+}
+/* table left connector */
+.sc-ovuCP{
+    border-left: 1px solid var(--ifm-color-primary)!important;
+}
+tr:first-of-type>.sc-eauhAA{
+    border: none!important;
+    background-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        transparent 22px,
+        #e36492 22px,
+        #e36492 100%
+      )!important;
+}
+tr:last-child>.sc-eauhAA{
+    border: none!important;
+    background-image: linear-gradient(
+      to bottom,
+      #e36492 0%,
+      #e36492 22px,
+      transparent 22px,
+      transparent 100%
+    )!important;
+}
+/* single param tables */
+tr:first-child:last-child>.sc-eauhAA{
+    background-image: none!important;
+    border: none!important;
+}
+tr:first-child:last-child > *{
+    border: none!important;
+}
+/* td left border extensions or pointers */
+.sc-gQaihK::before, .sc-gQaihK::after{
+    background: var(--ifm-color-primary)!important;
+}
+/* table param description cells*/
+.sc-fFoeYl{
+    border-bottom: 1px solid var(--ifm-border-background-color)!important;
+    padding: 0 1rem!important;
+}
+/* copy, expand, collapse all buttons */
+.sc-uYFMi button{
+    color: #fff!important;
+}
+/* response samples values */
+.redoc-json .token.string, .redoc-json .token.number{
+    background-color: transparent!important;
+    color: rgb(160, 251, 170)!important;
+}
+.property.token.string, .sc-txhaY, .sc-eWPXlR, .sc-txhaY, .token.punctuation, .collapser, .ellipsis, .collapsed, .hoverable{
+    color: #fff!important;
+}
+
+/* null values */
+.redoc-json .token.keyword{
+    color: rgb(209, 148, 158)!important;
+}
+/* endpoint text */
+.sc-hSyjfr{
+    color: var(--ifm-color-primary)!important;
+}
+
+tbody{
+    width: 100%!important;
+}
+
+.sc-dpBQxM{
+    border: none!important;
+}
+/* nested schema expander */
+td.sc-ovuCP.sc-eOzmre *{
+    background-color: transparent!important;
+    color: var(--ifm-font-color-base)!important;
+}
+td.sc-eOzmre{
+    border: none!important;
+}
+
+.last.expanded > td{
+    background: none!important;
+}
+
+
+/* redocly footer */
+.sc-fUEImY{
+    background-color: #f2f7fb!important;
+    /* border-radius: 0 0 1rem 1rem!important; */
+    padding: 0 1rem!important;
+    position: fixed!important;
+    bottom: 0!important;
+    width: 287px!important;
+}
+.sc-fUEImY > a{
+    border: none!important;
+}
+
+.sc-erSfwj[type="get"]{
+    background-color: #2F8132!important;
+    color: #fff!important;
+}
+.sc-erSfwj[type="post"]{
+    background-color: #186FAF!important;
+    color: #fff!important;
+}
