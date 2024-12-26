@@ -87,6 +87,7 @@ const sidebars: SidebarsConfig = {
     { type: 'doc', label: 'Tokenomics', id: 'home/governance/tokenomics' },
     { type: 'doc', label: 'Governance process', id: 'home/governance/governance-process' },
     { type: 'doc', label: 'Snapshot', id: 'home/governance/snapshot' },
+    { type: 'doc', label: 'Brand guide', id: 'home/garden-brand-guide' },
   ],
 
   developers: [
