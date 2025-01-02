@@ -19,7 +19,7 @@ The user interface looks like this:
 
 ![Final dApp](./images/final_dapp.png)
 
-## Environment setup
+  ## Environment setup
 
 To improve the developer experience, we will use [Merry](../developers/merry/Merry.md) to set up the multichain environment necessary for performing a swap.
 

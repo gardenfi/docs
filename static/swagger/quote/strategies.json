@@ -5,7 +5,7 @@
         "description": "Retrieves a list of all available strategies.",
         "servers": [
             {
-                "url": "https://quote-knrp.onrender.com"
+                "url": "https://quote.garden.finance"
             }
         ],
         "security": [],
