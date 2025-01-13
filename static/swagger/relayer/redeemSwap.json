@@ -18,12 +18,12 @@
                             "order_id": {
                                 "type": "string",
                                 "description": "The unique order ID.",
-                                "example": "12345"
+                                "example": "dab96...cbb4324a3874f78f2fa2faaea6ac714fba7028776fc6c96c41"
                             },
                             "secret": {
                                 "type": "string",
                                 "description": "The secret for the order.",
-                                "example": "6fe3d5d62b9b0137b1747b2a9dbb227b09d547c1a10f0455efb2584b459f9b24"
+                                "example": "6c5185...68d080073867cf0235f2639162e676a0f099d62236f1a9a22dad"
                             },
                             "perform_on": {
                                 "type": "string",
@@ -32,7 +32,7 @@
                                     "Destination"
                                 ],
                                 "description": "Indicates where the swap should be performed",
-                                "example": "Source"
+                                "example": "Destination"
                             }
                         },
                         "required": [

@@ -13,109 +13,7 @@
             "content": {
                 "application/json": {
                     "schema": {
-                        "type": "object",
-                        "properties": {
-                            "source_chain": {
-                                "type": "string",
-                                "description": "The blockchain network where the swap originates.",
-                                "example": "bitcoin"
-                            },
-                            "destination_chain": {
-                                "type": "string",
-                                "description": "The blockchain network where the swap completes.",
-                                "example": "ethereum"
-                            },
-                            "source_asset": {
-                                "type": "string",
-                                "description": "The asset being swapped on the source blockchain.",
-                                "example": "primary"
-                            },
-                            "destination_asset": {
-                                "type": "string",
-                                "description": "The asset to be received on the destination blockchain.",
-                                "example": "0xd8a6e3fca403d79b6ad6216b60527f51cc967d39"
-                            },
-                            "initiator_source_address": {
-                                "type": "string",
-                                "description": "The wallet address initiating the swap on the source blockchain.",
-                                "example": "0x5A4b7eD8c2a1F1e34C8e9...6A3C5D2B1f8E7A9C"
-                            },
-                            "initiator_destination_address": {
-                                "type": "string",
-                                "description": "The wallet address to receive the asset on the destination blockchain.",
-                                "example": "0x5A4b7eD8c2a1F1e34C8e9...6A3C5D2B1f8E7A9C"
-                            },
-                            "source_amount": {
-                                "type": "string",
-                                "description": "The amount of the asset being swapped on the source blockchain, expressed in its lowest denomination.",
-                                "example": "1"
-                            },
-                            "destination_amount": {
-                                "type": "string",
-                                "description": "The amount of the asset being swapped on the destination blockchain, expressed in its lowest denomination.",
-                                "example": "0.97"
-                            },
-                            "fee": {
-                                "type": "string",
-                                "description": "The total cost associated with the swap transaction.",
-                                "example": "1"
-                            },
-                            "nonce": {
-                                "type": "string",
-                                "description": "A unique identifier for the swap transaction to prevent duplication.",
-                                "example": "b8bc718d6af38a0d2cac5085c53f617a52e590b0ff4ad2c4abb0825e9cc39079"
-                            },
-                            "min_destination_confirmations": {
-                                "type": "integer",
-                                "description": "The minimum number of confirmations required on the destination blockchain to finalize the swap.",
-                                "example": 0
-                            },
-                            "timelock": {
-                                "type": "integer",
-                                "description": "A timeout period after which the swap expires if not completed.",
-                                "example": 288
-                            },
-                            "secret_hash": {
-                                "type": "string",
-                                "description": "A cryptographic hash used to verify the transaction's security.",
-                                "example": "f4a3b8d16e58cd30b8a0e9f504b1c7f9f24d1c70eaf2a3794b3c7e5bb7c90f5d"
-                            },
-                            "additional_data": {
-                                "type": "object",
-                                "properties": {
-                                    "strategy_id": {
-                                        "type": "string",
-                                        "description": "Provided by the quote server",
-                                        "example": "bre112"
-                                    },
-                                    "bitcoin_optional_recipient": {
-                                        "type": "string",
-                                        "description": "An optional Bitcoin address to receive the output token, if specified.",
-                                        "example": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
-                                    }
-                                },
-                                "required": [
-                                    "strategy_id",
-                                    "bitcoin_optional_recipient"
-                                ]
-                            }
-                        },
-                        "required": [
-                            "source_chain",
-                            "destination_chain",
-                            "source_asset",
-                            "destination_asset",
-                            "initiator_source_address",
-                            "initiator_destination_address",
-                            "source_amount",
-                            "destination_amount",
-                            "fee",
-                            "nonce",
-                            "min_destination_confirmations",
-                            "timelock",
-                            "secret_hash",
-                            "additional_data"
-                        ]
+                        "$ref": "./components/schemas.json#/CreateOrderRequest"
                     }
                 }
             }
@@ -126,23 +24,7 @@
                 "content": {
                     "application/json": {
                         "schema": {
-                            "type": "object",
-                            "properties": {
-                                "status": {
-                                    "type": "string",
-                                    "enum": [
-                                        "Ok",
-                                        "Error"
-                                    ],
-                                    "example": "Ok",
-                                    "description": "An enum representing the possible outcomes of the endpoint, indicating whether the request was successful."
-                                },
-                                "result": {
-                                    "type": "string",
-                                    "description": "Transaction hash",
-                                    "example": "0x4e9f6b8c3a3d7b92e5f789cc83dfac35f6a12348b7d0e9c1a4e5b6a8f7c123d4"
-                                }
-                            }
+                            "$ref": "./components/schemas.json#/SuccessResponse"
                         }
                     }
                 }
@@ -152,33 +34,7 @@
                 "content": {
                     "application/json": {
                         "schema": {
-                            "type": "object",
-                            "properties": {
-                                "status": {
-                                    "type": "string",
-                                    "enum": [
-                                        "Ok",
-                                        "Error"
-                                    ],
-                                    "example": "Error",
-                                    "description": "An enum representing the possible outcomes of the endpoint, indicating whether the request was successful."
-                                },
-                                "error": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "type": "number",
-                                            "description": "The numeric status code indicating the type of error or response.",
-                                            "example": 401
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "description": "A descriptive message providing details about the error or response.",
-                                            "example": "Order with given secretHash already exists."
-                                        }
-                                    }
-                                }
-                            }
+                            "$ref": "./components/schemas.json#/ErrorResponse"
                         }
                     }
                 }
@@ -191,23 +47,7 @@
                 "content": {
                     "application/json": {
                         "schema": {
-                            "type": "object",
-                            "properties": {
-                                "status": {
-                                    "type": "string",
-                                    "enum": [
-                                        "Ok",
-                                        "Error"
-                                    ],
-                                    "example": "Error",
-                                    "description": "An enum representing the possible outcomes of the endpoint, indicating whether the request was successful."
-                                },
-                                "error": {
-                                    "type": "string",
-                                    "description": "Error message",
-                                    "example": "internal error"
-                                }
-                            }
+                            "$ref": "./components/schemas.json#/ServerErrorResponse"
                         }
                     }
                 }

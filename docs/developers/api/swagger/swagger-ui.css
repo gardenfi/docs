@@ -2,12 +2,15 @@
     background-color: var(--ifm-color-primary);
     color: white;
 }
+.swagger-ui .scheme-container *{
+    color: var(--ifm-font-color-base);
+}
 .swagger-ui .opblock-tag {
     line-height: 2;
 }
 .swagger-ui {
     font-family: Satoshi, ui-sans-serif, system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji !important;
-    width: 75dvw;
+    padding: 0 2rem;
 }
 .swagger-ui .renderedMarkdown code {
     padding: 0rem 0.5rem;
@@ -32,7 +35,9 @@
 .swagger-ui .prop-format, 
 .swagger-ui table thead tr th, 
 .swagger-ui .model, 
-.swagger-ui .model .property.primitive {
+.swagger-ui .model .property.primitive,
+.swagger-ui .operation-servers h4.message,
+.swagger-ui .servers *{
     color: var(--ifm-font-color-base);
 }
 .swagger-ui .renderedMarkdown code {
@@ -58,7 +63,7 @@
     color: var(--ifm-font-color-base);
 }
 .swagger-ui .opblock-tag .nostyle {
-    width: 8rem;
+    width: 9rem;
 }
 .swagger-ui .opblock-tag {
     flex-wrap: wrap;
@@ -68,6 +73,7 @@
 }
 .swagger-ui .scheme-container {
     border-radius: 0.7rem;
+    background-color: var(--docusaurus-highlighted-code-line-bg);
 }
 .swagger-ui .opblock-summary-control {
     outline: none !important;
@@ -119,12 +125,63 @@
     font-weight: bold;
     cursor: pointer;
 }
+.custom-alert *{
+    color: #554b6a;
+}
 .custom-alert__container{
     width: fit-content;
     max-width: 15rem;
     height: fit-content;
     max-height: 15rem;
     overflow-y: scroll;
+}
+input{
+    color: #000;
+}
+#servers{
+    background-color: transparent;
+}
+#auth-bearer-value{
+    outline: none;
+    width: 100%;
+}
+
+.swagger-ui .info .title small.version-stamp{
+    padding: 1 0.8rem;
+}
+
+.swagger-ui .btn.authorize svg{
+    fill: var(--ifm-color-primary);
+}
+.swagger-ui .btn.authorize{
+    color: var(--ifm-color-primary);
+    border-color: var(--ifm-color-primary);
+}
+.swagger-ui .btn{
+    color: #000;
+}
+.swagger-ui label[for="auth-bearer-value"]{
+    color: #333;
+}
+.modal-ux-inner{
+    background-color: var(--ifm-code-background);
+}
+.swagger-ui .auth-container code{
+    color: #000;
+}
+.swagger-ui .scheme-container select, .servers select{
+    background: var(--ifm-drop-down-image);
+    background-size: 1.5rem;
+}
+.docMainContainer_TBSr{
+    scrollbar-width: none!important;
+    -ms-overflow-style: none!important;
+}
+.docMainContainer_TBSr::-webkit-scrollbar{
+    display: none!important;
+}
+.swagger-ui .responses-inner h4, .swagger-ui[class] .responses-inner[class] h5{
+    color: var(--ifm-font-color-base);
 }
 @media (max-width: 1024px) {
     .swagger-ui .opblock-tag {
@@ -135,5 +192,14 @@
     }
     .swagger-ui {
         width: 100%;
+    }
+    .swagger-ui {
+        padding: 0;
+    }
+    .swagger-ui .wrapper{
+        padding: 0;
+    }
+    .swagger-ui .scheme-container{
+        padding: 1rem;
     }
 }

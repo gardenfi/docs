@@ -1,0 +1,208 @@
+{
+    "CreateOrderRequest": {
+        "type": "object",
+        "properties": {
+            "source_chain": {
+                "type": "string",
+                "description": "The blockchain network where the swap originates.",
+                "example": "ethereum_sepolia"
+            },
+            "destination_chain": {
+                "type": "string",
+                "description": "The blockchain network where the swap completes.",
+                "example": "citrea_testnet"
+            },
+            "source_asset": {
+                "type": "string",
+                "description": "The asset being swapped on the source blockchain.",
+                "example": "0x3C6a17b8cD92976D1D91E491c93c98cd81998265"
+            },
+            "destination_asset": {
+                "type": "string",
+                "description": "The asset to be received on the destination blockchain.",
+                "example": "0xaD9d14CA82d9BF97fFf745fFC7d48172A1c0969E"
+            },
+            "initiator_source_address": {
+                "type": "string",
+                "description": "The wallet address initiating the swap on the source blockchain.",
+                "example": "0x5A4b7eD8c2a1F1e34C8e9...6A3C5D2B1f8E7A9C"
+            },
+            "initiator_destination_address": {
+                "type": "string",
+                "description": "The wallet address to receive the asset on the destination blockchain.",
+                "example": "0x5A4b7eD8c2a1F1e34C8e9...6A3C5D2B1f8E7A9C"
+            },
+            "source_amount": {
+                "type": "string",
+                "description": "The amount of the asset being swapped on the source blockchain, expressed in its lowest denomination.",
+                "example": "1000000"
+            },
+            "destination_amount": {
+                "type": "string",
+                "description": "The amount of the asset being swapped on the destination blockchain, expressed in its lowest denomination.",
+                "example": "9970000000000000"
+            },
+            "fee": {
+                "type": "string",
+                "description": "The total cost associated with the swap transaction.",
+                "example": "1"
+            },
+            "nonce": {
+                "type": "string",
+                "description": "A unique identifier for the swap transaction to prevent duplication.",
+                "example": "5"
+            },
+            "min_destination_confirmations": {
+                "type": "integer",
+                "description": "The minimum number of confirmations required on the destination blockchain to finalize the swap.",
+                "example": 0
+            },
+            "timelock": {
+                "type": "integer",
+                "description": "A timeout period after which the swap expires if not completed.",
+                "example": 7200
+            },
+            "secret_hash": {
+                "type": "string",
+                "description": "A cryptographic hash used to verify the transaction's security.",
+                "example": "c1f286d511fc428a82...e5920f7ff812091cfbee3a5484a087682839"
+            },
+            "additional_data": {
+                "type": "object",
+                "properties": {
+                    "strategy_id": {
+                        "type": "string",
+                        "description": "Provided by the quote server",
+                        "example": "ea56cte9"
+                    },
+                    "input_token_price": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Provided by the quote server",
+                        "example": 95339.72353861976
+                    },
+                    "output_token_price": {
+                        "type": "number",
+                        "format": "double",
+                        "description": "Provided by the quote server",
+                        "example": 95339.72353861976
+                    },
+                    "deadline": {
+                        "type": "number",
+                        "description": "Validity till the current quote is valid",
+                        "example": 1735801988
+                    },
+                    "bitcoin_optional_recipient": {
+                        "type": "string",
+                        "description": "An optional Bitcoin address to receive the output token, if specified.",
+                        "example": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
+                        "nullable": true
+                    },
+                    "sig": {
+                        "type": "string",
+                        "description": "The signature from the attested quote",
+                        "example": "939c73a014b9a016cbe...7adce0bc76f170a2deaafa1304f572b808341edcd93058b7b60af994b780a12f24dac0c905615d00d8059b6e6326446cc9d61c"
+                    },
+                    "instant_refund_tx_bytes": {
+                        "type": "string",
+                        "description": "The signature used to derive the transaction hash for an instant refund in case of transaction failure.",
+                        "nullable": true,
+                        "example": null
+                    }
+                },
+                "required": [
+                    "strategy_id",
+                    "bitcoin_optional_recipient",
+                    "instant_refund_tx_bytes",
+                    "sig",
+                    "deadline",
+                    "output_token_price",
+                    "input_token_price"
+                ]
+            }
+        },
+        "required": [
+            "source_chain",
+            "destination_chain",
+            "source_asset",
+            "destination_asset",
+            "initiator_source_address",
+            "initiator_destination_address",
+            "source_amount",
+            "destination_amount",
+            "fee",
+            "nonce",
+            "min_destination_confirmations",
+            "timelock",
+            "secret_hash",
+            "additional_data"
+        ]
+    },
+    "SuccessResponse": {
+        "type": "object",
+        "properties": {
+            "status": {
+                "type": "string",
+                "enum": [
+                    "Ok",
+                    "Error"
+                ],
+                "example": "Ok",
+                "description": "An enum representing the possible outcomes of the endpoint, indicating whether the request was successful."
+            },
+            "result": {
+                "type": "string",
+                "description": "Transaction hash",
+                "example": "0x4e9f6b8c3a3d7b92e5f789cc83dfac35f6a12348b7d0e9c1a4e5b6a8f7c123d4"
+            }
+        }
+    },
+    "ErrorResponse": {
+        "type": "object",
+        "properties": {
+            "status": {
+                "type": "string",
+                "enum": [
+                    "Ok",
+                    "Error"
+                ],
+                "example": "Error",
+                "description": "An enum representing the possible outcomes of the endpoint, indicating whether the request was successful."
+            },
+            "error": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "number",
+                        "description": "The numeric status code indicating the type of error or response.",
+                        "example": 401
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "A descriptive message providing details about the error or response.",
+                        "example": "Order with given secretHash already exists."
+                    }
+                }
+            }
+        }
+    },
+    "ServerErrorResponse": {
+        "type": "object",
+        "properties": {
+            "status": {
+                "type": "string",
+                "enum": [
+                    "Ok",
+                    "Error"
+                ],
+                "example": "Error",
+                "description": "An enum representing the possible outcomes of the endpoint, indicating whether the request was successful."
+            },
+            "error": {
+                "type": "string",
+                "description": "Error message",
+                "example": "internal error"
+            }
+        }
+    }
+}

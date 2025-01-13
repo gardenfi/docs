@@ -201,7 +201,7 @@
                     "swap_id": {
                         "type": "string",
                         "description": "Unique identifier for the swap.",
-                        "example": "swap_123"
+                        "example": "0x5A4b7eD8c2a1F1e34C8e9...6A3C5D2B1f8E7A9C"
                     },
                     "chain": {
                         "type": "string",
@@ -246,22 +246,22 @@
                     "secret": {
                         "type": "string",
                         "description": "The revealed secret for the atomic swap.",
-                        "example": ""
+                        "example": "garden.fi"
                     },
                     "initiate_tx_hash": {
                         "type": "string",
                         "description": "Transaction hash of the initiation transaction.",
-                        "example": ""
+                        "example": "zib3b8d16e58cd30b8a0e9f504b1c7f9f24d1c70eaf2a3794b3c7e5bb7c90f5d"
                     },
                     "redeem_tx_hash": {
                         "type": "string",
                         "description": "Transaction hash of the redeem transaction.",
-                        "example": ""
+                        "example": "abr8b8d16e58cd30b8a0e9f504b1c7f9f24d1c70eaf2a3794b3c7e5bb7c91wxk"
                     },
                     "refund_tx_hash": {
                         "type": "string",
                         "description": "Transaction hash of the refund transaction, if any.",
-                        "example": ""
+                        "example": "abr8b8d16e58cd30b8a0e9f504b1c7f9f24d1c70eaf2a3794b3c7e5bb7c91wxk"
                     },
                     "initiate_block_number": {
                         "type": "string",

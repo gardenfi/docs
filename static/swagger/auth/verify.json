@@ -13,12 +13,12 @@
                         "properties": {
                             "message": {
                                 "type": "string",
-                                "example": "localhost:4200 wants you to sign in with your Ethereum account: 0x8F4f2B8ab0341Af0cAe29e3C0F35C30eE00A3dE9 DeFiHub URI: http://localhost:4200/ Version: 2 Chain ID: 3 Nonce: b8bc718d6af38a0d2cac5085c53f617a52e590b0ff4ad2c4abb0825e9cc39079 Issued At: 2024-12-24T14:15:30.123Z",
+                                "example": "beta.garden.finance wants you to sign in with your Ethereum account:\n0xDda173bd23b07007394611D789EF789a9Aae5CF5\n\nGarden.fi\n\nURI: https://beta.garden.finance\nVersion: 1\nChain ID: 11155111\nNonce: ccecfc7e76a9c1f3d60ed7d7a7f12af7522714ad6e1c3a34980118d0d7866dbb\nIssued At: 2024-12-31T12:07:23.770Z\nNot Before: 2024-12-31T12:12:23.365Z",
                                 "description": "The message to be verified."
                             },
                             "signature": {
                                 "type": "string",
-                                "example": "6fe3d5d62b9b0137b1747b2a9dbb227b09d547c1a10f0455efb2584b459f9b24",
+                                "example": "0x966de683f1b41097bf5212a0c98a4f422df76b462a81ef45225a9f13bf83c643054126472d1045537f47e26a1f0a3b166e1c46a6a64255044db502e5975cbc691c",
                                 "description": "The signed message to verify."
                             },
                             "nonce": {
@@ -52,8 +52,8 @@
                                 },
                                 "result": {
                                     "type": "string",
-                                    "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.CwQHc49-QhP9O-d78b6oAAGv1FlMY_MBOxxr06vNPSgTSOx40HpNqTTlLwFExC-U-KajJZ2izwSKVhNlD2DqTf-V2M-wQTZsG9Ucqg-QZ-V_L02ePyyJ8mn5vJUtTfxmf_WyytvjxIRkPqKkPmu3tJl00cRVt4kFiD_F_XRhPT8QNmEodf5Q9jcByq5J3eyVgfge4wZA9V5nYBz9N-i_AcDttXQmsxtzvthlwszi5Sscw4yIbw1lnz_fHxuK6-lpoIh8IbOdPfGMlg_Mc0AzVObrhMKbT0OnNfbtk9tI0vErzOnoD7A2vDdBz01XccFZ36txcxQ95JZ-_WNs7g",
-                                    "description": "JWT token issued for authenticated user, containing encoded user claims and used for session validation in subsequent API requests."
+                                    "example": "0x966de683f1b41097bf5212a0c98a4f422df76b462a81ef45225a9f13bf83c643054126472d1045537f47e26a1f0a3b166e1c46a6a64255044db502e5975cbc691c",
+                                    "description": "JWT token issued for authenticated user used for session validation in subsequent API requests."
                                 }
                             }
                         }

@@ -5,7 +5,7 @@
         "description": "Retrieves a `quote` for the specified `order pair`, considering the exact output or input amount.",
         "servers": [
             {
-                "url": "https://quote-knrp.onrender.com"
+                "url": "https://quote.garden.finance"
             }
         ],
         "security": [],
@@ -17,7 +17,7 @@
                 "schema": {
                     "type": "string",
                     "description": "The order pair for which the quote is needed.",
-                    "example": "ethereum_sepolia:0x3C6a17b8cD92976D1D91E491c93c98cd81998265::bitcoin_testnet:primary"
+                    "example": "ethereum_sepolia%3A0x3C6a17b8cD92976D1D91E491c93c98cd81998265%3A%3Acitrea_testnet%3A0xaD9d14CA82d9BF97fFf745fFC7d48172A1c0969E"
                 }
             },
             {
@@ -38,7 +38,7 @@
                     "type": "string",
                     "format": "decimal",
                     "description": "The amount for the quote.",
-                    "example": 100000000
+                    "example": 1000000
                 }
             }
         ],

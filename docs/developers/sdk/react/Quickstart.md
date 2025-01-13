@@ -44,9 +44,9 @@ To install the required Garden packages:
 To install wagmi dependencies:
 <Tabs>
 <TabItem value="npm" label="npm">
-`bash
-    npm install @tanstack/react-query wagmi
-    `
+    ```bash
+      npm install @tanstack/react-query wagmi
+    ```
 
     </TabItem>
     <TabItem value="yarn" label="yarn">

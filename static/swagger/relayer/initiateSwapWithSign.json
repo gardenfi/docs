@@ -18,12 +18,12 @@
                             "order_id": {
                                 "type": "string",
                                 "description": "The unique order ID",
-                                "example": "12345"
+                                "example": "ee0397d...5aed66ffb0a0ede00e86d0446d468e681cf0b6166fcc413dafe"
                             },
                             "signature": {
                                 "type": "string",
                                 "description": "The signature for the swap",
-                                "example": "6fe3d5d62b9b0137b1747b2a9dbb227b09d547c1a10f0455efb2584b459f9b24"
+                                "example": "0xe71e...22220bb369c7db189d749b6d34d4b444f863b6bafa1ab107b07031e465b652e2959b73de0ea1700d2414734dea44a04eb20b8bf85c178604b6b461b"
                             },
                             "perform_on": {
                                 "type": "string",

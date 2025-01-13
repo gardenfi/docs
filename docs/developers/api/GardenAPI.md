@@ -2,7 +2,7 @@
 id: garden-api
 ---
 
-# API
+# OpenAPI
 
 import React from 'react';
 import SwaggerComponent from './swagger/SwaggerComponent';
