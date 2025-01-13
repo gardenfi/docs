@@ -20,7 +20,7 @@
                                 },
                                 "result": {
                                     "type": "string",
-                                    "example": "d2ea8a7ce1d18f50db51de1f7522e45706330cf3a2dcf269930b5d38b5461fcb",
+                                    "example": "6cdfd22dba0ca6b3a1fc3f1d0d2ea03fba4e463bc5365a1d9242c78a2ed92b1d",
                                     "description": "The generated nonce provided to the user as a one-time challenge for signing during authentication."
                                 }
                             }
