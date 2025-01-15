@@ -1,145 +1,140 @@
 {
-    "get": {
-        "operationId": "strategies",
-        "summary": "Get available strategies.",
-        "description": "Retrieves a list of all available strategies.",
-        "servers": [
-            {
-                "url": "https://quote-knrp.onrender.com"
-            }
-        ],
-        "security": [],
-        "responses": {
-            "200": {
-                "description": "Successfully retrieved strategies.",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "status": {
-                                    "type": "string",
-                                    "enum": [
-                                        "Ok",
-                                        "Error"
-                                    ],
-                                    "example": "Ok"
-                                },
-                                "data": {
-                                    "type": "object",
-                                    "description": "Retrieves a hashmap of strategies",
-                                    "properties": {
-                                        "id": {
-                                            "type": "string",
-                                            "description": "Unique identifier for the strategy.",
-                                            "example": "ea56btyr"
-                                        },
-                                        "source_chain_address": {
-                                            "type": "string",
-                                            "description": "Address on the source chain.",
-                                            "example": "0x661bA32eb5f86CaB358DDbB7F264b10c5825e2dd"
-                                        },
-                                        "dest_chain_address": {
-                                            "type": "string",
-                                            "description": "Address on the destination chain.",
-                                            "example": "460f2e8ff81fc4e0a8e6ce7796704e3829e3e3eedb8db9390bdc51f4f04cf0a6"
-                                        },
-                                        "source_chain": {
-                                            "type": "string",
-                                            "description": "Name of the source chain.",
-                                            "example": "ethereum_sepolia"
-                                        },
-                                        "dest_chain": {
-                                            "type": "string",
-                                            "description": "Name of the destination chain.",
-                                            "example": "bitcoin_testnet"
-                                        },
-                                        "source_asset": {
-                                            "type": "object",
-                                            "properties": {
-                                                "asset": {
-                                                    "type": "string",
-                                                    "example": "0x3C6a17b8cD92976D1D91E491c93c98cd81998265"
-                                                },
-                                                "token_id": {
-                                                    "type": "string",
-                                                    "example": "bitcoin"
-                                                },
-                                                "decimals": {
-                                                    "type": "integer",
-                                                    "description": "Number of decimals for the asset.",
-                                                    "example": 8
-                                                }
-                                            },
-                                            "description": "Asset on the source chain."
-                                        },
-                                        "dest_asset": {
-                                            "type": "object",
-                                            "properties": {
-                                                "asset": {
-                                                    "type": "string",
-                                                    "example": "primary"
-                                                },
-                                                "token_id": {
-                                                    "type": "string",
-                                                    "example": "bitcoin"
-                                                },
-                                                "decimals": {
-                                                    "type": "integer",
-                                                    "description": "Number of decimals for the asset.",
-                                                    "example": 8
-                                                }
-                                            },
-                                            "description": "Asset on the destination chain."
-                                        },
-                                        "makers": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "string",
-                                                "example": ""
-                                            },
-                                            "description": "List of maker addresses."
-                                        },
-                                        "min_amount": {
-                                            "type": "string",
-                                            "format": "decimal",
-                                            "description": "Minimum trade amount for the strategy."
-                                        },
-                                        "max_amount": {
-                                            "type": "string",
-                                            "format": "decimal",
-                                            "description": "Maximum trade amount for the strategy."
-                                        },
-                                        "min_source_timelock": {
-                                            "type": "integer",
-                                            "format": "int64",
-                                            "description": "Minimum timelock for the source chain."
-                                        },
-                                        "min_source_confirmations": {
-                                            "type": "integer",
-                                            "format": "int64",
-                                            "description": "Minimum number of confirmations on the source chain."
-                                        },
-                                        "min_price": {
-                                            "type": "number",
-                                            "format": "float",
-                                            "description": "Minimum price for the strategy."
-                                        },
-                                        "fee": {
-                                            "type": "integer",
-                                            "format": "int64",
-                                            "description": "Fee in basis points (bips)."
-                                        }
-                                    }
-                                }
-                            }
+  "get": {
+    "operationId": "strategies",
+    "summary": "Get available strategies.",
+    "description": "Retrieves a list of all available strategies.",
+    "servers": [
+      {
+        "url": "https://price.garden.finance"
+      }
+    ],
+    "security": [],
+    "responses": {
+      "200": {
+        "description": "Successfully retrieved strategies.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "enum": ["Ok", "Error"],
+                  "example": "Ok"
+                },
+                "data": {
+                  "type": "object",
+                  "description": "Retrieves a hashmap of strategies",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "description": "Unique identifier for the strategy.",
+                      "example": "ea56btyr"
+                    },
+                    "source_chain_address": {
+                      "type": "string",
+                      "description": "Address on the source chain.",
+                      "example": "0x661bA32eb5f86CaB358DDbB7F264b10c5825e2dd"
+                    },
+                    "dest_chain_address": {
+                      "type": "string",
+                      "description": "Address on the destination chain.",
+                      "example": "460f2e8ff81fc4e0a8e6ce7796704e3829e3e3eedb8db9390bdc51f4f04cf0a6"
+                    },
+                    "source_chain": {
+                      "type": "string",
+                      "description": "Name of the source chain.",
+                      "example": "ethereum_sepolia"
+                    },
+                    "dest_chain": {
+                      "type": "string",
+                      "description": "Name of the destination chain.",
+                      "example": "bitcoin_testnet"
+                    },
+                    "source_asset": {
+                      "type": "object",
+                      "properties": {
+                        "asset": {
+                          "type": "string",
+                          "example": "0x3C6a17b8cD92976D1D91E491c93c98cd81998265"
+                        },
+                        "token_id": {
+                          "type": "string",
+                          "example": "bitcoin"
+                        },
+                        "decimals": {
+                          "type": "integer",
+                          "description": "Number of decimals for the asset.",
+                          "example": 8
                         }
+                      },
+                      "description": "Asset on the source chain."
+                    },
+                    "dest_asset": {
+                      "type": "object",
+                      "properties": {
+                        "asset": {
+                          "type": "string",
+                          "example": "primary"
+                        },
+                        "token_id": {
+                          "type": "string",
+                          "example": "bitcoin"
+                        },
+                        "decimals": {
+                          "type": "integer",
+                          "description": "Number of decimals for the asset.",
+                          "example": 8
+                        }
+                      },
+                      "description": "Asset on the destination chain."
+                    },
+                    "makers": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "example": ""
+                      },
+                      "description": "List of maker addresses."
+                    },
+                    "min_amount": {
+                      "type": "string",
+                      "format": "decimal",
+                      "description": "Minimum trade amount for the strategy."
+                    },
+                    "max_amount": {
+                      "type": "string",
+                      "format": "decimal",
+                      "description": "Maximum trade amount for the strategy."
+                    },
+                    "min_source_timelock": {
+                      "type": "integer",
+                      "format": "int64",
+                      "description": "Minimum timelock for the source chain."
+                    },
+                    "min_source_confirmations": {
+                      "type": "integer",
+                      "format": "int64",
+                      "description": "Minimum number of confirmations on the source chain."
+                    },
+                    "min_price": {
+                      "type": "number",
+                      "format": "float",
+                      "description": "Minimum price for the strategy."
+                    },
+                    "fee": {
+                      "type": "integer",
+                      "format": "int64",
+                      "description": "Fee in basis points (bips)."
                     }
+                  }
                 }
+              }
             }
-        },
-        "tags": [
-            "Quote"
-        ]
-    }
+          }
+        }
+      }
+    },
+    "tags": ["Quote"]
+  }
 }

@@ -1,99 +1,97 @@
 {
-    "get": {
-        "operationId": "usdForOrderPair",
-        "summary": "Get USD prices for an order pair.",
-        "description": "Retrieves the USD prices for the input and output tokens associated with the specified order pair, providing accurate and up-to-date pricing information.",
-        "servers": [
-            {
-                "url": "https://quote-knrp.onrender.com"
-            }
-        ],
-        "security": [],
-        "parameters": [
-            {
-                "name": "order_pair",
-                "in": "query",
-                "required": true,
-                "schema": {
-                    "type": "string",
-                    "description": "The order pair for which USD prices are needed.",
-                    "example": "ethereum:USDC::arbitrum:USDT"
-                }
-            }
-        ],
-        "responses": {
-            "200": {
-                "description": "Successfully retrieved USD prices.",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "type": "object",
-                            "description": "Specifies the source and destination chain and asset in the format {fromChain}:{fromAsset}::{toChain}:{toAsset}",
-                            "properties": {
-                                "status":{
-                                    "type": "string",
-                                    "enum": ["Ok","Error"],
-                                    "description": "An enum representing the possible outcomes of the endpoint, indicating whether the request was successful.",
-                                    "example": "Ok"
-                                },
-                                "data": {
-                                    "type": "object",
-                                    "properties": {
-                                        "input_token_price": {
-                                            "type": "number",
-                                            "format": "double",
-                                            "description": "The USD price of the input token in the order pair.",
-                                            "example": 97056.37479601552
-                                        },
-                                        "output_token_price": {
-                                            "type": "number",
-                                            "format": "double",
-                                            "description": "The USD price of the output token in the order pair.",
-                                            "example": 97056.37479601552
-                                        }
-                                    }
-                                }
-                            }
-                        }
+  "get": {
+    "operationId": "usdForOrderPair",
+    "summary": "Get USD prices for an order pair.",
+    "description": "Retrieves the USD prices for the input and output tokens associated with the specified order pair, providing accurate and up-to-date pricing information.",
+    "servers": [
+      {
+        "url": "https://price.garden.finance"
+      }
+    ],
+    "security": [],
+    "parameters": [
+      {
+        "name": "order_pair",
+        "in": "query",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "description": "The order pair for which USD prices are needed.",
+          "example": "ethereum:USDC::arbitrum:USDT"
+        }
+      }
+    ],
+    "responses": {
+      "200": {
+        "description": "Successfully retrieved USD prices.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "description": "Specifies the source and destination chain and asset in the format {fromChain}:{fromAsset}::{toChain}:{toAsset}",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "enum": ["Ok", "Error"],
+                  "description": "An enum representing the possible outcomes of the endpoint, indicating whether the request was successful.",
+                  "example": "Ok"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "input_token_price": {
+                      "type": "number",
+                      "format": "double",
+                      "description": "The USD price of the input token in the order pair.",
+                      "example": 97056.37479601552
+                    },
+                    "output_token_price": {
+                      "type": "number",
+                      "format": "double",
+                      "description": "The USD price of the output token in the order pair.",
+                      "example": 97056.37479601552
                     }
+                  }
                 }
-            },
-            "400": {
-                "description": "Failed to retrieve USD prices.",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "status": {
-                                    "type": "string",
-                                    "enum": ["Ok","Error"],
-                                    "example": "Error",
-                                    "description": "An enum representing the possible outcomes of the endpoint, indicating whether the request was successful."
-                                },
-                                "error": {
-                                    "type": "object",
-                                    "properties":{
-                                        "code": {
-                                            "type": "number",
-                                            "description":"The numeric status code indicating the type of error or response.",
-                                            "example": 400
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "description": "A descriptive message providing details about the error or response.",
-                                            "example": "failed to get fiat values: Asset not found : ethereum:usdc"
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+              }
             }
-        },
-        "tags": [
-            "Quote"
-        ]
-    }
+          }
+        }
+      },
+      "400": {
+        "description": "Failed to retrieve USD prices.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "enum": ["Ok", "Error"],
+                  "example": "Error",
+                  "description": "An enum representing the possible outcomes of the endpoint, indicating whether the request was successful."
+                },
+                "error": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "number",
+                      "description": "The numeric status code indicating the type of error or response.",
+                      "example": 400
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "A descriptive message providing details about the error or response.",
+                      "example": "failed to get fiat values: Asset not found : ethereum:usdc"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tags": ["Quote"]
+  }
 }

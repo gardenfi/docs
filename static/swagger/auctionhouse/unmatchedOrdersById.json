@@ -5,7 +5,7 @@
     "description": "Retrieves a unmatched order using its unique order ID from the order book. It returns the order details if the order has not been picked up by `Orderbook`.",
     "servers": [
       {
-        "url": "https://evm-swapper-relay.onrender.com"
+        "url": "https://orderbook.garden.finance"
       }
     ],
     "parameters": [

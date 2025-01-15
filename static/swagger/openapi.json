@@ -15,11 +15,11 @@
   },
   "servers": [
     {
-      "url": "https://evm-swapper-relay.onrender.com",
+      "url": "https://orderbook.garden.finance",
       "description": "Auth, Gasless, Orderbook server"
     },
     {
-      "url":"https://quote-knrp.onrender.com",
+      "url": "https://price.garden.finance",
       "description": "Quote server"
     }
   ],

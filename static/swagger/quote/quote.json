@@ -1,277 +1,269 @@
 {
-    "post": {
-        "operationId": "attestedQuote",
-        "summary": "Get an attested quote for an order.",
-        "description": "Retrieves an attested quote, which includes the validity period of the quote until a specified time. It ensures that the quote is valid for a certain duration before expiration.",
-        "servers": [
-            {
-                "url": "https://quote-knrp.onrender.com"
-            }
-        ],
-        "security": [],
-        "requestBody": {
-            "required": true,
-            "content": {
-                "application/json": {
-                    "schema": {
-                        "type": "object",
-                        "properties": {
-                            "source_chain": {
-                                "type": "string",
-                                "description": "The blockchain network where the swap originates.",
-                                "example": "bitcoin"
-                            },
-                            "destination_chain": {
-                                "type": "string",
-                                "description": "The blockchain network where the swap completes.",
-                                "example": "ethereum"
-                            },
-                            "source_asset": {
-                                "type": "string",
-                                "description": "The asset being swapped on the source blockchain.",
-                                "example": "primary"
-                            },
-                            "destination_asset": {
-                                "type": "string",
-                                "description": "The asset to be received on the destination blockchain.",
-                                "example": "0xd8a6e3fca403d79b6ad6216b60527f51cc967d39"
-                            },
-                            "initiator_source_address": {
-                                "type": "string",
-                                "description": "The wallet address initiating the swap on the source blockchain.",
-                                "example": "0x5A4b7eD8c2a1F1e34C8e9...6A3C5D2B1f8E7A9C"
-                            },
-                            "initiator_destination_address": {
-                                "type": "string",
-                                "description": "The wallet address to receive the asset on the destination blockchain.",
-                                "example": "0x5A4b7eD8c2a1F1e34C8e9...6A3C5D2B1f8E7A9C"
-                            },
-                            "source_amount": {
-                                "type": "string",
-                                "description": "The amount of the asset being swapped on the source blockchain.",
-                                "example": "1"
-                            },
-                            "destination_amount": {
-                                "type": "string",
-                                "description": "The amount of the asset expected on the destination blockchain.",
-                                "example": "0.97"
-                            },
-                            "fee": {
-                                "type": "number",
-                                "description": "The total cost associated with the swap transaction.",
-                                "example": 1
-                            },
-                            "nonce": {
-                                "type": "string",
-                                "description": "A unique identifier for the swap transaction to prevent duplication.",
-                                "example": "b8bc718d6af38a0d2cac5085c53f617a52e590b0ff4ad2c4abb0825e9cc39079"
-                            },
-                            "min_destination_confirmations": {
-                                "type": "integer",
-                                "description": "The minimum number of confirmations required on the destination blockchain to finalize the swap.",
-                                "example": 0
-                            },
-                            "timelock": {
-                                "type": "integer",
-                                "description": "A timeout period after which the swap expires if not completed.",
-                                "example": 288
-                            },
-                            "secret_hash": {
-                                "type": "string",
-                                "description": "A cryptographic hash used to verify the transaction's security.",
-                                "example": "f4a3b8d16e58cd30b8a0e9f504b1c7f9f24d1c70eaf2a3794b3c7e5bb7c90f5d"
-                            },
-                            "additional_data": {
-                                "type": "object",
-                                "properties": {
-                                    "strategy_id": {
-                                        "type": "string",
-                                        "description": "Provided by the quote server",
-                                        "example": "bre112"
-                                    },
-                                    "bitcoin_optional_recipient": {
-                                        "type": "string",
-                                        "description": "An optional Bitcoin address to receive the output token, if specified.",
-                                        "example": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
-                                    }
-                                }
-                            }
-                        }
-                    }
+  "post": {
+    "operationId": "attestedQuote",
+    "summary": "Get an attested quote for an order.",
+    "description": "Retrieves an attested quote, which includes the validity period of the quote until a specified time. It ensures that the quote is valid for a certain duration before expiration.",
+    "servers": [
+      {
+        "url": "https://price.garden.finance"
+      }
+    ],
+    "security": [],
+    "requestBody": {
+      "required": true,
+      "content": {
+        "application/json": {
+          "schema": {
+            "type": "object",
+            "properties": {
+              "source_chain": {
+                "type": "string",
+                "description": "The blockchain network where the swap originates.",
+                "example": "bitcoin"
+              },
+              "destination_chain": {
+                "type": "string",
+                "description": "The blockchain network where the swap completes.",
+                "example": "ethereum"
+              },
+              "source_asset": {
+                "type": "string",
+                "description": "The asset being swapped on the source blockchain.",
+                "example": "primary"
+              },
+              "destination_asset": {
+                "type": "string",
+                "description": "The asset to be received on the destination blockchain.",
+                "example": "0xd8a6e3fca403d79b6ad6216b60527f51cc967d39"
+              },
+              "initiator_source_address": {
+                "type": "string",
+                "description": "The wallet address initiating the swap on the source blockchain.",
+                "example": "0x5A4b7eD8c2a1F1e34C8e9...6A3C5D2B1f8E7A9C"
+              },
+              "initiator_destination_address": {
+                "type": "string",
+                "description": "The wallet address to receive the asset on the destination blockchain.",
+                "example": "0x5A4b7eD8c2a1F1e34C8e9...6A3C5D2B1f8E7A9C"
+              },
+              "source_amount": {
+                "type": "string",
+                "description": "The amount of the asset being swapped on the source blockchain.",
+                "example": "1"
+              },
+              "destination_amount": {
+                "type": "string",
+                "description": "The amount of the asset expected on the destination blockchain.",
+                "example": "0.97"
+              },
+              "fee": {
+                "type": "number",
+                "description": "The total cost associated with the swap transaction.",
+                "example": 1
+              },
+              "nonce": {
+                "type": "string",
+                "description": "A unique identifier for the swap transaction to prevent duplication.",
+                "example": "b8bc718d6af38a0d2cac5085c53f617a52e590b0ff4ad2c4abb0825e9cc39079"
+              },
+              "min_destination_confirmations": {
+                "type": "integer",
+                "description": "The minimum number of confirmations required on the destination blockchain to finalize the swap.",
+                "example": 0
+              },
+              "timelock": {
+                "type": "integer",
+                "description": "A timeout period after which the swap expires if not completed.",
+                "example": 288
+              },
+              "secret_hash": {
+                "type": "string",
+                "description": "A cryptographic hash used to verify the transaction's security.",
+                "example": "f4a3b8d16e58cd30b8a0e9f504b1c7f9f24d1c70eaf2a3794b3c7e5bb7c90f5d"
+              },
+              "additional_data": {
+                "type": "object",
+                "properties": {
+                  "strategy_id": {
+                    "type": "string",
+                    "description": "Provided by the quote server",
+                    "example": "bre112"
+                  },
+                  "bitcoin_optional_recipient": {
+                    "type": "string",
+                    "description": "An optional Bitcoin address to receive the output token, if specified.",
+                    "example": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
+                  }
                 }
+              }
             }
-        },
-        "responses": {
-            "200": {
-                "description": "Successfully retrieved attested quote.",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "properties": {
-                                "status": {
-                                    "type": "string",
-                                    "enum": [
-                                        "Ok",
-                                        "Error"
-                                    ],
-                                    "example": "Ok",
-                                    "description": "An enum representing the possible outcomes of the endpoint, indicating whether the request was successful."
-                                },
-                                "result": {
-                                    "type": "object",
-                                    "description": "The order object",
-                                    "properties": {
-                                        "source_chain": {
-                                            "type": "string",
-                                            "description": "The blockchain network where the swap originates.",
-                                            "example": "bitcoin"
-                                        },
-                                        "destination_chain": {
-                                            "type": "string",
-                                            "description": "The blockchain network where the swap completes.",
-                                            "example": "ethereum"
-                                        },
-                                        "source_asset": {
-                                            "type": "string",
-                                            "description": "The asset being swapped on the source blockchain.",
-                                            "example": "primary"
-                                        },
-                                        "destination_asset": {
-                                            "type": "string",
-                                            "description": "The asset to be received on the destination blockchain.",
-                                            "example": "0xd8a6e3fca403d79b6ad6216b60527f51cc967d39"
-                                        },
-                                        "initiator_source_address": {
-                                            "type": "string",
-                                            "description": "The wallet address initiating the swap on the source blockchain.",
-                                            "example": "0x5A4b7eD8c2a1F1e34C8e9...6A3C5D2B1f8E7A9C"
-                                        },
-                                        "initiator_destination_address": {
-                                            "type": "string",
-                                            "description": "The wallet address to receive the asset on the destination blockchain.",
-                                            "example": "0x5A4b7eD8c2a1F1e34C8e9...6A3C5D2B1f8E7A9C"
-                                        },
-                                        "source_amount": {
-                                            "type": "string",
-                                            "description": "The amount of the asset being swapped on the source blockchain.",
-                                            "example": "1"
-                                        },
-                                        "destination_amount": {
-                                            "type": "string",
-                                            "description": "The amount of the asset expected on the destination blockchain.",
-                                            "example": "0.97"
-                                        },
-                                        "fee": {
-                                            "type": "string",
-                                            "description": "The total cost associated with the swap transaction.",
-                                            "example": 1
-                                        },
-                                        "nonce": {
-                                            "type": "string",
-                                            "description": "A unique identifier for the swap transaction to prevent duplication.",
-                                            "example": "b8bc718d6af38a0d2cac5085c53f617a52e590b0ff4ad2c4abb0825e9cc39079"
-                                        },
-                                        "min_destination_confirmations": {
-                                            "type": "integer",
-                                            "description": "The minimum number of confirmations required on the destination blockchain to finalize the swap.",
-                                            "example": 0
-                                        },
-                                        "timelock": {
-                                            "type": "integer",
-                                            "description": "A timeout period after which the swap expires if not completed.",
-                                            "example": 288
-                                        },
-                                        "secret_hash": {
-                                            "type": "string",
-                                            "description": "A cryptographic hash used to verify the transaction's security.",
-                                            "example": "f4a3b8d16e58cd30b8a0e9f504b1c7f9f24d1c70eaf2a3794b3c7e5bb7c90f5d"
-                                        },
-                                        "additional_data": {
-                                            "type": "object",
-                                            "properties": {
-                                                "strategy_id": {
-                                                    "type": "string",
-                                                    "description": "Provided by the quote server",
-                                                    "example": "bre112"
-                                                },
-                                                "input_token_price": {
-                                                    "type": "number",
-                                                    "format": "double",
-                                                    "description": "Provided by the quote server",
-                                                    "example": 97056.37479601552
-                                                },
-                                                "output_token_price": {
-                                                    "type": "number",
-                                                    "format": "double",
-                                                    "description": "Provided by the quote server",
-                                                    "example": 97056.37479601552
-                                                },
-                                                "deadline": {
-                                                    "type": "string",
-                                                    "description": "Validity till the current quote is valid"
-                                                },
-                                                "bitcoin_optional_recipient": {
-                                                    "type": "string",
-                                                    "description": "An optional Bitcoin address to receive the output token, if specified.",
-                                                    "example": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
-                                                },
-                                                "sig": {
-                                                    "type": "string",
-                                                    "description": "",
-                                                    "example": "MEYCIQDYfLzU1MxP3RLlY5YXzkKcFvndv3tZyjGtHKqbrFqJ6QIhAMTytBYJ5Fb2+9NdXdHSTHz9BUEtwxE/n9VUwqP1X5fn"
-                                                },
-                                                "instant_refund_tx_bytes": {
-                                                    "type": "string",
-                                                    "description": "The signature used to derive the transaction hash for an instant refund in case of transaction failure.",
-                                                    "example": "90a36c9fc942109060165b9db0ada8f6499302288d9d3698c6b4fa9431b5bf22"
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "200": {
+        "description": "Successfully retrieved attested quote.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "enum": ["Ok", "Error"],
+                  "example": "Ok",
+                  "description": "An enum representing the possible outcomes of the endpoint, indicating whether the request was successful."
+                },
+                "result": {
+                  "type": "object",
+                  "description": "The order object",
+                  "properties": {
+                    "source_chain": {
+                      "type": "string",
+                      "description": "The blockchain network where the swap originates.",
+                      "example": "bitcoin"
+                    },
+                    "destination_chain": {
+                      "type": "string",
+                      "description": "The blockchain network where the swap completes.",
+                      "example": "ethereum"
+                    },
+                    "source_asset": {
+                      "type": "string",
+                      "description": "The asset being swapped on the source blockchain.",
+                      "example": "primary"
+                    },
+                    "destination_asset": {
+                      "type": "string",
+                      "description": "The asset to be received on the destination blockchain.",
+                      "example": "0xd8a6e3fca403d79b6ad6216b60527f51cc967d39"
+                    },
+                    "initiator_source_address": {
+                      "type": "string",
+                      "description": "The wallet address initiating the swap on the source blockchain.",
+                      "example": "0x5A4b7eD8c2a1F1e34C8e9...6A3C5D2B1f8E7A9C"
+                    },
+                    "initiator_destination_address": {
+                      "type": "string",
+                      "description": "The wallet address to receive the asset on the destination blockchain.",
+                      "example": "0x5A4b7eD8c2a1F1e34C8e9...6A3C5D2B1f8E7A9C"
+                    },
+                    "source_amount": {
+                      "type": "string",
+                      "description": "The amount of the asset being swapped on the source blockchain.",
+                      "example": "1"
+                    },
+                    "destination_amount": {
+                      "type": "string",
+                      "description": "The amount of the asset expected on the destination blockchain.",
+                      "example": "0.97"
+                    },
+                    "fee": {
+                      "type": "string",
+                      "description": "The total cost associated with the swap transaction.",
+                      "example": 1
+                    },
+                    "nonce": {
+                      "type": "string",
+                      "description": "A unique identifier for the swap transaction to prevent duplication.",
+                      "example": "b8bc718d6af38a0d2cac5085c53f617a52e590b0ff4ad2c4abb0825e9cc39079"
+                    },
+                    "min_destination_confirmations": {
+                      "type": "integer",
+                      "description": "The minimum number of confirmations required on the destination blockchain to finalize the swap.",
+                      "example": 0
+                    },
+                    "timelock": {
+                      "type": "integer",
+                      "description": "A timeout period after which the swap expires if not completed.",
+                      "example": 288
+                    },
+                    "secret_hash": {
+                      "type": "string",
+                      "description": "A cryptographic hash used to verify the transaction's security.",
+                      "example": "f4a3b8d16e58cd30b8a0e9f504b1c7f9f24d1c70eaf2a3794b3c7e5bb7c90f5d"
+                    },
+                    "additional_data": {
+                      "type": "object",
+                      "properties": {
+                        "strategy_id": {
+                          "type": "string",
+                          "description": "Provided by the quote server",
+                          "example": "bre112"
+                        },
+                        "input_token_price": {
+                          "type": "number",
+                          "format": "double",
+                          "description": "Provided by the quote server",
+                          "example": 97056.37479601552
+                        },
+                        "output_token_price": {
+                          "type": "number",
+                          "format": "double",
+                          "description": "Provided by the quote server",
+                          "example": 97056.37479601552
+                        },
+                        "deadline": {
+                          "type": "string",
+                          "description": "Validity till the current quote is valid"
+                        },
+                        "bitcoin_optional_recipient": {
+                          "type": "string",
+                          "description": "An optional Bitcoin address to receive the output token, if specified.",
+                          "example": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
+                        },
+                        "sig": {
+                          "type": "string",
+                          "description": "",
+                          "example": "MEYCIQDYfLzU1MxP3RLlY5YXzkKcFvndv3tZyjGtHKqbrFqJ6QIhAMTytBYJ5Fb2+9NdXdHSTHz9BUEtwxE/n9VUwqP1X5fn"
+                        },
+                        "instant_refund_tx_bytes": {
+                          "type": "string",
+                          "description": "The signature used to derive the transaction hash for an instant refund in case of transaction failure.",
+                          "example": "90a36c9fc942109060165b9db0ada8f6499302288d9d3698c6b4fa9431b5bf22"
                         }
+                      }
                     }
+                  }
                 }
-            },
-            "400": {
-                "description": "Failed to retrieve attested quote.",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "properties": {
-                                "status": {
-                                    "type": "string",
-                                    "enum": [
-                                        "Ok",
-                                        "Error"
-                                    ],
-                                    "example": "Error",
-                                    "description": "An enum representing the possible outcomes of the endpoint, indicating whether the request was successful."
-                                },
-                                "error": {
-                                    "type": "object",
-                                    "properties": {
-                                        "code": {
-                                            "type": "number",
-                                            "description": "The numeric status code indicating the type of error or response.",
-                                            "example": 400
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "description": "A descriptive message providing details about the error or response.",
-                                            "example": "0x prefixed secret_hash are not allowed"
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+              }
             }
-        },
-        "tags": [
-            "Quote"
-        ]
-    }
+          }
+        }
+      },
+      "400": {
+        "description": "Failed to retrieve attested quote.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "enum": ["Ok", "Error"],
+                  "example": "Error",
+                  "description": "An enum representing the possible outcomes of the endpoint, indicating whether the request was successful."
+                },
+                "error": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "number",
+                      "description": "The numeric status code indicating the type of error or response.",
+                      "example": 400
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "A descriptive message providing details about the error or response.",
+                      "example": "0x prefixed secret_hash are not allowed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "tags": ["Quote"]
+  }
 }
