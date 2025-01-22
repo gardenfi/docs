@@ -462,5 +462,3 @@ const initiateRedeem = useCallback(async () => {
   - Verifies the provided `secret` matches the `secretHash` stored in the order.
   - Transfers the destination asset (e.g., WBTC) to the user's address.
   - Marks the order as redeemed, preventing duplicate redemptions.
-
-  
