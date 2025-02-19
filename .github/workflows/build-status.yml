@@ -1,7 +1,9 @@
 name: Build Status
 
-on: [pull_request, workflow_dispatch]
-
+on: 
+  push:
+    branches:
+      - main
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,7 +28,30 @@ jobs:
           yarn set version stable
 
       - name: Install Dependencies
-        run: yarn install
+        run: |
+          yarn install --mode=update-lockfile
+          yarn link
+
+      - name: Get Latest Version
+        id: version
+        run: |
+          LATEST_VERSION=$(ls versioned_docs | grep -E "version-2\.0\.[0-9]+" | sort -V | tail -n 1 || echo "version-2.0.0")
+          CURRENT_NUMBER=$(echo $LATEST_VERSION | grep -oE "2\.0\.[0-9]+" | cut -d. -f3)
+          NEW_NUMBER=$((CURRENT_NUMBER + 1))
+          NEW_VERSION="2.0.$NEW_NUMBER"
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+      
+
+      - name: Create New Version
+        run: yarn docusaurus docs:version ${{ steps.version.outputs.new_version }}
+
+      - name: Commit New Version
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+          git add versioned_sidebars/ versioned_docs/ versions.json
+          git commit -m "docs: Add new version ${{ steps.version.outputs.new_version }}"
+          git push
 
       - name: Build Project
         run: yarn build
