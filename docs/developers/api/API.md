@@ -23,6 +23,12 @@ href: "./garden-api",
 label: "Garden API",
 description: "Ideal for server-side and Node.js environments.",
 docId: "developers/api/garden-api",
+},{
+type: "link",
+href: "./api-key",
+label: "API Key",
+description: "Simplify Authentication using API Key",
+docId: "developers/api/api-key",
 },
 ]}
 />

@@ -152,6 +152,11 @@ const sidebars: SidebarsConfig = {
           id: "developers/api/garden-api",
           label: "Garden API",
         },
+        {
+          type: "doc",
+          id: "developers/api/api-key",
+          label: "API Key",
+        },
       ],
     },
     {
