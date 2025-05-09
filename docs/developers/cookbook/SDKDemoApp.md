@@ -30,9 +30,9 @@ The `GardenProvider` is the core of the SDK integration. It acts as a wrapper ar
 - **Wallet connectivity**: Manages wallet connections, transaction signing, and approvals.
 - **Environment configuration**: Switches between testnet and mainnet as needed.
 
-Before interacting with the SDK, wrap your application with the GardenProvider. The provider requires walletClient, which is provided by wagmi. For this, you'll need to:
+Before interacting with the SDK, wrap your application with the GardenProvider. The provider requires wallet configurations for different chains. For this, you'll need to:
 
-1. Get the [walletClient](https://wagmi.sh/react/api/hooks/useWalletClient) using the `useWalletClient` hook.
+1. Get the [walletClient](https://wagmi.sh/react/api/hooks/useWalletClient) using the `useWalletClient` hook for EVM chains.
 2. Pass it to your `GardenProvider` configuration.
 
 Here's how you set it up:
@@ -49,30 +49,18 @@ import { GardenProvider } from "@gardenfi/react-hooks";
 import { Environment } from "@gardenfi/utils";
 import { useWalletClient } from "wagmi";
 
-const getStorage = (): Storage => {
-  if (typeof window !== "undefined") {
-    return localStorage;
-  }
-
-  return {
-    getItem: () => null,
-    setItem: () => {},
-    removeItem: () => {},
-    clear: () => {},
-    length: 0,
-    key: () => null,
-  };
-};
-
 function GardenProviderWrapper({ children }: { children: React.ReactNode }) {
   const { data: walletClient } = useWalletClient();
 
   return (
     <GardenProvider
       config={{
-        store: getStorage(),
         environment: Environment.TESTNET,
-        walletClient: walletClient,
+        wallets: {
+          evm: walletClient,
+          // You can also add starknet wallet configuration here
+          // starknet: starknetWallet,
+        }
       }}
     >
       {children}
@@ -89,7 +77,7 @@ export default GardenProviderWrapper;
 
 ## Fetching quotes
 
-Now that you have your `walletClient`, you can use it to initialize the `GardenProvider`. Before diving into swap, your app needs to fetch real-time quotes for their swap params `fromAsset`, `toAsset`, `amount`.
+Now that you have your `walletClient`, you can use it to initialize the `GardenProvider`. Before diving into swap, your app needs to fetch real-time quotes for their swap params `fromAsset`, `toAsset` and `amount`.
 
 The `getQuote` hook from Garden SDK provides real-time USD values and exchange rates for any two [supported assets](../SupportedChains.mdx). You'll need to provide:
 
@@ -177,6 +165,7 @@ Here's how you can implement this:
 
 ```tsx
 import { useGarden } from "@gardenfi/react-hooks";
+
 const TokenSwap = () => {
   
   const { swapAndInitiate } = useGarden();
