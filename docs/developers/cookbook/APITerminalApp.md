@@ -14,10 +14,10 @@ We'll demonstrate a complete swap flow from Bitcoin Testnet4 (tBTC) to Arbitrum 
 
 For a full reference implementation, see this [page](https://github.com/gardenfi/api-cookbook-demo)—a working terminal UI in Rust that demonstrates these steps in a real application.
 
-## Authentication
+## Authenticate
 Before placing or interacting with orders, your system must authenticate the user. Garden supports two authentication methods:
 
-### Option 1: Direct SIWE authentication
+### Option 1: Direct SIWE
 Garden uses Sign-In with Ethereum (SIWE) to verify wallet ownership.
 
 1. **Request a nonce**  
@@ -91,7 +91,7 @@ Expected response:
 }
 ```
 
-### Option 2: API key authentication
+### Option 2: API key
 API keys offer a convenient way to authenticate if you prefer to manage authentication in-house or need persistent access without requiring users to sign messages repeatedly.
 
 1. Visit Garden’s [SDK dashboard](https://dev.garden.finance/).
@@ -201,11 +201,22 @@ Example response:
 ```
 The response provides asset prices (in USD) from market oracles and solver quotes for the specified amount. If `exact_out` is `false`, the quote reflects the output (receive) amount for the user.
 
-:::tip
-After receiving a quote, you can proceed with either a [**Garden-managed secret**](#garden-managed-secret) or a [**Developer-managed secret**](#developer-managed-secret) flow. Choose the approach that best fits your integration needs. Both options are described below.
+:::note
+In atomic swaps, funds are locked on-chain using a secret hash, which is the SHA256 hash of a randomly generated secret.
+
+Garden offers two approaches for managing the secret and its hash:
+
+    Garden-managed secret: Garden generates and manages the secret and secret hash internally.
+      - Redemptions are done automatically.
+
+    Developer-managed secret: You can generate and manage the secret and hash yourself.
+      - The developer must manually perform redemption calls.
+      - setup instant refund for bitcoin swaps
+
+After receiving a quote, you can proceed with either a [**Garden-managed secret**](#garden-managed-secret) or a [**Developer-managed secret**](#developer-managed-secret) flow, depending on what best suits your integration needs.
 :::
 
-## Garden managed secret
+## Garden-managed secret
 ### Create order
 
 When ready, create an order by sending a request to `/relayer/create-order`. This creates the order in Garden's orderbook. The response includes the unique `order ID` for tracking and managing the order.
@@ -223,21 +234,23 @@ Example request for tBTC to WBTC:
   "destination_chain": "arbitrum_sepolia",
   "source_asset": "primary",
   "destination_asset": "0x795Dcb58d1cd4789169D5F938Ea05E17ecEB68cA",
-  "initiator_source_address": "", // empty for bitcoin
   "initiator_destination_address": "0x753Cf575A0224c590ACF3587031E88b238261f7a",
   "source_amount": "10000",
   "destination_amount": "9970",
   "nonce": "1743337081630",
-  "secret_hash": "" , // managed by Garden if not provided
   "additional_data": {
     "strategy_id": "btyrasac",
     "bitcoin_optional_recipient": "tb1qz0pnh98kfynptg9dtkj06f7sqnlxl3dxnmnjw4",
-    "input_token_price": 81945.33486018311,
-    "output_token_price": 81945.33486018311,
-    "deadline": 1744265309
   }
 }
 ```
+
+:::note
+  - Since the source is Bitcoin, initiator_source_address is not required.
+  - If the destination is Bitcoin, initiator_destination_address is not required.
+:::
+
+
 Expected response:
 ```ts
 {
@@ -310,19 +323,33 @@ Expected response:
       "current_confirmations": "<number>"
     },
     "create_order": {
-      
+      // order metadata
     }
   }
 }
 ```
-If the order is not matched, this endpoint returns null.
+If the order is unmatched, this endpoint returns null.
 
 ### Initiate order
 The order initiation process begins when the user initiates the swap on the source chain. For EVM-based chains, use the `/relayer/initiate` endpoint. The process differs for Bitcoin, which uses scripts.
 
-**Initiation on EVM:**
+**Initiating on EVM:**
 
 To initiate, the user must sign the HTLC initiation message using their wallet provider's EIP-712 typed data signing method. This signature authorizes the HTLC contract to lock tokens in escrow with the specified parameters. The signature is used for contract initialization.
+
+
+1. The user must call the `eip712domain()` function on the HTLC contract that returns the eip712 domain data.
+  Sample EIP712domain data:
+
+```
+  [ eip712Domain method Response ]
+  name   string :  HTLC
+  version   string :  1
+  chainId   uint256 :  42161
+  verifyingContract   address :  0x6b6303fAb8eC7232b4f2a7b9fa58E5216F608fcb
+```
+
+2. The initiation message must be in the following format:
 
 HTLC initiation message format: 
 
@@ -334,6 +361,8 @@ HTLC initiation message format:
     bytes32 secretHash;
 }
 ```
+
+3. The message, along with the domain data, must be signed with the wallet, and the signature is sent with the initiate request to the relayer.
 
 Endpoint:
 ```bash
@@ -361,187 +390,224 @@ Expected response:
 }
 ```
 
-### Redemption
+**Initiating on bitcoin:**
 
-Redemption is handled automatically for the user. No manual action is required to redeem tokens.
-
-You now have everything needed to integrate Garden swaps into your application using our APIs.
-
-## Developer managed secret
-
-### Generating Secret and Secret Hash
-
-The secret hash is a SHA-256 hash of a randomly generated secret in the Garden environment.
-
-You can generate your own secret.
-
-The **secret** must be **hashed using the SHA-256 algorithm**. This hash is used for initiating and redeeming swaps.
-
-### Create order
-
-When ready, create an order by sending a request to `/relayer/create-order`. This creates the order in Garden's orderbook. The response includes the unique `order ID` for tracking and managing the order.
-
-Endpoint:
-```bash
-POST /relayer/create-order
-```
-
-Example request for tBTC to WBTC:
-
-```json
-{
-  "source_chain": "bitcoin_testnet",
-  "destination_chain": "arbitrum_sepolia",
-  "source_asset": "primary",
-  "destination_asset": "0x795Dcb58d1cd4789169D5F938Ea05E17ecEB68cA",
-  "initiator_source_address": "", // empty for bitcoin
-  "initiator_destination_address": "0x753Cf575A0224c590ACF3587031E88b238261f7a",
-  "source_amount": "10000",
-  "destination_amount": "9970",
-  "nonce": "1743337081630",
-  "secret_hash": "" , // managed by Garden if not provided
-  "additional_data": {
-    "strategy_id": "btyrasac",
-    "bitcoin_optional_recipient": "tb1qz0pnh98kfynptg9dtkj06f7sqnlxl3dxnmnjw4",
-    "input_token_price": 81945.33486018311,
-    "output_token_price": 81945.33486018311,
-    "deadline": 1744265309
-  }
-}
-```
-Expected response:
-```ts
-{
-  "result": <order-id>,
-  "status":   "Ok",
-}
-```
-
-### Get order data
-
-To retrieve order data for an order ID:
-
-Endpoint:
-```bash
-GET /orders/id/:id/
-```
-
-Expected response:
-```json
-{
-  "status": "Ok",
-  "result": {
-    "created_at": "<timestamp>",
-    "updated_at": "<timestamp>",
-    "deleted_at": null,
-    "source_swap": {
-      "created_at": "<timestamp>",
-      "updated_at": "<timestamp>",
-      "deleted_at": null,
-      "swap_id": "<swap_id_hash>", /* the htlc script address */
-      "chain": "<chain_name>",
-      "asset": "<asset_type>",
-      "initiator": "<initiator_address>",
-      "redeemer": "<redeemer_address>",
-      "timelock": "<timelock_value>",
-      "filled_amount": "<amount>",
-      "amount": "<amount>",
-      "secret_hash": "<secret_hash>",
-      "secret": "",
-      "initiate_tx_hash": "<transaction_hash>",
-      "redeem_tx_hash": "",
-      "refund_tx_hash": "<transaction_hash>",
-      "initiate_block_number": "<block_number>",
-      "redeem_block_number": "0",
-      "refund_block_number": "<block_number>",
-      "required_confirmations": "<number>",
-      "current_confirmations": "<number>"
-    },
-    "destination_swap": {
-      "created_at": "<timestamp>",
-      "updated_at": "<timestamp>",
-      "deleted_at": null,
-      "swap_id": "<swap_id_hash>", /* the htlc script address */
-      "chain": "<chain_name>",
-      "asset": "<asset_type>",
-      "initiator": "<initiator_address>",
-      "redeemer": "<redeemer_address>",
-      "timelock": "<timelock_value>",
-      "filled_amount": "<amount>",
-      "amount": "<amount>",
-      "secret_hash": "<secret_hash>",
-      "secret": "",
-      "initiate_tx_hash": "<transaction_hash>",
-      "redeem_tx_hash": "",
-      "refund_tx_hash": "<transaction_hash>",
-      "initiate_block_number": "<block_number>",
-      "redeem_block_number": "0",
-      "refund_block_number": "<block_number>",
-      "required_confirmations": "<number>",
-      "current_confirmations": "<number>"
-    },
-    "create_order": {
-      
-    }
-  }
-}
-```
-If the order is not matched, this endpoint returns null.
-
-### Initiate order
-The order initiation process begins when the user initiates the swap on the source chain. For EVM-based chains, use the `/relayer/initiate` endpoint. The process differs for Bitcoin, which uses scripts.
-
-**Initiation on EVM:**
-
-To initiate, the user must sign the HTLC initiation message using their wallet provider's EIP-712 typed data signing method. This signature authorizes the HTLC contract to lock tokens in escrow with the specified parameters. The signature is used for contract initialization.
-
-HTLC initiation message format: 
-
-```ts
-{
-    address redeemer;
-    uint256 timelock;
-    uint256 amount;
-    bytes32 secretHash;
-}
-```
-
-Endpoint:
-```bash
-POST /relayer/initiate
-```
-
-Example request:
-
-```json
-{
-    "order_id" : "<order_id>",
-    "signature": "<signature_hex_string>",
-    "perform_on": "Source"
-}
-```
-
-On success, the response contains the transaction hash of the initiate event.
-
-Expected response:
-
-```json
-{
-  "result": "<tx_id>",
-  "status": "Ok"
-}
-```
-
-**Initiation on Bitcoin:**
-
-On Bitcoin, there are two ways to initiate:
+On Bitcoin, initiation can be done in two ways:
 
 1. Fund the HTLC script address directly using a Bitcoin wallet. 
 2. Construct a transaction paying the required amount to the HTLC script address and broadcast it.
 
 The HTLC script address is the swap ID of the source chain swap, found in the `source_swap` field in the `/orders/id/:id` response.
 
-### Bitcoin Instant-Refund
+
+### Redeem asset
+
+Redemption is handled automatically for the user. No manual action is required to redeem tokens.
+
+:::note
+  If the secret is managed by the developer, redemptions must also be handled by the developer.
+:::
+
+
+## Developer managed secret
+
+### Generate secret and secret Hash
+
+The secret hash is a SHA-256 hash of a randomly generated secret.
+
+The **secret** must be **hashed using the SHA-256 algorithm**. This hash is used for initiating and redeeming swaps.
+
+Example:
+```
+  secret = "randomsecuresecretmessage"
+    | SHA256 hashed
+    v
+  secret_hash = "5b876744fc3b8812da6b5317e3dcbb833c68c13c59cb67e9dfac992d388a1b74"
+```
+
+
+### Create order
+
+When ready, create an order by sending a request to `/relayer/create-order`. This creates the order in Garden's orderbook. The response includes the unique `order ID` for tracking and managing the order.
+
+Endpoint:
+```bash
+POST /relayer/create-order
+```
+
+Example request for tBTC to WBTC:
+
+```json
+{
+  "source_chain": "bitcoin_testnet",
+  "destination_chain": "arbitrum_sepolia",
+  "source_asset": "primary",
+  "destination_asset": "0x795Dcb58d1cd4789169D5F938Ea05E17ecEB68cA",
+  "initiator_source_address": "609c8b4b2026902fa15ad850de19d56ecee31ce9b61f0f69cc732da3a58b6ad6", //x-only pubkey of the initiator bitcoin address
+  "initiator_destination_address": "0x753Cf575A0224c590ACF3587031E88b238261f7a",
+  "source_amount": "10000",
+  "destination_amount": "9970",
+  "nonce": "1743337081630",
+  "secret_hash": "5b876744fc3b8812da6b5317e3dcbb833c68c13c59cb67e9dfac992d388a1b74", // the secret generated by the user
+  "additional_data": {
+    "strategy_id": "btyrasac",
+    "bitcoin_optional_recipient": "tb1qz0pnh98kfynptg9dtkj06f7sqnlxl3dxnmnjw4",
+  }
+}
+```
+Expected response:
+```ts
+{
+  "result": <order-id>,
+  "status":   "Ok",
+}
+```
+
+### Get order data
+
+To retrieve order data for an order ID:
+
+Endpoint:
+```bash
+GET /orders/id/:id/
+```
+
+Expected response:
+```json
+{
+  "status": "Ok",
+  "result": {
+    "created_at": "<timestamp>",
+    "updated_at": "<timestamp>",
+    "deleted_at": null,
+    "source_swap": {
+      "created_at": "<timestamp>",
+      "updated_at": "<timestamp>",
+      "deleted_at": null,
+      "swap_id": "<swap_id_hash>", /* the htlc script address */
+      "chain": "<chain_name>",
+      "asset": "<asset_type>",
+      "initiator": "<initiator_address>",
+      "redeemer": "<redeemer_address>",
+      "timelock": "<timelock_value>",
+      "filled_amount": "<amount>",
+      "amount": "<amount>",
+      "secret_hash": "<secret_hash>",
+      "secret": "",
+      "initiate_tx_hash": "<transaction_hash>",
+      "redeem_tx_hash": "",
+      "refund_tx_hash": "<transaction_hash>",
+      "initiate_block_number": "<block_number>",
+      "redeem_block_number": "0",
+      "refund_block_number": "<block_number>",
+      "required_confirmations": "<number>",
+      "current_confirmations": "<number>"
+    },
+    "destination_swap": {
+      "created_at": "<timestamp>",
+      "updated_at": "<timestamp>",
+      "deleted_at": null,
+      "swap_id": "<swap_id_hash>", /* the htlc script address */
+      "chain": "<chain_name>",
+      "asset": "<asset_type>",
+      "initiator": "<initiator_address>",
+      "redeemer": "<redeemer_address>",
+      "timelock": "<timelock_value>",
+      "filled_amount": "<amount>",
+      "amount": "<amount>",
+      "secret_hash": "<secret_hash>",
+      "secret": "",
+      "initiate_tx_hash": "<transaction_hash>",
+      "redeem_tx_hash": "",
+      "refund_tx_hash": "<transaction_hash>",
+      "initiate_block_number": "<block_number>",
+      "redeem_block_number": "0",
+      "refund_block_number": "<block_number>",
+      "required_confirmations": "<number>",
+      "current_confirmations": "<number>"
+    },
+    "create_order": {
+        // order metadata
+      }
+    }
+  }
+}
+```
+If the order is unmatched, this endpoint returns null.
+
+### Initiate order
+The order initiation process begins when the user initiates the swap on the source chain. For EVM-based chains, use the `/relayer/initiate` endpoint. The process differs for Bitcoin, which uses scripts.
+
+**Initiating on EVM:**
+
+To initiate, the user must sign the HTLC initiation message using their wallet provider's EIP-712 typed data signing method. This signature authorizes the HTLC contract to lock tokens in escrow with the specified parameters. The signature is used for contract initialization.
+
+
+1. The user must call the `eip712domain()` function on the HTLC contract that returns the eip712 domain data.
+
+Sample EIP712domain data:
+```
+  [ eip712Domain method Response ]
+  fields   bytes1 :  0x0f
+  name   string :  HTLC
+  version   string :  1
+  chainId   uint256 :  42161
+  verifyingContract   address :  0x6b6303fAb8eC7232b4f2a7b9fa58E5216F608fcb
+  salt   bytes32 :  0x0000000000000000000000000000000000000000000000000000000000000000
+  extensions   uint256[] :  
+```
+
+2. The initiation message must be in the following format:
+
+HTLC initiation message format: 
+
+```ts
+{
+    address redeemer;
+    uint256 timelock;
+    uint256 amount;
+    bytes32 secretHash;
+}
+```
+
+3. The message, along with the domain data, must be signed with the wallet, and the signature is sent with the initiate request to the relayer.
+
+Endpoint:
+```bash
+POST /relayer/initiate
+```
+
+Example request:
+
+```json
+{
+    "order_id" : "<order_id>",
+    "signature": "<signature_hex_string>",
+    "perform_on": "Source"
+}
+```
+
+On success, the response contains the transaction hash of the initiate event.
+
+Expected response:
+
+```json
+{
+  "result": "<tx_id>",
+  "status": "Ok"
+}
+```
+
+**Initiating on bitcoin:**
+
+On Bitcoin, initiation can be done in two ways:
+
+1. Fund the HTLC script address directly using a Bitcoin wallet. 
+2. Construct a transaction paying the required amount to the HTLC script address and broadcast it.
+
+The HTLC script address is the swap ID of the source chain swap, found in the `source_swap` field in the `/orders/id/:id` response.
+
+### Setup Bitcoin Instant-Refund
 
 Instant refund is triggered automatically in these scenarios:
 
@@ -550,7 +616,7 @@ Instant refund is triggered automatically in these scenarios:
 
 To enable instant refund when the source swap is bitcoin, make the following API calls.
 
-#### a. Generate Signature Hashes
+**a. Generate signature hashes**
 
 **Endpoint**: `POST /relayer/bitcoin/instant-refund-hash`
 
@@ -578,7 +644,7 @@ Generates the transaction digest(s) that must be signed to enable instant refund
 
 - Sign each sighash using **Schnorr signature** with **SIGHASH_SINGLE | ANYONECANPAY**
 
-#### b. Submit Instant Refund Transaction
+**b. Submit instant refund transaction**
 
 **Endpoint**: `POST relayer/bitcoin/instant-refund`
 
@@ -610,11 +676,11 @@ Accepts user signatures and stores the prepared SACP (Single + AnyoneCanPay) tra
 - Public key must match swap initiator
 - Schnorr signature format with correct SIGHASH type enforced
 
-With this, bitcoin swaps can be refunded instantly to the user if the order expires or is partially filled.
+With this, Bitcoin swaps can be refunded instantly to the user if the order expires or is partially filled.
 
 ### Redeem asset
 
-The redemption step finalizes the swap, allowing the user to claim assets on the destination chain after the order is successfully initiated and confirmed.
+The redemption step finalizes the swap, allowing the user to claim assets on the destination chain after the order has been successfully initiated and confirmed.
 
 **Prerequisites:**
 
@@ -653,22 +719,22 @@ Expected response:
 }
 ```
 
-**Redemption on Bitcoin:**
+**Redeeming on Bitcoin:**
 
 For Bitcoin-based swaps, redemption involves constructing and signing a transaction with the appropriate witness data.
 
-Option 1: The HTLC on Bitcoin is constructed using the `destination_swap` details from `/orders/id/:id`.
+The HTLC on Bitcoin is constructed using the `destination_swap` details from `/orders/id/:id`.
 
 To redeem:
 - Use the secret from order creation.
 - Generate the required witness data:
-  - Secret value
+  - Secret
   - Redeem leaf bytes
   - Control block bytes
 - Construct and sign the Bitcoin transaction.
-- Submit the transaction to the Bitcoin network.
+- Use Garden’s relayer service for gasless redemption by sending the transaction hex bytes in the specified format.
 
-Option 2: If you prefer not to handle Bitcoin fees, you can use Garden’s relayer service for gasless redemption by sending the transaction hex bytes in the specified format.
+[An Example in RUST on how to construct and sign HTLC transactions](https://github.com/gardenfi/api-cookbook-demo/blob/main/src/service/blockchain/bitcoin/htlc_handler.rs)
 
 Endpoint:
 ```bash
@@ -683,6 +749,7 @@ Example request:
   "redeem_tx_bytes": "<transaction_hex_of_the_constructed_redeem_txn>"
 }
 ```
+
 Expected response:
 ```json
 {
@@ -691,4 +758,4 @@ Expected response:
 }
 ```
 
-You have now everything needed to integrate Garden swaps into your application using our APIs...
+You now have everything you need to integrate Garden swaps into your application using our APIs...
