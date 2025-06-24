@@ -94,14 +94,7 @@ Expected response:
 ### Option 2: API key
 API keys offer a convenient way to authenticate if you prefer to manage authentication in-house or need persistent access without requiring users to sign messages repeatedly.
 
-1. Visit Garden’s [SDK dashboard](https://dev.garden.finance/).
-2. Authenticate using SIWE.
-3. Create an application by providing:
-   - Application name
-   - (Optional) application icon
-4. Generate an API key by specifying:
-   - Key name
-   - Expiration date
+If you need an API key, please reach out to us on [Townhall](https://discord.com/invite/kqMBgeAKAh) and ping us, or raise a support ticket.
 
 Include the API key in your request headers as "api-key" with the generated key as its value. This replaces JWT bearer tokens for authentication.
 
