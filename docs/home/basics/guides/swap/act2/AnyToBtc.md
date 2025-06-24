@@ -24,4 +24,5 @@ Bridge any of your assets to Bitcoin on Garden by following these steps.
 
 ![step 5](../../../../images/swap/any-to-btc-4.png)
 
+
 You can bridge your asset to Bitcoin with just your EVM wallet connected, and the process is mostly the same. The key difference is that you must manually copy and paste the **Receive address** from your Bitcoin wallet when you input the amount.
