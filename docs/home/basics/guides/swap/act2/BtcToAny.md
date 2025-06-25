@@ -26,12 +26,12 @@ Bridge Bitcoin to any asset on Garden by following these steps.
 
 For subsequent swaps during an app session, you only need to sign once from the **Send** wallet.
 
-You can bridge Bitcoin with just your EVM wallet connected, and the process is mostly the same. The key differences are: after hitting the **Swap** button, you must manually copy the **Deposit address** and send the exact Bitcoin amount from your Bitcoin wallet. Additionally, you need to provide a **Bitcoin Recovery address** to ensure refunds if a solver isn’t matched.
+You can swap BTC without connecting your Bitcoin wallet, but you’ll need to connect your EVM wallet to sign the transaction. The process is almost identical to swapping any asset for BTC. The key differences are: after hitting Swap, you’ll have to manually copy the deposit address and send the exact BTC amount from your Bitcoin wallet. You’ll also need to add a Bitcoin recovery address to make sure your funds can be refunded safely if a solver doesn’t match the order
 
-1. Enter your Bitcoin refund address manually. This is the address where your Bitcoin will be refunded in the case of failure, so make sure to enter it correctly.
+1. Please enter your Bitcoin refund address manually. This is where your BTC will be refunded if the swap doesn’t go through, so make sure the address is correct.
 
    ![step 1](../../../../images/swap/swap_screen_without_btc_connection.png)
 
-2. After creating the swap order, you’ll see a Bitcoin destination address on the screen. To initiate the swap, you must send the exact amount of Bitcoin from your wallet to this address. Once the funds are received, the swap will begin automatically.
+2. After creating a swap order, you'll see a Bitcoin deposit address on the swap page. To initiate the swap, send the exact BTC amount from your Bitcoin wallet to that address. Once the solver receives the funds, the swap will go through successfully.
 
    ![step 2](../../../../images/swap/swap_in_awaiting_deposit_btc_manual.png)
