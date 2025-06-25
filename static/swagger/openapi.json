@@ -102,6 +102,12 @@
     "/bitcoin/redeem": {
       "$ref": "./relayer/bitcoinRedeem.json"
     },
+    "/bitcoin/instant-refund-hash": {
+      "$ref": "./relayer/instantRefundHash.json"
+    },
+    "/bitcoin/instant-refund": {
+      "$ref": "./relayer/instantRefund.json"
+    },
     "/health": {
       "$ref": "./relayer/checkHealth.json"
     },

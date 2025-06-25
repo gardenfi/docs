@@ -1,8 +1,8 @@
 {
   "post": {
-    "operationId": "addInstantRefundSignature",
-    "summary": "Add signatures for the provided instant refund SACP tx hashes.",
-    "description": "Add instant refund SACP for a matched order by validating and storing the refund transaction details.",
+    "operationId": "generateInstantRefundHash",
+    "summary": "Generate instant refund Hash.",
+    "description": "Successfully validates the bitcoin HTLC for the given order id and returns an array of taproot script spend sighashes that represents HTLC inputs requiring user signature",
     "servers": [
       {
         "url": "https://testnet.api.garden.finance/relayer",
@@ -27,16 +27,8 @@
             "properties": {
               "order_id": {
                 "type": "string",
-                "description": "The ID of the order, for which the instant refund SACP is being added and updated.",
+                "description": "The ID of the order for which instant refund tx is to be added.",
                 "example": "12345"
-              },
-              "signatures": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "description": "User's hex encoded schnorr signature for the sighashes received from the instant-refund-hash endpoint in the exact order",
-                "example": ["signature_hex"]
               }
             }
           }
@@ -45,19 +37,28 @@
     },
     "responses": {
       "200": {
-        "description": "Returned when the instant refund SACP is successfully added and updated in the order.",
+        "description": "Returned when the HTLC is successfully validated and the taproot script spend sighashes are generated.",
         "content": {
           "text/plain": {
             "schema": {
               "type": "object",
               "properties": {
                 "status": {
-                  "type": "string",
-                  "example": "ok"
+                    "type": "string",
+                    "enum": [
+                        "Ok",
+                        "Error"
+                    ],
+                    "description": "An enum representing the possible outcomes of the endpoint, indicating whether the request was successful.",
+                    "example": "Ok"
                 },
                 "result": {
-                  "type": "string",
-                  "example": "<tx_hex>"
+                    "type": "array",
+                    "items" : {
+                      "type": "string"
+                    },
+                    "description": "Taproot spend script sighashes for the user to sign.",
+                    "example": ["hash1"]
                 }
               }
             }
@@ -82,7 +83,7 @@
                     "message": {
                       "type": "string",
                       "description": "A descriptive message providing details about the error or response.",
-                      "example": "Not a bitcoin swap."
+                      "example": "Expected source chain to be bitcoin, bitcoin_regtest or bitcoin_testnet."
                     }
                   }
                 }
@@ -113,7 +114,7 @@
                           "error": {
                               "type": "string",
                               "description": "Error message",
-                              "example": "Failed to build signed instant refund sacp."
+                              "example": "Failed to generate signature hashes"
                           }
                       }
                   }
