@@ -57,7 +57,7 @@ curl -X 'POST' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -H 'Authorization: Bearer <authorization_token>' \ # in the case of SIWE
-  -H 'api-key <API-key>' \ # in the case of API keys
+  -H 'api-key: <API-key>' \ # in the case of API keys
   -d '{
     "source_chain": "<source_chain>",
     "source_asset": "<source_asset>",
