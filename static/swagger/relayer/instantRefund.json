@@ -1,8 +1,8 @@
 {
   "post": {
     "operationId": "addInstantRefundSignature",
-    "summary": "Add signatures for the provided instant refund SACP tx hashes.",
-    "description": "Add instant refund SACP for a matched order by validating and storing the refund transaction details.",
+    "summary": "Add signatures for the provided instant refund SACP sighashes.",
+    "description": "Add instant refund SACP for a matched order by validating schnorr signature and storing the refund transaction details.",
     "servers": [
       {
         "url": "https://testnet.api.garden.finance/relayer",

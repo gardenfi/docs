@@ -86,7 +86,7 @@ curl -X 'POST' \
     "additional_data": {
       "strategy_id": "<strategy_id>",
       "bitcoin_optional_recipient": "<user_bitcoin_address>",
-    }'
+    }
   }'
 ```
 Your affiliate fee can be split and sent to multiple addresses as shown above. You can define `nonce` as any random string that is unique to the order.
@@ -113,10 +113,10 @@ To initiate, the user must sign the HTLC initiation message using their wallet p
 
 ```
   [ eip712Domain method Response ]
-  name   string :  HTLC
-  version   string :  1
-  chainId   uint256 :  42161
-  verifyingContract   address :  0x6b6303fAb8eC7232b4f2a7b9fa58E5216F608fcb
+  name                string    :  HTLC
+  version             string    :  1
+  chainId             uint256   :  42161
+  verifyingContract   address   :  0x6b6303fAb8eC7232b4f2a7b9fa58E5216F608fcb
 ```
 
 2. The initiation message must be in the following format:

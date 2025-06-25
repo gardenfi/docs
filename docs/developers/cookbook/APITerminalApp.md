@@ -336,10 +336,10 @@ To initiate, the user must sign the HTLC initiation message using their wallet p
 
 ```
   [ eip712Domain method Response ]
-  name   string :  HTLC
-  version   string :  1
-  chainId   uint256 :  42161
-  verifyingContract   address :  0x6b6303fAb8eC7232b4f2a7b9fa58E5216F608fcb
+  name                string    :  HTLC
+  version             string    :  1
+  chainId             uint256   :  42161
+  verifyingContract   address   :  0x6b6303fAb8eC7232b4f2a7b9fa58E5216F608fcb
 ```
 
 2. The initiation message must be in the following format:
@@ -541,13 +541,10 @@ To initiate, the user must sign the HTLC initiation message using their wallet p
 Sample EIP712domain data:
 ```
   [ eip712Domain method Response ]
-  fields   bytes1 :  0x0f
-  name   string :  HTLC
-  version   string :  1
-  chainId   uint256 :  42161
-  verifyingContract   address :  0x6b6303fAb8eC7232b4f2a7b9fa58E5216F608fcb
-  salt   bytes32 :  0x0000000000000000000000000000000000000000000000000000000000000000
-  extensions   uint256[] :  
+  name                string    :  HTLC
+  version             string    :  1
+  chainId             uint256   :  42161
+  verifyingContract   address   :  0x6b6303fAb8eC7232b4f2a7b9fa58E5216F608fcb
 ```
 
 2. The initiation message must be in the following format:
