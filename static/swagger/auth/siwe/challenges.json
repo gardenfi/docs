@@ -1,5 +1,5 @@
 {
-    "get": {
+    "post": {
         "operationId": "getNonce",
         "summary": "Generate nonce.",
         "description": "The `/siwe/challenges` endpoint generates a unique `nonce` that serves as a one-time challenge for the user. This nonce is used during the authentication process, requiring the user to `sign` it with their `private key` to prove their identity.",
