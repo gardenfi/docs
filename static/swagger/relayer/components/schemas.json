@@ -42,10 +42,6 @@
                 "description": "The amount of the asset being swapped on the destination blockchain.",
                 "example": "9970000000000000"
             },
-            "fee": {
-                "type": "string",
-                "example": "1"
-            },
             "nonce": {
                 "type": "string",
                 "description": "A unique identifier for the swap transaction to prevent duplication.",
@@ -108,12 +104,6 @@
                         "description": "An optional Bitcoin address to receive the output token, if specified.",
                         "example": "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa",
                         "nullable": true
-                    },
-                    "instant_refund_tx_bytes": {
-                        "type": "string",
-                        "description": "The signature used to derive the transaction hash for an instant refund in case of transaction failure.",
-                        "nullable": true,
-                        "example": null
                     }
                 },
                 "required": [
