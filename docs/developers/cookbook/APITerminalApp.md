@@ -412,10 +412,10 @@ The **secret** must be **hashed using the SHA-256 algorithm**. This hash is used
 
 Example:
 ```
-  secret = "randomsecuresecretmessage"
+  secret = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" //randomly generated hex string
     | SHA256 hashed
     v
-  secret_hash = "5b876744fc3b8812da6b5317e3dcbb833c68c13c59cb67e9dfac992d388a1b74"
+  secret_hash = "5df6e0e2761359d30a8275058e299fcc0381534545f55cf43e41983f5d4c9456"
 ```
 
 
