@@ -53,7 +53,7 @@ With authentication in place and a quote selected, you can now create the order.
 
 ```bash
 curl -X 'POST' \
-  'https://api.garden.finance/relayer/create-order' \
+  'https://api.garden.finance/orders/' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -H 'Authorization: Bearer <authorization_token>' \ # in the case of SIWE
@@ -97,7 +97,8 @@ For **Bitcoin** swaps:
  - If Bitcoin is the source chain, set **initiator_source_address** to **null**.
  - If Bitcoin is the destination chain, set **initiator_destination_address** to **null**.
 
-The order is considered successfully created and matched if you receive a valid order object response from the [`getOrder`](#get-order) endpoint.
+If the response includes an order, it indicates that the order has been successfully created and matched.
+
 
 ## Initiate order
 
@@ -160,7 +161,6 @@ Expected response:
 ```
 
 ## Get order
-
 
 Use the `orders` endpoint to track the order status.
 ```bash
