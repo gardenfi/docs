@@ -681,13 +681,18 @@
           "order_id": {
             "type": "string"
           },
-          "transaction": {
+          "initiate_transaction": {
             "$ref": "#/components/schemas/EVMTransaction"
+          },
+          "approval_transaction": {
+            "$ref": "#/components/schemas/EVMTransaction",
+            "nullable": true,
+            "description": "Can be null if no approval is needed."
           },
           "typed_data": {
             "$ref": "#/components/schemas/EVMTypedData"
           }
-        }  
+        }
       },
       "StarknetTransaction": {
         "type": "object",
