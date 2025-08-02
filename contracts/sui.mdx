@@ -18,29 +18,12 @@ Garden uses Hashed Time Lock Contracts (HTLCs) to implement atomic swap function
 
 ### Initiate
 
-The initiate function creates a new HTLC by locking coins in a shared registry. Sui provides two initiation methods:
-
-#### Basic initiation
+The initiate function creates a new HTLC by locking coins in a shared registry.
 
 ```move
-public fun initiate<CoinType>(
+public fun initiate_swap<CoinType>(
     orders_reg: &mut OrdersRegistry<CoinType>,
-    redeemer_pubk: vector<u8>,
-    secret_hash: vector<u8>,
-    amount: u64,
-    timelock: u256,
-    coins: Coin<CoinType>,
-    clock: &Clock,
-    ctx: &mut TxContext,
-)
-```
-
-#### Initiation on behalf
-
-```move
-public fun initiate_on_behalf<CoinType>(
-    orders_reg: &mut OrdersRegistry<CoinType>,
-    initiator: address,
+    initiator_pubk: vector<u8>,
     redeemer_pubk: vector<u8>,
     secret_hash: vector<u8>,
     amount: u64,
@@ -116,7 +99,7 @@ The contract uses Move structs to store swap state with Sui's object model:
 public struct Order<phantom CoinType> has key, store {
     id: UID,
     is_fulfilled: bool,
-    initiator: address,
+    initiator_pubk: vector<u8>,
     redeemer_pubk: vector<u8>,
     amount: u64,
     initiated_at: u256,
@@ -151,22 +134,6 @@ The registry uses dynamic fields to store orders, allowing unlimited scalability
 Sui's Coin objects provide superior safety compared to manual balance management, as coins cannot be accidentally lost or duplicated due to Move's resource type system.
 </Tip>
 
-### Address generation
-
-Sui generates addresses from Ed25519 public keys using a specific scheme:
-
-```move
-fun gen_addr(pubk: vector<u8>): address {
-    // 0x00 = ED25519, 0x01 = Secp256k1, 0x02 = Secp256r1, 0x03 = multiSig
-    let flag: u8 = 0;
-    let mut preimage = vector::empty<u8>();
-    vector::push_back(&mut preimage, flag);
-    vector::append(&mut preimage, pubk);
-    let addr = blake2b256(&preimage);
-    address::from_bytes(addr)
-}
-```
-
 ### Event logging
 
 The contract emits events for each state transition to enable efficient off-chain monitoring:
@@ -187,6 +154,10 @@ public struct Redeemed has copy, drop {
 public struct Refunded has copy, drop {
     order_id: vector<u8>,
 }
+
+public struct RegistryCreated has copy, drop {
+    registry_id: ID
+}
 ```
 
 ### Order ID generation
@@ -196,11 +167,25 @@ Unique order identifiers are generated using SHA256 hashing with chain-specific 
 ```move
 fun create_order_id(
     secret_hash: vector<u8>,
-    initiator: address,
-    redeemer: address,
+    initiator_pubk: vector<u8>,
+    redeemer_pubk: vector<u8>,
     timelock: u256,
     amount: u64,
-): vector<u8>
+    reg_id: address
+): vector<u8> {
+    let sui_chain_id = x"0000000000000000000000000000000000000000000000000000000000000000"; // mainnet
+    let timelock_bytes = bcs::to_bytes(&timelock);
+    let amount = bcs::to_bytes(&amount);
+    let mut data = vector::empty<u8>();
+    vector::append(&mut data, sui_chain_id);
+    vector::append(&mut data, secret_hash);
+    vector::append(&mut data, initiator_pubk);
+    vector::append(&mut data, redeemer_pubk);
+    vector::append(&mut data, timelock_bytes);
+    vector::append(&mut data, amount);
+    vector::append(&mut data, address::to_bytes(reg_id));
+    hash::sha2_256(data)
+}
 ```
 
 <Check>
