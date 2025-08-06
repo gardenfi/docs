@@ -163,11 +163,16 @@
           }
         ]
       },
-      "AffiliateFeeItem": {
+      "AffiliateEarningsItem": {
         "type": "object",
         "properties": {
           "total_earnings": {
-            "type": "string"
+            "type": "string",
+            "description": "Total earnings in asset units for the affiliate."
+          },
+          "total_earnings_usd": {
+            "type": "string",
+            "description": "Total earnings in USD for the mentioned asset for the affiliate."
           },
           "affiliate": {
             "type": "string"
@@ -176,19 +181,26 @@
             "$ref": "#/components/schemas/AffiliateFeeAsset"
           },
           "claim_amount": {
-            "type": "string"
+            "type": "string",
+            "description": "Amount available for claiming in asset units. Only included if the affiliate has not yet claimed their earnings."
+          },
+          "claim_amount_usd": {
+            "type": "string",
+            "description": "Amount available for claiming in USD. Only included if the affiliate has not yet claimed their earnings."
           },
           "claim_transaction": {
-            "$ref": "#/components/schemas/EVMTransaction"
+            "$ref": "#/components/schemas/EVMTransaction",
+            "description": "Transaction data for claiming earnings. Only included if the affiliate has not yet claimed their earnings."
           }
         },
         "required": [
           "total_earnings",
+          "total_earnings_usd",
           "affiliate",
           "asset"
         ]
       },
-      "AffiliateFeesResponse": {
+      "AffiliateEarningsResponse": {
        "allOf": [
           {
             "$ref": "#/components/schemas/Response"
@@ -202,8 +214,108 @@
               "result": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/AffiliateFeeItem"
+                  "$ref": "#/components/schemas/AffiliateEarningsItem"
                 }
+              }
+            }
+          }
+        ]
+      },
+      "AffiliateTransactionType": {
+        "type": "string",
+        "enum": [
+          "credit",
+          "debit"
+        ],
+        "description": "Transaction type: 'credit' for earnings, 'debit' for claimed amounts."
+      },
+      "AffiliateHistoryItem": {
+        "type": "object",
+        "properties": {
+          "asset": {
+            "$ref": "#/components/schemas/AffiliateFeeAsset"
+          },
+          "affiliate": {
+            "type": "string",
+            "description": "The recipient address of the affiliate."
+          },
+          "amount": {
+            "type": "string",
+            "description": "The amount of the transaction in asset units."
+          },
+          "amount_usd": {
+            "type": "string",
+            "description": "The amount of the transaction in USD."
+          },
+            "type": {
+            "$ref": "#/components/schemas/AffiliateTransactionType"
+           },
+          "id": {
+            "type": "string",
+            "description": "Order ID for credit, transaction hash for debit."
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "asset",
+          "affiliate",
+          "amount",
+          "amount_usd",
+          "type",
+          "id",
+          "timestamp"
+        ]
+      },
+      "PaginatedAffiliateHistoryItems": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AffiliateHistoryItem"
+            }
+          },
+          "total_earned": {
+            "type": "string",
+            "description": "Total earnings in USD for the affiliate."
+          },
+          "total_claimed": {
+            "type": "string",
+            "description": "Total claimed earnings in USD for the affiliate."
+          },
+          "page": {
+            "type": "integer"
+          },
+          "total_pages": {
+            "type": "integer"
+          },
+          "total_items": {
+            "type": "integer"
+          },
+          "per_page": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "data",
+          "total_earned",
+          "total_claimed",
+          "page",
+          "total_pages",
+          "total_items",
+          "per_page"
+         ]
+      },
+      "AffiliateHistoryResponse": {
+        "allOf": [
+          {"$ref": "#/components/schemas/Response"},
+          {
+            "type": "object",
+            "properties": {
+              "result": {
+                "$ref": "#/components/schemas/PaginatedAffiliateHistoryItems"
               }
             }
           }
@@ -1352,69 +1464,17 @@
     "/fees": {
       "get": {
         "summary": "Get swap fees.",
-        "security": [],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "garden-app-id",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Garden app ID for affiliate fee information"
-          }
-        ],
         "responses": {
           "200": {
-            "description": "Total swap fees or affiliate fees if garden-app-id is provided. For affiliate fees, claim_amount and claim_transaction are only included if the affiliate has not yet claimed their fees.",
+            "description": "Total swap fees.",
             "content": {
               "application/json": {
                 "schema": {
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/ResponseString",
-                      "title": "Total Fees"
-                    },
-                    {
-                      "$ref": "#/components/schemas/AffiliateFeesResponse",
-                      "title": "Affiliate Fees"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/ResponseString"
                 },
-                "examples": {
-                  "total-fees": {
-                    "summary": "Total Fees Response",
-                    "value": {
-                      "success": true,
-                      "result": "2668122"
-                    }
-                  },
-                  "affiliate-fees": {
-                    "summary": "Affiliate Fees Response",
-                    "value": {
-                      "success": true,
-                      "result": [
-                        {
-                          "total_earnings": "150750000",
-                          "affiliate": "0x004Cc75ACF4132Fc08cB6a252E767804F303F729",
-                          "asset": "ethereum:usdc",
-                          "claim_amount": "50750000",
-                          "claim_transaction": {
-                            "to": "0x5EbEC4D8DA437b2BAD656D43d40fE412bA5D217a",
-                            "value": "0x0",
-                            "chain_id": 1,
-                            "data": "0x4ede0ab7000000000000000000000000661ba32eb5f86cab358ddbb7f264b10c5825e2dd0000000000000000000000000000000000000000000000000000000000069780000000000000000000000000000000000000000000000000000000000000c3503331ff69aca609e06dcd4b97223667611d66bb4e8b56e26fc0ff53c49a1ed04d00000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000000",
-                            "gas_limit": "0x30d40"
-                          }
-                        },
-                        {
-                          "total_earnings": "3000000",
-                          "affiliate": "0x004Cc75ACF4132Fc08cB6a252E767804F303F729",
-                          "asset": "ethereum:cbbtc"
-                        }
-                      ]
-                    }
-                  }
+                "example": {
+                    "status": "Ok",
+                    "result": "2668122"
                 }
               }
             }
@@ -1760,6 +1820,61 @@
                     "whitelist_overrides": []
                   }
                 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/affiliates/earnings": {
+      "get": {
+        "summary": "Get affiliate earnings.",
+        "responses": {
+          "200": {
+            "description": "List of affiliate earnings.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AffiliateEarningsResponse"
+                },
+                "example": {
+                  "status": "Ok",
+                  "result": [
+                    {
+                      "total_earnings": "15075",
+                      "affiliate": "0x004Cc75ACF4132Fc08cB6a252E767804F303F729",
+                      "asset": "ethereum:usdc",
+                      "claim_amount": "5075",
+                      "claim_transaction": {
+                        "to": "0x5EbEC4D8DA437b2BAD656D43d40fE412bA5D217a",
+                        "value": "0x0",
+                        "chain_id": 1,
+                        "data": "0xce2631b8000000000000000000000000004cc75acf4132fc08cb6a252e767804f303f729000000000000000000000000d8a6e3fca403d79b6ad6216b60527f51cc967d39000000000000000000000000000000000000000000000000000000000000003200000000000000000000000000000000000000000000000000000000000000800000000000000000000000000000000000000000000000000000000000000041ff96072b331ff4d1b00c6fb61f3f69949a1bc7de7f48719aa016a7a6e2a6b28c159010947540573981978da376731693e9b272ba3b2c2fae24b1de854897c2671c00000000000000000000000000000000000000000000000000000000000000",
+                        "gas_limit": "0x30d40"
+                      }
+                    },
+                    {
+                      "total_earnings": "30000",
+                      "affiliate": "0x004Cc75ACF4132Fc08cB6a252E767804F303F729",
+                      "asset": "ethereum:cbbtc"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/affiliates/history": {
+      "get": {
+        "summary": "Get credit and debit history of an affiliate.",
+        "responses": {
+          "200": {
+            "description": "Credit and debit history of an affiliate.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/AffiliateHistoryResponse" }
               }
             }
           }
