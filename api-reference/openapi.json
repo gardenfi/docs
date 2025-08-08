@@ -14,7 +14,10 @@
       "variables": {
         "environment": {
           "default": "api",
-          "enum": ["api", "testnet.api"]
+          "enum": [
+            "api",
+            "testnet.api"
+          ]
         }
       }
     }
@@ -57,8 +60,12 @@
       },
       "SchemaName": {
         "oneOf": [
-          { "$ref": "#/components/schemas/HTLCSchemaName" },
-          { "$ref": "#/components/schemas/TokenSchemaName" }
+          {
+            "$ref": "#/components/schemas/HTLCSchemaName"
+          },
+          {
+            "$ref": "#/components/schemas/TokenSchemaName"
+          }
         ]
       },
       "Chain": {
@@ -98,13 +105,17 @@
       },
       "ChainWithAssets": {
         "allOf": [
-          {"$ref": "#/components/schemas/ChainVerbose"},
+          {
+            "$ref": "#/components/schemas/ChainVerbose"
+          },
           {
             "type": "object",
             "properties": {
               "assets": {
                 "type": "array",
-                "items": {"$ref": "#/components/schemas/AssetVerbose"}
+                "items": {
+                  "$ref": "#/components/schemas/AssetVerbose"
+                }
               }
             }
           }
@@ -131,11 +142,15 @@
           },
           "supported_htlc_schemas": {
             "type": "array",
-            "items": {"$ref": "#/components/schemas/HTLCSchemaName"}
+            "items": {
+              "$ref": "#/components/schemas/HTLCSchemaName"
+            }
           },
           "supported_token_schemas": {
             "type": "array",
-            "items": {"$ref": "#/components/schemas/TokenSchemaName"}
+            "items": {
+              "$ref": "#/components/schemas/TokenSchemaName"
+            }
           }
         }
       },
@@ -259,12 +274,16 @@
         ]
       },
       "Contract": {
-          "type": "object",
-          "properties": {
-            "address": { "type": "string" },
-            "schema": { "$ref": "#/components/schemas/SchemaName" }
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "string"
           },
-          "nullable": true
+          "schema": {
+            "$ref": "#/components/schemas/SchemaName"
+          }
+        },
+        "nullable": true
       },
       "AssetVerbose": {
         "type": "object",
@@ -490,22 +509,35 @@
             "items": {
               "$ref": "#/components/schemas/Liquidity"
             }
-          }, 
-          "policy": { "$ref": "#/components/schemas/RoutePolicy" }
+          },
+          "policy": {
+            "$ref": "#/components/schemas/RoutePolicy"
+          }
         }
       },
       "AffiliateFee": {
         "type": "object",
         "required": [],
         "properties": {
-          "address": {"type": "string"},
-          "asset": {"$ref": "#/components/schemas/AffiliateFeeAsset"},
-          "fee": {"type": "integer", "description": "In BIPS (base index points) 100 bips = 1%", "example": 10 }
+          "address": {
+            "type": "string"
+          },
+          "asset": {
+            "$ref": "#/components/schemas/AffiliateFeeAsset"
+          },
+          "fee": {
+            "type": "integer",
+            "description": "In BIPS (base index points) 100 bips = 1%",
+            "example": 10
+          }
         }
       },
       "OrderRequest": {
         "type": "object",
-        "required": ["source", "destination"],
+        "required": [
+          "source",
+          "destination"
+        ],
         "properties": {
           "source": {
             "$ref": "#/components/schemas/Account"
@@ -737,17 +769,25 @@
           "typed_data": {
             "$ref": "#/components/schemas/EVMTypedData"
           }
-        }  
+        }
       },
       "StarknetTransaction": {
         "type": "object",
         "properties": {
           "calldata": {
             "type": "array",
-            "items": { "type": "string" }
+            "items": {
+              "type": "string"
+            }
           },
-          "selector": { "type": "string", "example": "0x2aed25fcd0101fcece997d93f9d0643dfa3fbd4118cae16bf7d6cd533577c28" },
-          "to": { "type": "string", "example": "0x2448040b22b27f5a814756e67da005701e525658b162d4f0343d2e011bc6dad" }
+          "selector": {
+            "type": "string",
+            "example": "0x2aed25fcd0101fcece997d93f9d0643dfa3fbd4118cae16bf7d6cd533577c28"
+          },
+          "to": {
+            "type": "string",
+            "example": "0x2448040b22b27f5a814756e67da005701e525658b162d4f0343d2e011bc6dad"
+          }
         }
       },
       "StarknetTypedData": {
@@ -799,7 +839,16 @@
                 "items": {
                   "type": "integer"
                 },
-                "example": [1208377717, 3328794282, 2017733490, 901540904, 1502396360, 718117041, 1704147999, 3475506811]
+                "example": [
+                  1208377717,
+                  3328794282,
+                  2017733490,
+                  901540904,
+                  1502396360,
+                  718117041,
+                  1704147999,
+                  3475506811
+                ]
               },
               "timelock": {
                 "type": "string",
@@ -868,7 +917,7 @@
           "typed_data": {
             "$ref": "#/components/schemas/StarknetTypedData"
           }
-        }  
+        }
       },
       "SolanaInitiateRequest": {
         "type": "object",
@@ -908,25 +957,50 @@
       "QuoteAsset": {
         "type": "object",
         "properties": {
-          "asset": { "$ref": "#/components/schemas/Asset" },
-          "amount": { "type": "string", "example": "1000000" },
-          "display": { "type": "string", "example": "0.01", "description": "USD Value" },
-          "value": { "type": "string", "example": "100" }
+          "asset": {
+            "$ref": "#/components/schemas/Asset"
+          },
+          "amount": {
+            "type": "string",
+            "example": "1000000"
+          },
+          "display": {
+            "type": "string",
+            "example": "0.01",
+            "description": "USD Value"
+          },
+          "value": {
+            "type": "string",
+            "example": "100"
+          }
         }
       },
       "Quote": {
         "type": "object",
         "properties": {
-          "solver_id": { "type": "string" },
-          "source": { "$ref": "#/components/schemas/QuoteAsset" },
-          "destination": { "$ref": "#/components/schemas/QuoteAsset" }
+          "solver_id": {
+            "type": "string"
+          },
+          "source": {
+            "$ref": "#/components/schemas/QuoteAsset"
+          },
+          "destination": {
+            "$ref": "#/components/schemas/QuoteAsset"
+          }
         }
       },
       "SolverLiquidity": {
         "type": "object",
         "properties": {
-          "solver_id": { "type": "string" },
-          "liquidity": { "type": "array", "items": { "$ref": "#/components/schemas/Liquidity" } } 
+          "solver_id": {
+            "type": "string"
+          },
+          "liquidity": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Liquidity"
+            }
+          }
         }
       },
       "CreateOrderResponse": {
@@ -1010,11 +1084,15 @@
           }
         ]
       },
-      "Schema": { 
+      "Schema": {
         "type": "object",
         "properties": {
-          "name": { "$ref": "#/components/schemas/SchemaName" },
-          "schema": { "type": "object" }
+          "name": {
+            "$ref": "#/components/schemas/SchemaName"
+          },
+          "schema": {
+            "type": "object"
+          }
         }
       },
       "SchemaResponse": {
@@ -1025,7 +1103,9 @@
           {
             "type": "object",
             "properties": {
-              "result": { "$ref": "#/components/schemas/Schema" }
+              "result": {
+                "$ref": "#/components/schemas/Schema"
+              }
             }
           }
         ]
@@ -1038,7 +1118,12 @@
           {
             "type": "object",
             "properties": {
-              "result": { "type": "array", "items": { "$ref": "#/components/schemas/Schema"} }
+              "result": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Schema"
+                }
+              }
             }
           }
         ]
@@ -1136,7 +1221,10 @@
         "properties": {
           "default": {
             "type": "string",
-            "enum": ["open", "closed"],
+            "enum": [
+              "open",
+              "closed"
+            ],
             "default": "open",
             "description": "Default policy for routes not covered by specific rules"
           },
@@ -1145,7 +1233,9 @@
             "items": {
               "type": "string"
             },
-            "example": ["ethereum:SEED <-> arbitrum:SEED"],
+            "example": [
+              "ethereum:SEED <-> arbitrum:SEED"
+            ],
             "description": "Assets in an isolation group can ONLY trade with other assets in the same group"
           },
           "blacklist_pairs": {
@@ -1153,7 +1243,10 @@
             "items": {
               "type": "string"
             },
-            "example": ["bitcoin:BTC -> starknet:*", "*:USDC -> bitcoin:*"],
+            "example": [
+              "bitcoin:BTC -> starknet:*",
+              "*:USDC -> bitcoin:*"
+            ],
             "description": "Explicitly forbidden trading pairs using pattern matching"
           },
           "whitelist_overrides": {
@@ -1161,7 +1254,9 @@
             "items": {
               "type": "string"
             },
-            "example": ["ethereum:USDC -> bitcoin:BTC"],
+            "example": [
+              "ethereum:USDC -> bitcoin:BTC"
+            ],
             "description": "Explicit overrides that bypass other restrictions"
           }
         }
@@ -1486,6 +1581,72 @@
     "/orders": {
       "get": {
         "summary": "Get all orders.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "address",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter orders by address"
+          },
+          {
+            "in": "query",
+            "name": "from_timestamp",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Filter orders starting from the given timestamp"
+          },
+          {
+            "in": "query",
+            "name": "to_timestamp",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Filter orders till the given timestamp"
+          },
+          {
+            "in": "query",
+            "name": "tx_hash",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter orders by transaction hash"
+          },
+          {
+            "in": "query",
+            "name": "source_chain",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "description": "Filter orders by source chains"
+          },
+          {
+            "in": "query",
+            "name": "dest_chain",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "description": "Filter orders by destination chains"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Page number"
+          }
+        ],
         "responses": {
           "200": {
             "description": "List of orders.",
