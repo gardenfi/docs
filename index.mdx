@@ -3,29 +3,26 @@ mode: "custom"
 ---
 
 export function openSearch() {
-    document.getElementById("search-bar-entry").click();
+  document.getElementById("search-bar-entry").click();
 }
 
 <div className="w-full h-96 px-4 flex flex-col items-center justify-center bg-[#e4ebf2] dark:bg-white/5 dark:text-white">
-    <div className="w-full max-w-[400px] sm:max-w-[600px]">
-        <img
-            className="w-full hidden dark:block"
-            src="/logo/dark.svg"
-        />
-        <img
-            className="w-full block dark:hidden"
-            src="/logo/light.svg"
-        />
+  <div className="w-full max-w-[400px] sm:max-w-[600px]">
+    <img className="w-full hidden dark:block" src="/logo/dark.svg" />
+    <img className="w-full block dark:hidden" src="/logo/light.svg" />
+  </div>
+  <div className="text-xl mt-2">Swap Bitcoin cross-chain in minutes.</div>
+  <div
+    className="flex items-center w-full max-w-[450px] border border-white/10 ring-1 ring-gray-400/20 rounded-lg mt-10 px-4 py-2"
+    onClick={openSearch}
+  >
+    Ask me anything...
+  </div>
+  <a className="mt-6" href="/home/about">
+    <div className="inline-flex bg-primary text-white rounded-full px-4 py-1.5 hover:opacity-[0.9]">
+      Get started →
     </div>
-    <div className="text-xl mt-2">
-        Swap Bitcoin cross-chain in minutes.
-    </div>
-    <div className="flex items-center w-full max-w-[450px] border border-white/10 ring-1 ring-gray-400/20 rounded-lg mt-10 px-4 py-2" onClick={openSearch}>
-        Ask me anything...
-    </div>
-    <a className="mt-6" href="/home/about">
-        <div className="inline-flex bg-primary-dark text-white rounded-full px-4 py-1.5 hover:opacity-[0.9]">Get started →</div>
-    </a>
+  </a>
 </div>
 
 <div className="max-w-8xl mx-auto my-24 px-4 lg:px-8">
@@ -102,4 +99,5 @@ export function openSearch() {
             </a>
         </a>
     </div>
+
 </div>
