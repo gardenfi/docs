@@ -10,20 +10,13 @@
   "favicon": "/favicon.svg",
   "openapi": "api-reference/openapi.json",
   "contextual": {
-    "options": [
-      "copy",
-      "view",
-      "chatgpt",
-      "claude"
-    ]
+    "options": ["copy", "view", "chatgpt", "claude"]
   },
   "navigation": {
     "tabs": [
       {
         "tab": "Home",
-        "pages": [
-          "index"
-        ]
+        "pages": ["index"]
       },
       {
         "tab": "Get Started",
@@ -100,10 +93,7 @@
           },
           {
             "group": "API",
-            "pages": [
-              "developers/api/overview",
-              "developers/api/1click"
-            ]
+            "pages": ["developers/api/overview", "developers/api/1click"]
           },
           {
             "group": "SDK",
@@ -134,16 +124,11 @@
           },
           {
             "group": "Developer Guides",
-            "pages": [
-              "developers/guides/cookbook",
-              "developers/guides/sdk"
-            ]
+            "pages": ["developers/guides/cookbook", "developers/guides/sdk"]
           },
           {
             "group": "Testing",
-            "pages": [
-              "developers/localnet"
-            ]
+            "pages": ["developers/localnet"]
           }
         ]
       },
@@ -152,9 +137,7 @@
         "groups": [
           {
             "group": "Get Started",
-            "pages": [
-              "contracts/overview"
-            ]
+            "pages": ["contracts/overview"]
           },
           {
             "group": "Contracts",
@@ -173,9 +156,7 @@
         "groups": [
           {
             "group": "Get Started",
-            "pages": [
-              "api-reference/quickstart"
-            ]
+            "pages": ["api-reference/quickstart"]
           },
           {
             "group": "Global",
@@ -206,14 +187,20 @@
               "api-reference/endpoint/orders/get-instant-refund-hash",
               "api-reference/endpoint/orders/patch"
             ]
+          },
+          {
+            "group": "Insights",
+            "pages": [
+              "api-reference/endpoint/insights/get-volume",
+              "api-reference/endpoint/insights/get-volume-metrics",
+              "api-reference/endpoint/insights/competitors"
+            ]
           }
         ]
       },
       {
         "tab": "Changelog",
-        "pages": [
-          "changelog"
-        ]
+        "pages": ["changelog"]
       }
     ],
     "global": {

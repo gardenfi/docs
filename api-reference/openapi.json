@@ -49,11 +49,7 @@
       "TokenSchemaName": {
         "type": "string",
         "title": "token",
-        "enum": [
-          "evm:erc20",
-          "solana:spltoken",
-          "starknet:erc20"
-        ]
+        "enum": ["evm:erc20", "solana:spltoken", "starknet:erc20"]
       },
       "SchemaName": {
         "oneOf": [
@@ -98,13 +94,13 @@
       },
       "ChainWithAssets": {
         "allOf": [
-          {"$ref": "#/components/schemas/ChainVerbose"},
+          { "$ref": "#/components/schemas/ChainVerbose" },
           {
             "type": "object",
             "properties": {
               "assets": {
                 "type": "array",
-                "items": {"$ref": "#/components/schemas/AssetVerbose"}
+                "items": { "$ref": "#/components/schemas/AssetVerbose" }
               }
             }
           }
@@ -131,11 +127,11 @@
           },
           "supported_htlc_schemas": {
             "type": "array",
-            "items": {"$ref": "#/components/schemas/HTLCSchemaName"}
+            "items": { "$ref": "#/components/schemas/HTLCSchemaName" }
           },
           "supported_token_schemas": {
             "type": "array",
-            "items": {"$ref": "#/components/schemas/TokenSchemaName"}
+            "items": { "$ref": "#/components/schemas/TokenSchemaName" }
           }
         }
       },
@@ -156,10 +152,7 @@
           {
             "type": "string",
             "title": "testnet",
-            "enum": [
-              "ethereum_sepolia:wbtc",
-              "ethereum_sepolia:usdc"
-            ]
+            "enum": ["ethereum_sepolia:wbtc", "ethereum_sepolia:usdc"]
           }
         ]
       },
@@ -182,22 +175,16 @@
             "$ref": "#/components/schemas/EVMTransaction"
           }
         },
-        "required": [
-          "total_earnings",
-          "affiliate",
-          "asset"
-        ]
+        "required": ["total_earnings", "affiliate", "asset"]
       },
       "AffiliateFeesResponse": {
-       "allOf": [
+        "allOf": [
           {
             "$ref": "#/components/schemas/Response"
           },
           {
             "type": "object",
-            "required": [
-              "result"
-            ],
+            "required": ["result"],
             "properties": {
               "result": {
                 "type": "array",
@@ -259,12 +246,12 @@
         ]
       },
       "Contract": {
-          "type": "object",
-          "properties": {
-            "address": { "type": "string" },
-            "schema": { "$ref": "#/components/schemas/SchemaName" }
-          },
-          "nullable": true
+        "type": "object",
+        "properties": {
+          "address": { "type": "string" },
+          "schema": { "$ref": "#/components/schemas/SchemaName" }
+        },
+        "nullable": true
       },
       "AssetVerbose": {
         "type": "object",
@@ -490,7 +477,7 @@
             "items": {
               "$ref": "#/components/schemas/Liquidity"
             }
-          }, 
+          },
           "policy": { "$ref": "#/components/schemas/RoutePolicy" }
         }
       },
@@ -498,9 +485,13 @@
         "type": "object",
         "required": [],
         "properties": {
-          "address": {"type": "string"},
-          "asset": {"$ref": "#/components/schemas/AffiliateFeeAsset"},
-          "fee": {"type": "integer", "description": "In BIPS (base index points) 100 bips = 1%", "example": 10 }
+          "address": { "type": "string" },
+          "asset": { "$ref": "#/components/schemas/AffiliateFeeAsset" },
+          "fee": {
+            "type": "integer",
+            "description": "In BIPS (base index points) 100 bips = 1%",
+            "example": 10
+          }
         }
       },
       "OrderRequest": {
@@ -541,9 +532,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "signature"
-        ]
+        "required": ["signature"]
       },
       "RedeemActionRequest": {
         "type": "object",
@@ -553,9 +542,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "secret"
-        ]
+        "required": ["secret"]
       },
       "RefundActionRequest": {
         "type": "object",
@@ -570,9 +557,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "signature"
-        ]
+        "required": ["signature"]
       },
       "PaginatedOrders": {
         "type": "object",
@@ -602,10 +587,7 @@
         "properties": {
           "status": {
             "type": "string",
-            "enum": [
-              "Ok",
-              "Error"
-            ]
+            "enum": ["Ok", "Error"]
           },
           "error": {
             "type": "string",
@@ -623,11 +605,7 @@
       },
       "BitcoinInitiateRequest": {
         "type": "object",
-        "required": [
-          "order_id",
-          "to",
-          "amount"
-        ],
+        "required": ["order_id", "to", "amount"],
         "properties": {
           "order_id": {
             "type": "string"
@@ -718,11 +696,7 @@
       },
       "EVMInitiateRequest": {
         "type": "object",
-        "required": [
-          "order_id",
-          "transaction",
-          "typed_data"
-        ],
+        "required": ["order_id", "transaction", "typed_data"],
         "properties": {
           "order_id": {
             "type": "string"
@@ -737,7 +711,7 @@
           "typed_data": {
             "$ref": "#/components/schemas/EVMTypedData"
           }
-        }  
+        }
       },
       "StarknetTransaction": {
         "type": "object",
@@ -746,8 +720,14 @@
             "type": "array",
             "items": { "type": "string" }
           },
-          "selector": { "type": "string", "example": "0x2aed25fcd0101fcece997d93f9d0643dfa3fbd4118cae16bf7d6cd533577c28" },
-          "to": { "type": "string", "example": "0x2448040b22b27f5a814756e67da005701e525658b162d4f0343d2e011bc6dad" }
+          "selector": {
+            "type": "string",
+            "example": "0x2aed25fcd0101fcece997d93f9d0643dfa3fbd4118cae16bf7d6cd533577c28"
+          },
+          "to": {
+            "type": "string",
+            "example": "0x2448040b22b27f5a814756e67da005701e525658b162d4f0343d2e011bc6dad"
+          }
         }
       },
       "StarknetTypedData": {
@@ -799,7 +779,10 @@
                 "items": {
                   "type": "integer"
                 },
-                "example": [1208377717, 3328794282, 2017733490, 901540904, 1502396360, 718117041, 1704147999, 3475506811]
+                "example": [
+                  1208377717, 3328794282, 2017733490, 901540904, 1502396360,
+                  718117041, 1704147999, 3475506811
+                ]
               },
               "timelock": {
                 "type": "string",
@@ -848,11 +831,7 @@
       },
       "StarknetInitiateRequest": {
         "type": "object",
-        "required": [
-          "order_id",
-          "transaction",
-          "typed_data"
-        ],
+        "required": ["order_id", "transaction", "typed_data"],
         "properties": {
           "order_id": {
             "type": "string"
@@ -868,14 +847,11 @@
           "typed_data": {
             "$ref": "#/components/schemas/StarknetTypedData"
           }
-        }  
+        }
       },
       "SolanaInitiateRequest": {
         "type": "object",
-        "required": [
-          "order_id",
-          "versioned_tx"
-        ],
+        "required": ["order_id", "versioned_tx"],
         "properties": {
           "order_id": {
             "type": "string"
@@ -910,7 +886,11 @@
         "properties": {
           "asset": { "$ref": "#/components/schemas/Asset" },
           "amount": { "type": "string", "example": "1000000" },
-          "display": { "type": "string", "example": "0.01", "description": "USD Value" },
+          "display": {
+            "type": "string",
+            "example": "0.01",
+            "description": "USD Value"
+          },
           "value": { "type": "string", "example": "100" }
         }
       },
@@ -926,7 +906,10 @@
         "type": "object",
         "properties": {
           "solver_id": { "type": "string" },
-          "liquidity": { "type": "array", "items": { "$ref": "#/components/schemas/Liquidity" } } 
+          "liquidity": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Liquidity" }
+          }
         }
       },
       "CreateOrderResponse": {
@@ -1010,7 +993,7 @@
           }
         ]
       },
-      "Schema": { 
+      "Schema": {
         "type": "object",
         "properties": {
           "name": { "$ref": "#/components/schemas/SchemaName" },
@@ -1038,7 +1021,10 @@
           {
             "type": "object",
             "properties": {
-              "result": { "type": "array", "items": { "$ref": "#/components/schemas/Schema"} }
+              "result": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/Schema" }
+              }
             }
           }
         ]
@@ -1101,9 +1087,7 @@
           },
           {
             "type": "object",
-            "required": [
-              "result"
-            ],
+            "required": ["result"],
             "properties": {
               "result": {
                 "$ref": "#/components/schemas/Order"
@@ -1119,9 +1103,7 @@
           },
           {
             "type": "object",
-            "required": [
-              "result"
-            ],
+            "required": ["result"],
             "properties": {
               "result": {
                 "type": "string"
@@ -1176,6 +1158,144 @@
             "properties": {
               "result": {
                 "$ref": "#/components/schemas/RoutePolicy"
+              }
+            }
+          }
+        ]
+      },
+      "VolumeMetricsResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Response"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "result": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "source_volume": {
+                      "type": "string",
+                      "description": "Source volume amount in USD",
+                      "format": "decimal"
+                    },
+                    "destination_volume": {
+                      "type": "string",
+                      "description": "Destination volume amount in USD",
+                      "format": "decimal"
+                    },
+                    "total_volume": {
+                      "type": "string",
+                      "description": "Total volume amount in USD",
+                      "format": "decimal"
+                    },
+                    "source_chain": {
+                      "type": "string",
+                      "description": "Source blockchain identifier",
+                      "nullable": true
+                    },
+                    "dest_chain": {
+                      "type": "string",
+                      "description": "Destination blockchain identifier",
+                      "nullable": true
+                    },
+                    "swaps_count": {
+                      "type": "string",
+                      "description": "Number of swaps",
+                      "format": "decimal"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ]
+      },
+      "CompetitorsResponse": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Response"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "result": {
+                "type": "object",
+                "properties": {
+                  "orderId": {
+                    "type": "string",
+                    "description": "Unique identifier for the order"
+                  },
+                  "garden": {
+                    "type": "object",
+                    "properties": {
+                      "duration": {
+                        "type": "integer",
+                        "description": "Duration in seconds"
+                      },
+                      "fees": {
+                        "type": "string",
+                        "description": "Fees in USD"
+                      }
+                    },
+                    "required": ["duration", "fees"]
+                  },
+                  "competitors": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "object",
+                      "properties": {
+                        "duration": {
+                          "type": "integer",
+                          "description": "Duration in seconds"
+                        },
+                        "fees": {
+                          "type": "string",
+                          "description": "Fees in USD"
+                        }
+                      },
+                      "required": ["duration", "fees"]
+                    },
+                    "description": "Dynamic object where keys are competitor names and values contain duration and fees",
+                    "example": {
+                      "competitor-name-1": {
+                        "duration": "225",
+                        "fees": "4.00"
+                      },
+                      "competitor-name-2": {
+                        "duration": "182",
+                        "fees": "3.00"
+                      }
+                    }
+                  },
+                  "meta": {
+                    "type": "object",
+                    "properties": {
+                      "units": {
+                        "type": "object",
+                        "properties": {
+                          "duration": {
+                            "description": "Unit for duration (seconds)"
+                          },
+                          "fees": {
+                            "description": "Unit for fees (USD)"
+                          }
+                        },
+                        "required": ["duration", "fees"]
+                      }
+                    },
+                    "example": {
+                      "units": {
+                        "duration": "seconds",
+                        "fees": "USD"
+                      }
+                    },
+                    "required": ["units"]
+                  }
+                },
+                "required": ["orderId", "garden", "competitors", "meta"]
               }
             }
           }
@@ -1560,9 +1680,7 @@
       },
       "patch": {
         "summary": "Update swap by doing an action.",
-        "tags": [
-          "Swaps"
-        ],
+        "tags": ["Swaps"],
         "parameters": [
           {
             "in": "path",
@@ -1578,12 +1696,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "enum": [
-                "initiate",
-                "redeem",
-                "refund",
-                "instant-refund"
-              ]
+              "enum": ["initiate", "redeem", "refund", "instant-refund"]
             }
           }
         ],
@@ -1792,14 +1905,134 @@
                   "status": "Ok",
                   "result": {
                     "default": "open",
-                    "isolation_groups": [
-                      "ethereum:SEED <-> arbitrum:SEED"
-                    ],
-                    "blacklist_pairs": [
-                      "bitcoin:BTC -> starknet:*"
-                    ],
+                    "isolation_groups": ["ethereum:SEED <-> arbitrum:SEED"],
+                    "blacklist_pairs": ["bitcoin:BTC -> starknet:*"],
                     "whitelist_overrides": []
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/volume-metrics": {
+      "get": {
+        "summary": "Get detailed volume metrics and analytics.",
+        "security": [],
+        "description": "Returns comprehensive volume data including historical trends, chain-specific breakdowns, and asset pair analytics.",
+        "responses": {
+          "200": {
+            "description": "Detailed volume metrics and analytics data.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VolumeMetricsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/volume-2": {
+      "get": {
+        "security": [],
+        "summary": "Get swap volume.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "address",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by wallet address"
+          },
+          {
+            "in": "query",
+            "name": "source_chain",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by source chain"
+          },
+          {
+            "in": "query",
+            "name": "dest_chain",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by destination chain"
+          },
+          {
+            "in": "query",
+            "name": "from",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Filter by timestamp in Unix timestamp format"
+          },
+          {
+            "in": "query",
+            "name": "to",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Filter by timestamp in Unix timestamp format"
+          },
+          {
+            "in": "query",
+            "name": "chain",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by chain"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Total swap volume.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseString"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/competitors/{id}": {
+      "get": {
+        "security": [],
+        "summary": "Get competitors.",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Order ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Competitors.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CompetitorsResponse"
                 }
               }
             }

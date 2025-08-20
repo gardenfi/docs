@@ -14,6 +14,12 @@ Run the following command at the root of your documentation (where docs.json is)
 mint dev
 ```
 
+Alternatively, you can run the development server without installing the CLI globally:
+
+```
+npx mintlify dev
+```
+
 #### Troubleshooting
 
 - If the dev environment isn't running - Run `mint update` to ensure you have the most recent version of the CLI.
