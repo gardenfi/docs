@@ -206,6 +206,12 @@
               "api-reference/endpoint/orders/get-instant-refund-hash",
               "api-reference/endpoint/orders/patch"
             ]
+          },
+          {
+            "group": "Affiliate",
+            "pages": [
+              "api-reference/endpoint/affiliate/get-earnings"
+            ]
           }
         ]
       },

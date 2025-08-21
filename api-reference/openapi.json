@@ -163,32 +163,54 @@
           }
         ]
       },
-      "AffiliateFeeItem": {
+      "AffiliateEarningsItem": {
         "type": "object",
         "properties": {
           "total_earnings": {
-            "type": "string"
+            "type": "string",
+            "description": "Total earnings in asset units for the affiliate."
+          },
+          "total_earnings_usd": {
+            "type": "string",
+            "description": "Total earnings in USD for the mentioned asset for the affiliate."
           },
           "affiliate": {
-            "type": "string"
+            "type": "string",
+            "description": "The address that will receive the earnings."
           },
           "asset": {
             "$ref": "#/components/schemas/AffiliateFeeAsset"
           },
-          "claim_amount": {
-            "type": "string"
+          "token_address": {
+            "type": "string",
+            "description": "Contract address for the affiliate fee asset."
           },
-          "claim_transaction": {
-            "$ref": "#/components/schemas/EVMTransaction"
+          "claim_amount": {
+            "type": "string",
+            "description": "Amount available for claiming in asset units. Only included if the affiliate has not yet claimed their earnings."
+          },
+          "claim_amount_usd": {
+            "type": "string",
+            "description": "Amount available for claiming in USD. Only included if the affiliate has not yet claimed their earnings."
+          },
+          "claim_signature": {
+            "type": "string",
+            "description": "Signature for claiming earnings. Only included if the affiliate has not yet claimed their earnings."
+          },
+          "claim_contract": {
+            "type": "string",
+            "description": "Contract address for claiming earnings. Only included if the affiliate has not yet claimed their earnings."
           }
         },
         "required": [
           "total_earnings",
+          "total_earnings_usd",
           "affiliate",
-          "asset"
+          "asset",
+          "token_address"
         ]
       },
-      "AffiliateFeesResponse": {
+      "AffiliateEarningsResponse": {
        "allOf": [
           {
             "$ref": "#/components/schemas/Response"
@@ -202,7 +224,7 @@
               "result": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/AffiliateFeeItem"
+                  "$ref": "#/components/schemas/AffiliateEarningsItem"
                 }
               }
             }
@@ -1359,69 +1381,17 @@
     "/fees": {
       "get": {
         "summary": "Get swap fees.",
-        "security": [],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "garden-app-id",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Garden app ID for affiliate fee information"
-          }
-        ],
         "responses": {
           "200": {
-            "description": "Total swap fees or affiliate fees if garden-app-id is provided. For affiliate fees, claim_amount and claim_transaction are only included if the affiliate has not yet claimed their fees.",
+            "description": "Total swap fees.",
             "content": {
               "application/json": {
                 "schema": {
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/ResponseString",
-                      "title": "Total Fees"
-                    },
-                    {
-                      "$ref": "#/components/schemas/AffiliateFeesResponse",
-                      "title": "Affiliate Fees"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/ResponseString"
                 },
-                "examples": {
-                  "total-fees": {
-                    "summary": "Total Fees Response",
-                    "value": {
-                      "success": true,
-                      "result": "2668122"
-                    }
-                  },
-                  "affiliate-fees": {
-                    "summary": "Affiliate Fees Response",
-                    "value": {
-                      "success": true,
-                      "result": [
-                        {
-                          "total_earnings": "150750000",
-                          "affiliate": "0x004Cc75ACF4132Fc08cB6a252E767804F303F729",
-                          "asset": "ethereum:usdc",
-                          "claim_amount": "50750000",
-                          "claim_transaction": {
-                            "to": "0x5EbEC4D8DA437b2BAD656D43d40fE412bA5D217a",
-                            "value": "0x0",
-                            "chain_id": 1,
-                            "data": "0x4ede0ab7000000000000000000000000661ba32eb5f86cab358ddbb7f264b10c5825e2dd0000000000000000000000000000000000000000000000000000000000069780000000000000000000000000000000000000000000000000000000000000c3503331ff69aca609e06dcd4b97223667611d66bb4e8b56e26fc0ff53c49a1ed04d00000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000000",
-                            "gas_limit": "0x30d40"
-                          }
-                        },
-                        {
-                          "total_earnings": "3000000",
-                          "affiliate": "0x004Cc75ACF4132Fc08cB6a252E767804F303F729",
-                          "asset": "ethereum:cbbtc"
-                        }
-                      ]
-                    }
-                  }
+                "example": {
+                    "status": "Ok",
+                    "result": "2668122"
                 }
               }
             }
@@ -1800,6 +1770,46 @@
                     ],
                     "whitelist_overrides": []
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apps/earnings": {
+      "get": {
+        "summary": "Get affiliate earnings.",
+        "responses": {
+          "200": {
+            "description": "List of affiliate earnings.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AffiliateEarningsResponse"
+                },
+                "example": {
+                  "status": "Ok",
+                  "result": [
+                    {
+                      "total_earnings": "15075000000",
+                      "total_earnings_usd": "15075",
+                      "affiliate": "0x004Cc75ACF4132Fc08cB6a252E767804F303F729",
+                      "asset": "ethereum:usdc",
+                      "token_address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+                      "claim_amount": "5075000000",
+                      "claim_amount_usd": "5075",
+                      "claim_signature": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1b",
+                      "claim_contract": "0x5EbEC4D8DA437b2BAD656D43d40fE412bA5D217a"
+                    },
+                    {
+                      "total_earnings": "30000000",
+                      "total_earnings_usd": "30000",
+                      "affiliate": "0x004Cc75ACF4132Fc08cB6a252E767804F303F729",
+                      "asset": "ethereum:cbbtc",
+                      "token_address": "0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf"
+                    }
+                  ]
                 }
               }
             }

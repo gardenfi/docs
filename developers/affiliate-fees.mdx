@@ -160,3 +160,98 @@ For example, a 30 bps fee could be split by sending 10 bps in USDC to an Ethereu
     </Tab>
 
 </Tabs>
+
+## How to Claim
+
+The claiming process involves two steps: checking your available earnings through the API, then submitting an on-chain transaction to withdraw them.
+
+### Check Available Earnings
+
+First, call the earnings endpoint to get your claimable amounts:
+
+```bash cURL
+curl -X 'GET' 'https://api.garden.finance/v2/apps/earnings' \
+    -H 'garden-app-id: YOUR_APP_ID' \
+    -H 'accept: application/json'
+```
+
+Example response:
+
+```json Success
+{
+  "status": "Ok",
+  "result": [
+    {
+      "total_earnings": "15075000000",
+      "total_earnings_usd": "15075",
+      "affiliate": "0x004Cc75ACF4132Fc08cB6a252E767804F303F729",
+      "asset": "ethereum:usdc",
+      "token_address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+      "claim_amount": "5075000000",
+      "claim_amount_usd": "5075",
+      "claim_signature": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1b",
+      "claim_contract": "0x5EbEC4D8DA437b2BAD656D43d40fE412bA5D217a"
+    }
+  ]
+}
+```
+
+<Note>
+  The `claim_amount`, `claim_amount_usd`, `claim_signature`, and `claim_contract` fields are only included when you have unclaimed earnings available.
+</Note>
+
+### Claim Your Earnings
+
+To claim your earnings, you need to call the `claim` function on the distributor contract. Here's how to construct the transaction:
+
+<Note>
+  Make sure to call the claim function on the same chain where you received the rewards. For example, if your earnings are in `ethereum:usdc`, you should use the Ethereum mainnet RPC URL and chain configuration.
+</Note>
+
+```javascript JavaScript
+import { createWalletClient, createPublicClient, http, parseAbi } from 'viem';
+import { privateKeyToAccount } from 'viem/accounts';
+import { mainnet } from 'viem/chains';
+
+async function claimAffiliateEarnings(claimData) {
+  const account = privateKeyToAccount('<YOUR_PRIVATE_KEY>');
+  
+  // Create wallet client for sending transactions
+  const walletClient = createWalletClient({
+    account,
+    chain: mainnet,
+    transport: http('YOUR_RPC_URL'),
+  });
+
+  // Create public client for reading transaction receipts
+  const publicClient = createPublicClient({
+    chain: mainnet,
+    transport: http('YOUR_RPC_URL'),
+  });
+
+  // Parse the ABI for the claim function
+  const abi = parseAbi([
+    'function claim((address toAddress, address tokenAddress, uint256 totalRewards) _claim, bytes _signature)'
+  ]);
+
+  // Prepare claim parameters
+  const claimParams = {
+    toAddress: claimData.affiliate,
+    tokenAddress: claimData.token_address,
+    totalRewards: BigInt(claimData.total_earnings)
+  };
+
+  // Execute the claim transaction
+  const hash = await walletClient.writeContract({
+    address: claimData.claim_contract,
+    abi,
+    functionName: 'claim',
+    args: [claimParams, claimData.claim_signature]
+  });
+
+  // Wait for transaction receipt
+  const receipt = await publicClient.waitForTransactionReceipt({ hash });
+  return receipt;
+}
+```
+
