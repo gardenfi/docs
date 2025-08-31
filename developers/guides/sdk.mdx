@@ -4,7 +4,7 @@ description: "Step-by-step guide to integrating Garden SDK for fetching quotes, 
 ---
 
 <Note>
-If you are stuck at any part of the implementation, drop a message in our [Townhall](https://discord.gg/dZwSjh9922)—our dev team is ready to assist!
+If you are stuck at any part of the implementation, drop a message in our [Townhall](https://discord.gg/B7RczEFuJ5)—our dev team is ready to assist!
 </Note>
 
 This cookbook provides a step-by-step guide to integrating Garden SDK for fetching quotes, executing swaps, and tracking them. It walks through building a simple cross-chain bridge in a Next.js environment, enabling seamless swaps between BTC (Bitcoin Testnet4) and WBTC (Ethereum Sepolia).
@@ -146,7 +146,7 @@ Now that you have the quotes, it's time to execute the swap. Garden SDK provides
 
 Here's what it does:
 1. Creates your swap order.
-2. Waits for it to be matched with the [solver](/home/fundamentals/introduction/solvers).
+2. Waits for it to be matched with the [solver](/home/fundamentals/core-concepts/solvers).
 3. Automatically initiates the swap if you're on a smart contract chain.
 
 You'll need to provide the swap parameters (including the quote details you got earlier). The hook will return either a matched order or an error message if something goes wrong.
