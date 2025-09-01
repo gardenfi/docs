@@ -859,7 +859,7 @@ description: "Use Garden's API to get quotes, submit orders, and track their sta
                 const gasPrice = await client.getReferenceGasPrice();
                 const estimatedGasBudget = 10000000; // 10M gas units as a conservative estimate
                 
-                let transaction = Transaction.fromKind(new Uint8Array(ptb_bytes)) // ptb_bytes are the Programmable Transaction Bytes returned from the create order response
+                let transaction = Transaction.fromKind(new Uint8Array(ptb_bytes)) // ptb_bytes are the Programmable Transaction Bytes returned from the create order response 
                 transaction.setSender(sender);
                 transaction.setGasPrice(gasPrice);
                 transaction.setGasBudget(estimatedGasBudget);
