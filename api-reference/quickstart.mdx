@@ -856,26 +856,28 @@ description: "Use Garden's API to get quotes, submit orders, and track their sta
                 Then deposit the funds:
                 ```typescript
                 const client = new SuiClient({ url: getFullnodeUrl('testnet') });
-                    const gasPrice = await client.getReferenceGasPrice();
-                    const estimatedGasBudget = 10000000; // 10M gas units as a conservative estimate
-                    
-                    let transaction = Transaction.fromKind(new Uint8Array(programmable_transaction_bytes)) // Programmable Transaction bytes is what we return from our API
-                    transaction.setSender(sender);
-                    transaction.setGasPrice(gasPrice);
-                    transaction.setGasBudget(estimatedGasBudget);
+                const gasPrice = await client.getReferenceGasPrice();
+                const estimatedGasBudget = 10000000; // 10M gas units as a conservative estimate
+                
+                let transaction = Transaction.fromKind(new Uint8Array(ptb_bytes)) // ptb_bytes are the Programmable Transaction Bytes returned from the create order response
+                transaction.setSender(sender);
+                transaction.setGasPrice(gasPrice);
+                transaction.setGasBudget(estimatedGasBudget);
 
-                    try {
-                        const result = await client.signAndExecuteTransaction({
-                            transaction: transaction,
-                            signer: keypairAdminTestnet,
-                            options: {
-                                showEffects: true,
-                            },
-                        });
+                const suiWallet = Ed25519Keypair.fromSecretKey("[private-key]");
 
-                        console.log(result)
-                    } catch (error) {
-                        console.error('Transaction execution failed:', error);
+                try {
+                    const result = await client.signAndExecuteTransaction({
+                        transaction: transaction,
+                        signer: suiWallet,
+                        options: {
+                            showEffects: true,
+                        },
+                    });
+
+                    console.log(result)
+                } catch (error) {
+                    console.error('Transaction execution failed:', error);
                 }
                 ```
             </Step>
