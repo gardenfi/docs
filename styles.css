@@ -1,0 +1,100 @@
+/* Custom Haffer Font Loading for Mintlify Docs */
+
+@font-face {
+  font-family: "Haffer";
+  src: url("./fonts/HafferRegular.woff2") format("woff2"),
+    url("./fonts/HafferRegular.woff") format("woff");
+  font-weight: 430;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Haffer";
+  src: url("./fonts/HafferMedium.woff2") format("woff2"),
+    url("./fonts/HafferMedium.woff") format("woff");
+  font-weight: 570;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Haffer";
+  src: url("./fonts/HafferBold.woff2") format("woff2"),
+    url("./fonts/HafferBold.woff") format("woff");
+  font-weight: 790;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Haffer";
+  src: url("./fonts/HafferLight.woff2") format("woff2"),
+    url("./fonts/HafferLight.woff") format("woff");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Haffer";
+  src: url("./fonts/HafferSemiBold.woff2") format("woff2"),
+    url("./fonts/HafferSemiBold.woff") format("woff");
+  font-weight: 670;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Apply Haffer font to all text elements */
+body,
+.mintlify-docs,
+.mintlify-docs * {
+  font-family: "Haffer", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif !important;
+}
+
+/* Specific font weights for different elements */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.mintlify-docs h1,
+.mintlify-docs h2,
+.mintlify-docs h3,
+.mintlify-docs h4,
+.mintlify-docs h5,
+.mintlify-docs h6 {
+  font-family: "Haffer", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif !important;
+}
+
+/* Body text */
+p,
+li,
+div,
+span,
+.mintlify-docs p,
+.mintlify-docs li,
+.mintlify-docs div,
+.mintlify-docs span {
+  font-family: "Haffer", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+}
+
+/* Code blocks and inline code */
+code span {
+  font-family: "JetBrains Mono", "Fira Code", "Monaco", "Consolas", monospace !important;
+}
+
+/* Navigation and sidebar */
+nav,
+aside,
+.sidebar,
+.mintlify-docs nav,
+.mintlify-docs aside,
+.mintlify-docs .sidebar {
+  font-family: "Haffer", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif !important;
+}
