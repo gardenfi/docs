@@ -2,14 +2,129 @@
 title: "Changelog"
 description: "Product updates and announcements"
 ---
+
+<Update label="October 7, 2025" description="v2.0.12" tags={["API"]}>
+  ### Endpoint update
+  - Update GET `/quote` endpoint to include `fee` and `fixed_fee`
+  - Update GET `/assets` endpoint to include `name`
+  - Update GET `/chains` endpoint to include `name`
+</Update>
+
+<Update label="September 24, 2025" description="v2.0.11" tags={["API"]}>
+  ### New endpoint
+  - Add `/apps/earnings` endpoint for fetching affiliate earnings
+</Update>
+
+<Update label="September 15, 2025" description="v2.0.10" tags={["API"]}>
+  ### Endpoint updates
+  - Update POST `/orders` to use `initiate_on_behalf` calldata when the source delegate is passed
+</Update>
+
+<Update label="September 10, 2025" description="v2.0.9" tags={["API"]}>
+  ### Endpoint updates
+  - Update GET `/orders` to include the following filters: `from_owner`, `to_owner`
+  - Update GET `/quote` endpoint to accept `slippage` parameter
+</Update>
+
+<Update label="September 5, 2025" description="v2.0.8" tags={["API"]}>
+  ### Endpoint update
+  - Update GET `/quote` endpoint to include `estimated_time`
+</Update>
+
+<Update label="September 1, 2025" description="v2.5.2" tags={["SDK"]}>
+  ### New chains
+  - Add Core support
+
+  ### New assets
+  - Add SPL tokens support for Solana
+
+  ### Approval flow improvements
+  - Add check after approval to verify the latest allowance amount.
+</Update>
+
+<Update label="September 1, 2025" description="v2.0.7" tags={["API"]}>
+  ### Watcher improvements
+  - Update event watch deadline for Bitcoin swaps from 1 hour to 6 hours
+</Update>
+
+<Update label="August 26, 2025" description="v2.5.0" tags={["SDK"]}>
+  ### New chains
+  - Add Sui support
+
+  ### API call improvements
+  - Extend `getOrders` function with new filters (e.g. status , transaction hash) for more precise order queries.
+  - Accept `AbortController` as a parameter in get methods of `@gardenfi/orderbook` to allow cancellation of ongoing orderbook API calls.
+
+  ### Network switching improvements
+  - Fix error handling in `switchOrAddNetwork` utility for case when network is not found.
+
+  ### Local testing
+  - Add `yarn link` support allowing developers to locally test the changes done in SDK within a working project directory.  
+</Update>
+
+<Update label="August 20, 2025" description="v2.0.6" tags={["API"]}>
+  ### Affiliate fees endpoint
+  - Add GET `/apps/earnings` to track an integrator's affiliate fees
+</Update>
+
+<Update label="August 11, 2025" description="v2.0.5" tags={["API"]}>
+  ### New chains
+  - Add Sui support
+</Update>
+
+<Update label="August 10, 2025" description="v2.4.2" tags={["SDK"]}>
+  ### Order status fixes
+  - Fix order status parsing to ensure swap initiation and initiation detection are confirmed before the attested deadline, preventing orders from being accepted after expiry.
+</Update>
+
+<Update label="August 5, 2025" description="v2.0.4" tags={["API"]}>
+  ### New chains
+  - Add SPL tokens support for Solana
+</Update>
+
+<Update label="August 1, 2025" description="v2.0.3" tags={["API"]}>
+  ### Endpoint updates
+  - Update GET `/orders` to include the following filters: `address`, `tx_hash`, `from_chain`, `to_chain`, `page`, `per_page`, `status`
+  - Update GET `/chains` to include the default explorer URL
+</Update>
+
+<Update label="July 30, 2025" description="v2.4.0" tags={["SDK"]}>
+  ### New chains
+  - Add BNB Chain support
+
+  ### One-click swaps
+  - Add `handleSecretManagement` flag for optional secret management.
+    - When set to `false`, we use [one-click swaps](/developers/api/1click)
+    - When set to `true`, we manage secrets within the SDK, and the user has to keep his session active
+</Update>
+
+<Update label="July 29, 2025" description="v2.0.3" tags={["API"]}>
+  ### New endpoint
+  - Add PATCH `/orders/:id?action=refund` endpoint to process Bitcoin refunds
+</Update>
+
+<Update label="July 24, 2025" description="v2.0.2" tags={["API"]}>
+  ### Endpoint updates
+  - Update GET `/assets` endpoint to return `chain_id` and fiat value
+  - Update POST `/orders` endpoint to make Bitcoin address optional, to allow refund address updates after expiry
+</Update>
+
+<Update label="July 17, 2025" description="v2.3.1" tags={["SDK"]}>
+  ### Phantom wallet fixes
+  - Finalize all inputs of a Partially Signed Bitcoin Transaction in `PhantomProvider`, fixing issues with transaction broadcasting
+</Update>
+
+<Update label="July 16, 2025" description="v2.3.0" tags={["SDK"]}>
+  ### Dependency update
+  - Internalised `@catalogfi/wallets` dependency to Garden SDK
+</Update>
+
 <Update label="July 15, 2025" description="v2.0.1" tags={["API"]}>
   ### New endpoints
-  
   - Add `/schemas/{name}` endpoint for fetching specific contract schemas
   - Add `/schemas` endpoint for browsing available contract interfaces
 
   ### Enhanced schema types
-  
   - Add support for different HTLC contract types across chains:
     - `evm:htlc`, `evm:htlc_erc20`
     - `solana:htlc`, `solana:htlc_spltoken` 

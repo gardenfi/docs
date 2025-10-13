@@ -178,32 +178,54 @@
           }
         ]
       },
-      "AffiliateFeeItem": {
+      "AffiliateEarningsItem": {
         "type": "object",
         "properties": {
           "total_earnings": {
-            "type": "string"
+            "type": "string",
+            "description": "Total earnings in asset units for the affiliate."
+          },
+          "total_earnings_usd": {
+            "type": "string",
+            "description": "Total earnings in USD for the mentioned asset for the affiliate."
           },
           "affiliate": {
-            "type": "string"
+            "type": "string",
+            "description": "The address that will receive the earnings."
           },
           "asset": {
             "$ref": "#/components/schemas/AffiliateFeeAsset"
           },
-          "claim_amount": {
-            "type": "string"
+          "token_address": {
+            "type": "string",
+            "description": "Contract address for the affiliate fee asset."
           },
-          "claim_transaction": {
-            "$ref": "#/components/schemas/EVMTransaction"
+          "claim_amount": {
+            "type": "string",
+            "description": "Amount available for claiming in asset units. Only included if the affiliate has not yet claimed their earnings."
+          },
+          "claim_amount_usd": {
+            "type": "string",
+            "description": "Amount available for claiming in USD. Only included if the affiliate has not yet claimed their earnings."
+          },
+          "claim_signature": {
+            "type": "string",
+            "description": "Signature for claiming earnings. Only included if the affiliate has not yet claimed their earnings."
+          },
+          "claim_contract": {
+            "type": "string",
+            "description": "Contract address for claiming earnings. Only included if the affiliate has not yet claimed their earnings."
           }
         },
         "required": [
           "total_earnings",
+          "total_earnings_usd",
           "affiliate",
-          "asset"
+          "asset",
+          "token_address"
         ]
       },
-      "AffiliateFeesResponse": {
+      "AffiliateEarningsResponse": {
        "allOf": [
           {
             "$ref": "#/components/schemas/Response"
@@ -217,7 +239,7 @@
               "result": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/AffiliateFeeItem"
+                  "$ref": "#/components/schemas/AffiliateEarningsItem"
                 }
               }
             }
@@ -230,23 +252,30 @@
             "type": "string",
             "title": "mainnet",
             "enum": [
-              "arbitrum:ibtc",
               "arbitrum:usdc",
               "arbitrum:wbtc",
+              "arbitrum:seed",
               "base:cbbtc",
-              "bera:lbtc",
               "base:usdc",
+              "bera:lbtc",
               "bitcoin:btc",
+              "bnbchain:bnb",
+              "bnbchain:btcb",
+              "bnbchain:usdc",
               "botanix:btc",
+              "core:wbtc",
               "corn:btcn",
               "ethereum:cbbtc",
               "ethereum:wbtc",
-              "ethereum:ibtc",
               "ethereum:seed",
               "ethereum:usdc",
-              "hyperevm:ubtc",
+              "ethereum:eth",
+              "hyperliquid:ubtc",
               "solana:sol",
+              "solana:usdc",
+              "solana:cbbtc",
               "starknet:wbtc",
+              "sui:sui",
               "unichain:usdc",
               "unichain:wbtc"
             ]
@@ -258,18 +287,71 @@
               "arbitrum_sepolia:seed",
               "arbitrum_sepolia:ibtc",
               "arbitrum_sepolia:wbtc",
+              "arbitrum_sepolia:usdc",
               "base_sepolia:wbtc",
               "base_sepolia:usdt",
               "base_sepolia:ibtc",
+              "base_sepolia:usdc",
               "bitcoin_testnet:btc",
-              "citrea_testnet:cbtc",
+              "bnbchain_testnet:wbtc",
               "citrea_testnet:wcbtc",
+              "citrea_testnet:wbtc",
+              "citrea_testnet:cbtc",
+              "citrea_testnet:cbbtc",
+              "citrea_testnet:usdc",
+              "citrea_testnet:usdt",
               "ethereum_sepolia:wbtc",
+              "ethereum_sepolia:usdc",
               "monad_testnet:cbbtc",
               "monad_testnet:usdc",
               "solana_testnet:sol",
-              "starknet_sepolia:wbtc"
+              "solana_testnet:usdc",
+              "solana_testnet:cbbtc",
+              "starknet_sepolia:wbtc",
+              "sui_testnet:sui"
             ]
+          }
+        ]
+      },
+      "AssetName": {
+        "oneOf": [
+          {
+            "type": "string",
+            "title": "mainnet",
+            "enum": [
+              "USD Coin",
+              "Binance Bitcoin",
+              "Bitcorn",
+              "Bitcoin",
+              "BNB",
+              "Botanix Bitcoin",
+              "Coinbase Wrapped Bitcoin",
+              "Ethereum",
+              "Lombard Bitcoin",
+              "SEED",
+              "SUI",
+              "Solana",
+              "Unit Bitcoin",
+              "Wrapped Bitcoin"
+            ]            
+          },
+          {
+            "type": "string",
+            "title": "testnet",
+            "enum": [
+              "Bitcoin",
+              "Citrea Bitcoin",
+              "Coinbase Wrapped Bitcoin",
+              "iBTC",
+              "SEED",
+              "Solana",
+              "SUI",
+              "Tether USD",
+              "USD Coin",
+              "Wrapped Bitcoin",
+              "Wrapped Citrea Bitcoin"
+            ]
+            
           }
         ]
       },
@@ -291,6 +373,9 @@
         "properties": {
           "id": {
             "$ref": "#/components/schemas/Asset"
+          },
+          "name": {
+            "$ref": "#/components/schemas/AssetName"
           },
           "chain": {
             "$ref": "#/components/schemas/Chain"
@@ -333,6 +418,17 @@
             "type": "string"
           }
         }
+      },
+      "OrderStatus": {
+        "type": "string",
+        "title": "status",
+        "enum": [
+          "not-initiated", 
+          "in-progress", 
+          "completed", 
+          "expired", 
+          "refunded"
+        ]
       },
       "Swap": {
         "type": "object",
@@ -752,7 +848,8 @@
         "type": "object",
         "required": [
           "order_id",
-          "transaction",
+          "approval_transaction",
+          "initiate_transaction",
           "typed_data"
         ],
         "properties": {
@@ -761,7 +858,8 @@
           },
           "approval_transaction": {
             "nullable": true,
-            "$ref": "#/components/schemas/EVMTransaction"
+            "$ref": "#/components/schemas/EVMTransaction",
+            "description": "Can be `null`, if user has already given approval"
           },
           "initiate_transaction": {
             "$ref": "#/components/schemas/EVMTransaction"
@@ -899,18 +997,20 @@
         "type": "object",
         "required": [
           "order_id",
-          "transaction",
+          "approval_transaction",
+          "initiate_transaction",
           "typed_data"
         ],
         "properties": {
           "order_id": {
             "type": "string"
           },
-          "approval_call": {
+          "approval_transaction": {
             "nullable": true,
-            "$ref": "#/components/schemas/StarknetTransaction"
+            "$ref": "#/components/schemas/StarknetTransaction",
+            "description": "Can be `null`, if user has already given approval"
           },
-          "initiate_call": {
+          "initiate_transaction": {
             "nullable": true,
             "$ref": "#/components/schemas/StarknetTransaction"
           },
@@ -934,6 +1034,25 @@
           }
         }
       },
+      "SuiInitiateRequest": {
+        "type": "object",
+        "required": [
+          "order_id",
+          "ptb_bytes"
+        ],
+        "properties": {
+          "order_id": {
+            "type": "string"
+          },
+          "ptb_bytes": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        }
+      },
       "InitiateRequest": {
         "anyOf": [
           {
@@ -951,6 +1070,10 @@
           {
             "title": "solana",
             "$ref": "#/components/schemas/SolanaInitiateRequest"
+          },
+          {
+            "title": "sui",
+            "$ref": "#/components/schemas/SuiInitiateRequest"
           }
         ]
       },
@@ -981,11 +1104,30 @@
           "solver_id": {
             "type": "string"
           },
+          "estimated_time": {
+            "type": "integer",
+            "description": "Estimated swap time in seconds"
+          },
           "source": {
             "$ref": "#/components/schemas/QuoteAsset"
           },
           "destination": {
             "$ref": "#/components/schemas/QuoteAsset"
+          },
+          "slippage": {
+            "type": "integer",
+            "description": "in BIPS (base index points) where 100 bips = 1%",
+            "example": 50
+          },
+          "fee": {
+            "type": "integer",
+            "description": "in BIPS (base index points) where 100 bips = 1%",
+            "example": 30
+          },
+          "fixed_fee": {
+            "type": "string",
+            "description": "in USD",
+            "example": "0.05"
           }
         }
       },
@@ -1346,7 +1488,18 @@
             "name": "affiliate_fee",
             "schema": {
               "type": "integer"
-            }
+            },
+            "description": "in BIPS (base index points) where 100 bips = 1%",
+            "example": 10
+          },
+          {
+            "in": "query",
+            "name": "slippage",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "in BIPS (base index points) where 100 bips = 1%\nWhen not specified, the slippage configured in app settings is used, or zero if no default is configured.",
+            "example": 50
           }
         ],
         "responses": {
@@ -1454,69 +1607,17 @@
     "/fees": {
       "get": {
         "summary": "Get swap fees.",
-        "security": [],
-        "parameters": [
-          {
-            "in": "header",
-            "name": "garden-app-id",
-            "required": false,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Garden app ID for affiliate fee information"
-          }
-        ],
         "responses": {
           "200": {
-            "description": "Total swap fees or affiliate fees if garden-app-id is provided. For affiliate fees, claim_amount and claim_transaction are only included if the affiliate has not yet claimed their fees.",
+            "description": "Total swap fees.",
             "content": {
               "application/json": {
                 "schema": {
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/ResponseString",
-                      "title": "Total Fees"
-                    },
-                    {
-                      "$ref": "#/components/schemas/AffiliateFeesResponse",
-                      "title": "Affiliate Fees"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/ResponseString"
                 },
-                "examples": {
-                  "total-fees": {
-                    "summary": "Total Fees Response",
-                    "value": {
-                      "success": true,
-                      "result": "2668122"
-                    }
-                  },
-                  "affiliate-fees": {
-                    "summary": "Affiliate Fees Response",
-                    "value": {
-                      "success": true,
-                      "result": [
-                        {
-                          "total_earnings": "150750000",
-                          "affiliate": "0x004Cc75ACF4132Fc08cB6a252E767804F303F729",
-                          "asset": "ethereum:usdc",
-                          "claim_amount": "50750000",
-                          "claim_transaction": {
-                            "to": "0x5EbEC4D8DA437b2BAD656D43d40fE412bA5D217a",
-                            "value": "0x0",
-                            "chain_id": 1,
-                            "data": "0x4ede0ab7000000000000000000000000661ba32eb5f86cab358ddbb7f264b10c5825e2dd0000000000000000000000000000000000000000000000000000000000069780000000000000000000000000000000000000000000000000000000000000c3503331ff69aca609e06dcd4b97223667611d66bb4e8b56e26fc0ff53c49a1ed04d00000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000000",
-                            "gas_limit": "0x30d40"
-                          }
-                        },
-                        {
-                          "total_earnings": "3000000",
-                          "affiliate": "0x004Cc75ACF4132Fc08cB6a252E767804F303F729",
-                          "asset": "ethereum:cbbtc"
-                        }
-                      ]
-                    }
-                  }
+                "example": {
+                    "status": "Ok",
+                    "result": "2668122"
                 }
               }
             }
@@ -1620,6 +1721,22 @@
               "type": "string"
             },
             "description": "Filter orders by destination chain"
+          },
+          {
+            "in": "query",
+            "name": "from_owner",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter orders by source owner"
+          },
+          {
+            "in": "query",
+            "name": "to_owner",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter orders by destination owner"
           },
           {
             "in": "query",
@@ -1953,6 +2070,46 @@
                     ],
                     "whitelist_overrides": []
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apps/earnings": {
+      "get": {
+        "summary": "Get affiliate earnings.",
+        "responses": {
+          "200": {
+            "description": "List of affiliate earnings.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AffiliateEarningsResponse"
+                },
+                "example": {
+                  "status": "Ok",
+                  "result": [
+                    {
+                      "total_earnings": "15075000000",
+                      "total_earnings_usd": "15075",
+                      "affiliate": "0x004Cc75ACF4132Fc08cB6a252E767804F303F729",
+                      "asset": "ethereum:usdc",
+                      "token_address": "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+                      "claim_amount": "5075000000",
+                      "claim_amount_usd": "5075",
+                      "claim_signature": "0x1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1b",
+                      "claim_contract": "0x5EbEC4D8DA437b2BAD656D43d40fE412bA5D217a"
+                    },
+                    {
+                      "total_earnings": "30000000",
+                      "total_earnings_usd": "30000",
+                      "affiliate": "0x004Cc75ACF4132Fc08cB6a252E767804F303F729",
+                      "asset": "ethereum:cbbtc",
+                      "token_address": "0xcbB7C0000aB88B473b1f5aFd9ef808440eed33Bf"
+                    }
+                  ]
                 }
               }
             }

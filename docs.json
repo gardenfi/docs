@@ -136,7 +136,8 @@
             "group": "Developer Guides",
             "pages": [
               "developers/guides/cookbook",
-              "developers/guides/sdk"
+              "developers/guides/sdk",
+              "developers/guides/api"
             ]
           },
           {
@@ -206,6 +207,12 @@
               "api-reference/endpoint/orders/get-instant-refund-hash",
               "api-reference/endpoint/orders/patch"
             ]
+          },
+          {
+            "group": "Affiliate",
+            "pages": [
+              "api-reference/endpoint/affiliate/get-earnings"
+            ]
           }
         ]
       },
@@ -230,7 +237,7 @@
         },
         {
           "anchor": "Community",
-          "href": "https://discord.gg/dZwSjh9922",
+          "href": "https://discord.gg/B7RczEFuJ5",
           "icon": "discord"
         }
       ]
@@ -244,7 +251,7 @@
     "links": [
       {
         "label": "Support",
-        "href": "https://discord.gg/dZwSjh9922"
+        "href": "https://discord.gg/B7RczEFuJ5"
       }
     ],
     "primary": {
@@ -257,7 +264,7 @@
     "socials": {
       "x": "https://x.com/garden_finance",
       "github": "https://github.com/gardenfi",
-      "discord": "https://discord.gg/dZwSjh9922"
+      "discord": "https://discord.gg/B7RczEFuJ5"
     },
     "links": [
       {

@@ -1,743 +1,845 @@
 ---
-title: "Integrate with Garden API"
-description: "Guide to integrating Garden into your wallet backend, bridge aggregator, or infrastructure service using our API"
+title: "Build with Garden V2 API"
+description: "Step-by-step guide to building a cross-chain swap terminal UI using Garden's V2 API in Rust"
 ---
 
 <Note>
-If you get stuck during implementation, reach out in our [Townhall](https://discord.gg/dZwSjh9922)—our dev team is ready to help!
+If you are stuck at any part of the implementation, drop a message in our [Townhall](https://discord.gg/B7RczEFuJ5)—our dev team is ready to assist!
 </Note>
 
-This cookbook guides you through integrating Garden into your wallet backend, bridge aggregator, or infrastructure service using our API. You'll learn how to authenticate users, create and initiate cross-chain swaps, and track and redeem them on the destination chain. If you're unsure whether to use the SDK or APIs, see this [comparison](/developers/overview#choosing-between-sdk-and-api).
+This cookbook provides a step-by-step guide to building a terminal-based swap application using Garden's V2 API. It walks through creating an interactive TUI (Terminal User Interface) in Rust that enables seamless cross-chain swaps between Bitcoin and various EVM chains.
 
-We'll demonstrate a complete swap flow from Bitcoin Testnet4 (tBTC) to Arbitrum Sepolia (WBTC), showing how to coordinate with Garden APIs at each step.
+For a fully functional reference, check out [api-cookbook-demo](https://github.com/gardenfi/api-cookbook-demo), allowing you to see how these steps integrate into a working application.
 
-For a full reference implementation, see this [page](https://github.com/gardenfi/api-cookbook-demo)—a working terminal UI in Rust that demonstrates these steps in a real application.
+<Frame caption="Terminal UI showing the network selection screen">
+  ![Network Selector UI](../images/api-demo-app/Network_selector.png)
+</Frame>
 
-## Authenticate
+## What you'll build
 
-Before placing or interacting with orders, your system must authenticate the user. Garden supports two authentication methods:
+- **Network selector**: Choose between localnet, testnet, or mainnet environments
+- **Asset pair selector**: Browse and select from all available trading pairs
+- **Quote dashboard**: Get real-time quotes with amount input
+- **Order dashboard**: Create orders, initiate transactions, and track swap status
 
-### Option 1: Direct SIWE
+## Quick start
 
-Garden uses Sign-In with Ethereum (SIWE) to verify wallet ownership.
+### Prerequisites
 
-**1. Request a nonce**  
-Generate a unique, single-use nonce as a challenge.
+- Rust and Cargo installed
+- Bitcoin and EVM private keys
+- Access to Bitcoin and EVM networks (testnet for testing)
 
-```bash
-POST /auth/siwe/challenges
-```
+### Installation
 
-Expected response:
-```json
-{
-  "status": "Ok",
-  "result": "a34f6521d29cb6f0febbef3c0799f1b8213f85162fa206a535e5e11424c87b43"
-}
-```
-
-**2. Sign the nonce**  
-The user signs the nonce with their EVM wallet, generating a structured SIWE message. This is done by creating a local signer instance (e.g., using 'PrivateKeySigner' from the Alloy crate in Rust), which uses the user's private key to sign the message. The signed message ensures:
-
-- The nonce is unique and prevents replay attacks
-- The user's private key remains secure
-
-SIWE message format:
-```
-<domain> wants you to sign in with your Ethereum account:
-<account_address>
-Garden.fi
-URI: <url>
-Version: 1
-Chain ID: <chain_id>
-Nonce: <the unique nonce from the previous step>
-Issued At: <current_time>
-```
-
-Example for testnet:
-```
-localhost:4361 wants you to sign in with your Ethereum account:
-0x7E5F4552091A69125d5DfCb7b8C2659029395Bdf
-Garden.fi
-URI: http://localhost:4361
-Version: 1
-Chain ID: 11155111
-Nonce: a34f6521d29cb6f0febbef3c0799f1b8213f85162fa206a535e5e11424c87b43
-Issued At: 2025-04-09T07:29:20.203Z
-```
-
-**3. Verify the signed message**  
-Send the signed message to obtain a JSON web token (JWT).
+Clone and set up the repository:
 
 ```bash
-POST /auth/siwe/tokens
+git clone https://github.com/gardenfi/api-cookbook-demo
+cd api-cookbook-demo
 ```
 
-Request:
-```json
-{
- "message": "<message_string>",
- "signature": "<hex_encoded_signature>",
- "nonce": "<unique_nonce_message>"
-}
-```
+### Configuration
 
-Expected response:
-```json
-{
-    "status": "Ok",
-    "result": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiMHhlOTg5MmE4QTNENTk4MTREYjE0OTkxOEFEOWZGNDI4MmMyRDk5MUU4IiwiZXhwIjoxNzQ0MzYyMDIwfQ.iHiPUkeaNBkoUPhDQLqYkP6-6F3NtdmqrfozpafX8oM"
-}
-```
+**1. Set up environment variables**
 
-### Option 2: API key
-
-API keys offer a convenient way to authenticate if you prefer to manage authentication in-house or need persistent access without requiring users to sign messages repeatedly.
-
-If you need an API key, please reach out to us on [Townhall](https://discord.gg/dZwSjh9922) and ping us, or raise a support ticket.
-
-Include the API key in your request headers as "api-key" with the generated key as its value. This replaces JWT bearer tokens for authentication.
+Create a `.env` file with your private keys:
 
 ```bash
-api-key: <your_api_key>
+# EVM Private Key (hex format without 0x prefix)
+PRIV_KEY=your_evm_private_key_here
+
+# Bitcoin Private Key (WIF or hex format)
+# If not provided, PRIV_KEY will be used
+BTC_PRIV_KEY=your_btc_private_key_here
 ```
 
-## Order lifecycle
+**2. Configure network endpoints**
 
-This section outlines the swap lifecycle and how each step maps to specific API calls.
+The `config.json` file contains API endpoints and provider URLs for each network:
 
-When a user requests to swap assets, start by retrieving a price quote for the order pair (source chain, source asset, destination chain, destination asset, and amount). After confirming the quote, the order is attested and validated by Garden's API, then created via the `/relayer/create-order` endpoint.
-
-For a detailed breakdown of the order lifecycle, including status transitions, see the [order lifecycle](/developers/core/order-lifecycle). For a deeper understanding of the Garden protocol, read the [intent flow](/home/fundamentals/how-it-works/intent-flow).
-
-### Get supported pairs
-
-The first step is to display all available options. Use the `/quote/strategies` endpoint to get all supported pairs from Garden. Each pair has a unique 'id'.
-
-```bash
-GET /quote/strategies
-```
-
-Example response:
-```json
+<CodeGroup>
+```json Response expandable
 {
-  "status": "Ok",
-  "result": {
-    "btyrasac": {
-      "id": "btyrasac",
-      "source_chain_address": "1db36714896afaee20c2cc817d170689870858b5204d3b5a94d217654e94b2fb",
-      "dest_chain_address": "0x29f72597ca8a21F9D925AE9527ec5639bAFD5075",
-      "source_chain": "bitcoin_testnet",
-      "dest_chain": "arbitrum_sepolia",
-      "source_asset": {
-        "asset": "primary",
-        "token_id": "bitcoin",
-        "decimals": 8
+  "networks": {
+    "mainnet": {
+      "api": {
+        "assets_url": "https://api.garden.finance/v2/chains",
+        "quote_server_url": "https://api.garden.finance/v2/quote",
+        "authenticator_url": "https://api.garden.finance/auth",
+        "orderbook_url": "https://api.garden.finance/v2/orders"
       },
-      "dest_asset": {
-        "asset": "0x795Dcb58d1cd4789169D5F938Ea05E17ecEB68cA",
-        "token_id": "bitcoin",
-        "decimals": 8
+      "providers": {
+        "bitcoin": "https://mempool.space/api",
+        "arbitrum": "https://arb-mainnet.g.alchemy.com/v2/demo",
+        "ethereum": "https://eth-mainnet.g.alchemy.com/v2/demo"
+      }
+    },
+    "testnet": {
+      "api": {
+        "assets_url": "https://testnet.api.garden.finance/v2/chains",
+        "quote_server_url": "https://testnet.api.garden.finance/v2/quote",
+        "authenticator_url": "https://testnet.api.garden.finance/auth",
+        "orderbook_url": "https://testnet.api.garden.finance/v2/orders"
       },
-      "makers": [],
-      "min_amount": "10000",
-      "max_amount": "100000",
-      "min_source_timelock": 12,
-      "min_source_confirmations": 1,
-      "min_price": 1.0001,
-      "fee": 30
+      "providers": {
+        "bitcoin": "https://mempool.space/testnet4/api",
+        "arbitrum": "https://arbitrum-sepolia.drpc.org",
+        "ethereum": "https://ethereum-sepolia-rpc.publicnode.com"
+      }
+    },
+    "localnet": {
+      "api": {
+        "assets_url": "http://localhost:8080",
+        "quote_server_url": "http://localhost:6969",
+        "authenticator_url": "http://localhost:4427",
+        "orderbook_url": "http://localhost:4455"
+      },
+      "providers": {
+        "bitcoin": "http://localhost:30000",
+        "arbitrum": "http://localhost:8546",
+        "ethereum": "http://localhost:8545"
+      }
     }
   }
 }
 ```
+</CodeGroup>
 
-Define the `order pair` based on user selection in this format:
-`source_chain:source_asset::destination_chain:destination_asset`
+### Running the application
 
-For our tBTC to WBTC (Arbitrum) example:
-```
-bitcoin_testnet:primary::arbitrum_sepolia:0x795Dcb58d1cd4789169D5F938Ea05E17ecEB68cA
-```
-
-### Get quote
-
-Request solver quotes for the expected output (or required input) amount using the selected `order pair` and specifying the `amount` in sats.
+Start the terminal UI:
 
 ```bash
-GET /quote/?order_pair=<source_chain:source_asset::dest_chain::dest_asset>&amount=<desired_in_amount>&exact_out=boolean
+cargo run -- --c config.json
 ```
 
-`exact_out` lets you choose whether to specify what you want to spend or what you want to receive:
+## Application flow
 
-- `exact_out=false`: Specify input amount (e.g., send 0.01 BTC → get X WBTC)
-- `exact_out=true`: Specify desired output (e.g., get 10 WBTC → send X BTC)
+### 1. Network selection
 
-For our tBTC to WBTC (Arbitrum) example:
+When you launch the app, you'll first select your target network. The terminal interface presents all available networks (localnet, testnet, and mainnet) in an interactive list where you can navigate with arrow keys and select with Enter:
 
-```bash
-GET /quote/?order_pair=bitcoin_testnet:primary::arbitrum_sepolia:0x795Dcb58d1cd4789169D5F938Ea05E17ecEB68cA&amount=10000&exact_out=false
-```
+<Frame caption="Interactive network selector with localnet, testnet, and mainnet options">
+  ![Network Selection](../images/api-demo-app/Network_selector.png)
+</Frame>
 
-Example response:
-```json
-{
-  "status": "Ok",
-  "result": {
-    "quotes": {
-      "btyrasac": "9970"
-    },
-    "input_token_price": 77328.3666062084,
-    "output_token_price": 77328.3666062084
-  }
+The network selector is implemented in `src/ui/states/network_selector.rs`:
+
+<CodeGroup>
+```rust network_selector.rs
+pub struct NetworkSelectorState {
+    selected_index: usize,
+    networks: Vec<String>,
+    list_state: ListState,
 }
-```
 
-The response provides asset prices (in USD) from market oracles and solver quotes for the specified amount. If `exact_out` is `false`, the quote reflects the output (receive) amount for the user.
+impl NetworkSelectorState {
+    pub fn new(config: &Config) -> Self {
+        let mut networks: Vec<String> = config.networks.keys().map(|k| k.to_string()).collect();
+        networks.sort();
 
-<Note>
-In atomic swaps, funds are locked on-chain using a secret hash, which is the SHA256 hash of a randomly generated secret.
-
-Garden offers two approaches for managing the secret and its hash:
-
-**Garden-managed secret**: Garden generates and manages the secret and secret hash internally.
-- Redemptions are done automatically.
-
-**Developer-managed secret**: You can generate and manage the secret and hash yourself.
-- The developer must manually perform redemption calls.
-- Setup instant refund for bitcoin swaps
-
-After receiving a quote, you can proceed with either a [**Garden-managed secret**](#garden-managed-secret) or a [**Developer-managed secret**](#developer-managed-secret) flow, depending on what best suits your integration needs.
-</Note>
-
-## Garden-managed secret
-
-### Create order
-
-When ready, create an order by sending a request to `/relayer/create-order`. This creates the order in Garden's orderbook. The response includes the unique `order ID` for tracking and managing the order.
-
-```bash
-POST /relayer/create-order
-```
-
-Example request for tBTC to WBTC:
-
-```json
-{
-  "source_chain": "bitcoin_testnet",
-  "destination_chain": "arbitrum_sepolia",
-  "source_asset": "primary",
-  "destination_asset": "0x795Dcb58d1cd4789169D5F938Ea05E17ecEB68cA",
-  "initiator_destination_address": "0x753Cf575A0224c590ACF3587031E88b238261f7a",
-  "source_amount": "10000",
-  "destination_amount": "9970",
-  "nonce": "1743337081630",
-  "additional_data": {
-    "strategy_id": "btyrasac",
-    "bitcoin_optional_recipient": "tb1qz0pnh98kfynptg9dtkj06f7sqnlxl3dxnmnjw4"
-  }
-}
-```
-
-<Note>
-- Since the source is Bitcoin, `initiator_source_address` is not required.
-- If the destination is Bitcoin, `initiator_destination_address` is not required.
-</Note>
-
-Expected response:
-```json
-{
-  "result": "<order-id>",
-  "status": "Ok"
-}
-```
-
-### Get order data
-
-To retrieve order data for an order ID:
-
-```bash
-GET /orders/id/:id/
-```
-
-Expected response:
-```json
-{
-  "status": "Ok",
-  "result": {
-    "created_at": "<timestamp>",
-    "updated_at": "<timestamp>",
-    "deleted_at": null,
-    "source_swap": {
-      "created_at": "<timestamp>",
-      "updated_at": "<timestamp>",
-      "deleted_at": null,
-      "swap_id": "<swap_id_hash>",
-      "chain": "<chain_name>",
-      "asset": "<asset_type>",
-      "initiator": "<initiator_address>",
-      "redeemer": "<redeemer_address>",
-      "timelock": "<timelock_value>",
-      "filled_amount": "<amount>",
-      "amount": "<amount>",
-      "secret_hash": "<secret_hash>",
-      "secret": "",
-      "initiate_tx_hash": "<transaction_hash>",
-      "redeem_tx_hash": "",
-      "refund_tx_hash": "<transaction_hash>",
-      "initiate_block_number": "<block_number>",
-      "redeem_block_number": "0",
-      "refund_block_number": "<block_number>",
-      "required_confirmations": "<number>",
-      "current_confirmations": "<number>"
-    },
-    "destination_swap": {
-      "created_at": "<timestamp>",
-      "updated_at": "<timestamp>",
-      "deleted_at": null,
-      "swap_id": "<swap_id_hash>",
-      "chain": "<chain_name>",
-      "asset": "<asset_type>",
-      "initiator": "<initiator_address>",
-      "redeemer": "<redeemer_address>",
-      "timelock": "<timelock_value>",
-      "filled_amount": "<amount>",
-      "amount": "<amount>",
-      "secret_hash": "<secret_hash>",
-      "secret": "",
-      "initiate_tx_hash": "<transaction_hash>",
-      "redeem_tx_hash": "",
-      "refund_tx_hash": "<transaction_hash>",
-      "initiate_block_number": "<block_number>",
-      "redeem_block_number": "0",
-      "refund_block_number": "<block_number>",
-      "required_confirmations": "<number>",
-      "current_confirmations": "<number>"
-    },
-    "create_order": {
-      // order metadata
+        let mut list_state = ListState::default();
+        list_state.select(Some(0));
+        Self {
+            selected_index: 0,
+            networks,
+            list_state,
+        }
     }
-  }
+
+    pub fn get_selected_network(&self) -> &str {
+        &self.networks[self.selected_index]
+    }
+
+    fn update_list_state(&mut self) {
+        self.list_state.select(Some(self.selected_index));
+    }
 }
 ```
+</CodeGroup>
 
-If the order is unmatched, this endpoint returns null.
+**Key features:**
+- Navigate with `↑/↓` arrow keys
+- Select with `Enter`
+- Quit with `q`
+- Scrollable list that adapts to terminal size
 
-### Initiate order
+### 2. Fetching supported chains and assets
 
-The order initiation process begins when the user initiates the swap on the source chain. For EVM-based chains, use the `/relayer/initiate` endpoint. The process differs for Bitcoin, which uses scripts.
+After selecting a network, the app fetches all available chains and their assets from Garden's API:
 
-**Initiating on EVM:**
+<CodeGroup>
+```rust chains.rs
+pub fn get_chains(&self) -> Result<Vec<Chain>> {
+    let response = self
+        .client
+        .get(&self.assets_url)
+        .send()
+        .map_err(|e| anyhow!("Failed to fetch chains: {}", e))?;
 
-To initiate, the user must sign the HTLC initiation message using their wallet provider's EIP-712 typed data signing method. This signature authorizes the HTLC contract to lock tokens in escrow with the specified parameters. The signature is used for contract initialization.
+    let response_text = response
+        .error_for_status()
+        .map_err(|e| anyhow!("HTTP error: {}", e))?
+        .text()
+        .map_err(|e| anyhow!("Failed to read response body: {}", e))?;
 
-1. **Get EIP712 domain data**  
-   The user must call the `eip712domain()` function on the HTLC contract that returns the eip712 domain data.
+    let api_response: ApiResponse<Vec<Chain>> = serde_json::from_str(&response_text)
+        .map_err(|e| anyhow!("Failed to parse chains response: {}", e))?;
 
-   Sample EIP712domain data:
-   ```
-   [ eip712Domain method Response ]
-   name                string    :  HTLC
-   version             string    :  1
-   chainId             uint256   :  42161
-   verifyingContract   address   :  0x6b6303fAb8eC7232b4f2a7b9fa58E5216F608fcb
-   ```
-
-2. **Format initiation message**  
-   The initiation message must be in the following format:
-
-   ```typescript
-   {
-       address redeemer;
-       uint256 timelock;
-       uint256 amount;
-       bytes32 secretHash;
-   }
-   ```
-
-3. **Sign and submit**  
-   The message, along with the domain data, must be signed with the wallet, and the signature is sent with the initiate request to the relayer.
-
-   ```bash
-   POST /relayer/initiate
-   ```
-
-   Example request:
-   ```json
-   {
-       "order_id": "<order_id>",
-       "signature": "<signature_hex_string>",
-       "perform_on": "Source"
-   }
-   ```
-
-   Expected response:
-   ```json
-   {
-     "result": "<tx_id>",
-     "status": "Ok"
-   }
-   ```
-
-**Initiating on Bitcoin:**
-
-On Bitcoin, initiation can be done in two ways:
-
-1. Fund the HTLC script address directly using a Bitcoin wallet
-2. Construct a transaction paying the required amount to the HTLC script address and broadcast it
-
-The HTLC script address is the swap ID of the source chain swap, found in the `source_swap` field in the `/orders/id/:id` response.
-
-### Redeem asset
-
-Redemption is handled automatically for the user. No manual action is required to redeem tokens.
-
-<Note>
-If the secret is managed by the developer, redemptions must also be handled by the developer.
-</Note>
-
-## Developer managed secret
-
-### Generate secret and secret Hash
-
-The secret hash is a SHA256 hash of a randomly generated secret.
-
-The **secret** must be **hashed using the SHA256 algorithm**. This hash is used for initiating and redeeming swaps.
-
-Example:
-```
-secret = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" //randomly generated hex string
-  | SHA256 hashed
-  v
-secret_hash = "5df6e0e2761359d30a8275058e299fcc0381534545f55cf43e41983f5d4c9456"
-```
-
-### Create order
-
-When ready, create an order by sending a request to `/relayer/create-order`. This creates the order in Garden's orderbook. The response includes the unique `order ID` for tracking and managing the order.
-
-```bash
-POST /relayer/create-order
-```
-
-Example request for tBTC to WBTC:
-
-```json
-{
-  "source_chain": "bitcoin_testnet",
-  "destination_chain": "arbitrum_sepolia",
-  "source_asset": "primary",
-  "destination_asset": "0x795Dcb58d1cd4789169D5F938Ea05E17ecEB68cA",
-  "initiator_source_address": "609c8b4b2026902fa15ad850de19d56ecee31ce9b61f0f69cc732da3a58b6ad6",
-  "initiator_destination_address": "0x753Cf575A0224c590ACF3587031E88b238261f7a",
-  "source_amount": "10000",
-  "destination_amount": "9970",
-  "nonce": "1743337081630",
-  "secret_hash": "5b876744fc3b8812da6b5317e3dcbb833c68c13c59cb67e9dfac992d388a1b74",
-  "additional_data": {
-    "strategy_id": "btyrasac",
-    "bitcoin_optional_recipient": "tb1qz0pnh98kfynptg9dtkj06f7sqnlxl3dxnmnjw4"
-  }
+    Ok(api_response.result)
 }
 ```
+</CodeGroup>
 
-Expected response:
-```json
-{
-  "result": "<order-id>",
-  "status": "Ok"
-}
-```
+**Response structure:**
 
-### Get order data
-
-To retrieve order data for an order ID:
-
-```bash
-GET /orders/id/:id/
-```
-
-Expected response:
-```json
+```json Response expandable
 {
   "status": "Ok",
-  "result": {
-    "created_at": "<timestamp>",
-    "updated_at": "<timestamp>",
-    "deleted_at": null,
-    "source_swap": {
-      "created_at": "<timestamp>",
-      "updated_at": "<timestamp>",
-      "deleted_at": null,
-      "swap_id": "<swap_id_hash>",
-      "chain": "<chain_name>",
-      "asset": "<asset_type>",
-      "initiator": "<initiator_address>",
-      "redeemer": "<redeemer_address>",
-      "timelock": "<timelock_value>",
-      "filled_amount": "<amount>",
-      "amount": "<amount>",
-      "secret_hash": "<secret_hash>",
-      "secret": "",
-      "initiate_tx_hash": "<transaction_hash>",
-      "redeem_tx_hash": "",
-      "refund_tx_hash": "<transaction_hash>",
-      "initiate_block_number": "<block_number>",
-      "redeem_block_number": "0",
-      "refund_block_number": "<block_number>",
-      "required_confirmations": "<number>",
-      "current_confirmations": "<number>"
+  "result": [
+    {
+      "chain": "bitcoin_testnet",
+      "id": "bitcoin",
+      "icon": "https://garden.imgix.net/token-images/bitcoin.svg",
+      "explorer_url": "https://mempool.space/testnet4",
+      "confirmation_target": 1,
+      "source_timelock": "144",
+      "destination_timelock": "12",
+      "supported_htlc_schemas": [],
+      "supported_token_schemas": [],
+      "assets": [
+        {
+          "id": "bitcoin_testnet:btc",
+          "name": "Bitcoin",
+          "chain": "bitcoin",
+          "icon": "https://garden.imgix.net/token-images/bitcoin.svg",
+          "htlc": null,
+          "token": null,
+          "decimals": 8,
+          "min_amount": "50000",
+          "max_amount": "10000000000",
+          "price": 114641.1
+        }
+      ]
     },
-    "destination_swap": {
-      "created_at": "<timestamp>",
-      "updated_at": "<timestamp>",
-      "deleted_at": null,
-      "swap_id": "<swap_id_hash>",
-      "chain": "<chain_name>",
-      "asset": "<asset_type>",
-      "initiator": "<initiator_address>",
-      "redeemer": "<redeemer_address>",
-      "timelock": "<timelock_value>",
-      "filled_amount": "<amount>",
-      "amount": "<amount>",
-      "secret_hash": "<secret_hash>",
-      "secret": "",
-      "initiate_tx_hash": "<transaction_hash>",
-      "redeem_tx_hash": "",
-      "refund_tx_hash": "<transaction_hash>",
-      "initiate_block_number": "<block_number>",
-      "redeem_block_number": "0",
-      "refund_block_number": "<block_number>",
-      "required_confirmations": "<number>",
-      "current_confirmations": "<number>"
-    },
-    "create_order": {
-      // order metadata
+    {
+      "chain": "ethereum_sepolia",
+      "id": "evm:11155111",
+      "icon": "https://garden.imgix.net/chain_images/sepolia.svg",
+      "explorer_url": "https://sepolia.etherscan.io",
+      "confirmation_target": 1,
+      "source_timelock": "7200",
+      "destination_timelock": "600",
+      "supported_htlc_schemas": [
+        "evm:htlc_erc20"
+      ],
+      "supported_token_schemas": [
+        "evm:erc20"
+      ],
+      "assets": [
+        {
+          "id": "ethereum_sepolia:wbtc",
+          "name": "Wrapped Bitcoin",
+          "chain": "evm:11155111",
+          "icon": "https://garden.imgix.net/token-images/wbtc.svg",
+          "htlc": {
+            "address": "0xd1E0Ba2b165726b3a6051b765d4564d030FDcf50",
+            "schema": "evm:htlc_erc20"
+          },
+          "token": {
+            "address": "0xE918A5a47b8e0AFAC2382bC5D1e981613e63fB07",
+            "schema": "evm:erc20"
+          },
+          "decimals": 8,
+          "min_amount": "50000",
+          "max_amount": "10000000000",
+          "price": 114641.1
+        },
+        {
+          "id": "ethereum_sepolia:usdc",
+          "name": "USD Coin",
+          "chain": "evm:11155111",
+          "icon": "https://garden.imgix.net/token-images/usdc.svg",
+          "htlc": {
+            "address": "0x730Be401ef981D199a0560C87DfdDaFd3EC1C493",
+            "schema": "evm:htlc_erc20"
+          },
+          "token": {
+            "address": "0xadDD620EA6D20f4f9c24fff3BC039E497ceBEDc2",
+            "schema": "evm:erc20"
+          },
+          "decimals": 6,
+          "min_amount": "15000000",
+          "max_amount": "10000000000",
+          "price": 1
+        }
+      ]
     }
-  }
-}
-```
-
-If the order is unmatched, this endpoint returns null.
-
-### Initiate order
-
-The order initiation process begins when the user initiates the swap on the source chain. For EVM-based chains, use the `/relayer/initiate` endpoint. The process differs for Bitcoin, which uses scripts.
-
-**Initiating on EVM:**
-
-To initiate, the user must sign the HTLC initiation message using their wallet provider's EIP-712 typed data signing method. This signature authorizes the HTLC contract to lock tokens in escrow with the specified parameters. The signature is used for contract initialization.
-
-1. **Get EIP712 domain data**  
-   The user must call the `eip712domain()` function on the HTLC contract that returns the eip712 domain data.
-
-   Sample EIP712domain data:
-   ```
-   [ eip712Domain method Response ]
-   name                string    :  HTLC
-   version             string    :  1
-   chainId             uint256   :  42161
-   verifyingContract   address   :  0x6b6303fAb8eC7232b4f2a7b9fa58E5216F608fcb
-   ```
-
-2. **Format initiation message**  
-   The initiation message must be in the following format:
-
-   ```typescript
-   {
-       address redeemer;
-       uint256 timelock;
-       uint256 amount;
-       bytes32 secretHash;
-   }
-   ```
-
-3. **Sign and submit**  
-   The message, along with the domain data, must be signed with the wallet, and the signature is sent with the initiate request to the relayer.
-
-   ```bash
-   POST /relayer/initiate
-   ```
-
-   Example request:
-   ```json
-   {
-       "order_id": "<order_id>",
-       "signature": "<signature_hex_string>",
-       "perform_on": "Source"
-   }
-   ```
-
-   Expected response:
-   ```json
-   {
-     "result": "<tx_id>",
-     "status": "Ok"
-   }
-   ```
-
-**Initiating on Bitcoin:**
-
-On Bitcoin, initiation can be done in two ways:
-
-1. Fund the HTLC script address directly using a Bitcoin wallet
-2. Construct a transaction paying the required amount to the HTLC script address and broadcast it
-
-The HTLC script address is the swap ID of the source chain swap, found in the `source_swap` field in the `/orders/id/:id` response.
-
-### Setup Bitcoin Instant-Refund
-
-Instant refund is triggered automatically in these scenarios:
-
-1. **Order Expiry**: User initiates swap → Filler fills → User fails to redeem before expiry → Instant refund triggered
-2. **Partial Fill**: User initiates swap → Filler confirms partial fill → Remaining unfilled portion triggers instant refund
-
-To enable instant refund when the source swap is bitcoin, make the following API calls.
-
-**Generate signature hashes**
-
-```bash
-POST /relayer/bitcoin/instant-refund-hash
-```
-
-Generates the transaction digest(s) that must be signed to enable instant refund.
-
-Request Body:
-```json
-{
-  "order_id": "<order_id>"
-}
-```
-
-Response:
-```json
-{
-  "sighashes": [
-    "<hex_encoded_sighash_to_sign>"
   ]
 }
 ```
 
-<Warning>
-Sign each sighash using **Schnorr signature** with **SIGHASH_SINGLE | ANYONECANPAY**
-</Warning>
+### 3. Asset pair selection
 
-**Submit instant refund transaction**
+The app generates all possible trading pairs and displays them in an interactive scrollable list. Browse through available swap routes showing the source and destination assets with their respective chains:
 
-```bash
-POST /relayer/bitcoin/instant-refund
+<Frame caption="Scrollable list of available trading pairs between different chains">
+  ![Asset Pair Selection](../images/api-demo-app/Asset_pair.png)
+</Frame>
+
+<CodeGroup>
+```rust network_information.rs
+pub fn generate_asset_pairs(chains: Vec<Chain>) -> Vec<AssetPair> {
+    let mut assets = Vec::new();
+
+    for chain in chains {
+        for asset in chain.assets {
+            if asset.price.unwrap_or(0.0) > 0.0 {
+                assets.push(asset.id);
+            }
+        }
+    }
+
+    let mut pairs = Vec::new();
+    for i in 0..assets.len() {
+        for j in 0..assets.len() {
+            if i != j {
+                pairs.push(AssetPair::new(assets[i].clone(), assets[j].clone()));
+            }
+        }
+    }
+
+    pairs
+}
 ```
+</CodeGroup>
 
-Accepts user signatures and stores the prepared SACP (Single + AnyoneCanPay) transaction for future use.
+**Key features:**
+- Automatic pair generation from chain data
+- Scrollable list with visual indicators
+- Back navigation to network selection
+- Search and filter capabilities
 
-Request Body:
+### 4. Getting quotes
+
+Once you select a pair, enter an amount and press "g" to get a real-time quote. The swap page displays the selected asset pair and allows you to input the amount you want to swap:
+
+<Frame caption="Swap page with amount input for the selected trading pair">
+  ![Swap Page](../images/api-demo-app/Swap_page.png)
+</Frame>
+
+After submitting the amount, the application fetches real-time quotes from available solvers and displays detailed swap information including estimated output, fees, and execution time. Press "s" to proceed with creating the order:
+
+<Frame caption="Quote received, ready to create order">
+  ![Create Order](../images/api-demo-app/Create_order.png)
+</Frame>
+
+<CodeGroup>
+```rust quote.rs
+pub async fn fetch_quote(
+    context: &ApiContext,
+    from: &str,
+    to: &str,
+    from_amount: &str,
+) -> Result<Vec<Quote>> {
+    let url = format!(
+        "{}/v2/quote?from={}&to={}&from_amount={}",
+        context.base_url, from, to, from_amount
+    );
+    
+    let response = reqwest::Client::new()
+        .get(&url)
+        .header("garden-app-id", &context.app_id)
+        .header("accept", "application/json")
+        .send()
+        .await?;
+    
+    let quote_response: QuoteResponse = response.json().await?;
+    Ok(quote_response.result)
+}
+```
+</CodeGroup>
+
+**Quote response:**
+
 ```json
 {
-  "order_id": "<order_id>",
-  "signatures": [
-    "<schnorr_signature_in_hex>"
+  "status": "Ok",
+  "result": [
+    {
+      "source": {
+        "asset": "bitcoin_testnet:btc",
+        "amount": "50000",
+        "display": "0.00050000",
+        "value": "58.82"
+      },
+      "destination": {
+        "asset": "base_sepolia:wbtc",
+        "amount": "49850",
+        "display": "0.00049850",
+        "value": "58.64"
+      },
+      "solver_id": "0x9dd9c2d208b07bf9a4ef9ca311f36d7185749635",
+      "estimated_time": 20,
+      "slippage": 0,
+      "fee": 30,
+      "fixed_fee": "0"
+    }
   ]
 }
 ```
 
-Response:
+### 5. Creating orders
+
+After confirming the quote, the application creates an order on Garden's orderbook. You'll see the order being processed with all the swap details:
+
+<Frame caption="Order successfully created showing order ID and swap details">
+  ![Order Created](../images/api-demo-app/Order_created.png)
+</Frame>
+
+For EVM source swaps, you'll need to approve token spending before initiating the swap. The application will prompt you to sign the approval transaction by clicking "a":
+
+<Frame caption="Token approved screen for EVM chains">
+  ![Token Approval](../images/api-demo-app/Token_approval.png)
+</Frame>
+
+<CodeGroup>
+```rust orders.rs
+pub async fn create_order(
+    context: &ApiContext,
+    request: CreateOrderRequest,
+) -> Result<OrderResponse> {
+    let url = format!("{}/v2/orders", context.base_url);
+    
+    let response = reqwest::Client::new()
+        .post(&url)
+        .header("garden-app-id", &context.app_id)
+        .header("Content-Type", "application/json")
+        .json(&request)
+        .send()
+        .await?;
+    
+    let order_response: OrderCreationResponse = response.json().await?;
+    Ok(order_response.result)
+}
+```
+</CodeGroup>
+
+**Order creation request:**
+
 ```json
 {
-  "status": "ok",
-  "result": "<transaction_hex>"
+  "source": {
+    "asset": "bitcoin_testnet:btc",
+    "owner": "tb1p4pr78swsn60y4ushe05v28mqpqppxxkfkxu2wun5jw6duc8unj3sjrh4gd",
+    "amount": "50000"
+  },
+  "destination": {
+    "asset": "base_sepolia:wbtc",
+    "owner": "0x004Cc75ACF4132Fc08cB6a252E767804F303F729",
+    "amount": "49850"
+  }
 }
 ```
 
-**Validation:**
-- Signatures are verified against generated sighashes
-- Public key must match swap initiator
-- Schnorr signature format with correct SIGHASH type enforced
+### 6. Initiating transactions
 
-With this, Bitcoin swaps can be refunded instantly to the user if the order expires or is partially filled.
+The initiation process differs based on the source chain. After creating an order and approving tokens (for EVM), you'll see the initiation screen with transaction details ready to be signed and broadcast:
 
-### Redeem asset
+<Frame caption="Transaction initiation screen showing the swap details">
+  ![Initiate Transaction](../images/api-demo-app/Initiate_txn.png)
+</Frame>
 
-The redemption step finalizes the swap, allowing the user to claim assets on the destination chain after the order has been successfully initiated and confirmed.
+#### Bitcoin Initiation
 
-**Prerequisites:**
-- The swap must be complete on the `source chain`, and assets must be ready on the `destination chain`
-- The destination chain must show an `initiate_tx_hash` under `destination_swap`
-- The `secret` generated during order creation must be revealed
+For Bitcoin swaps, construct and broadcast a transaction to the HTLC address:
 
-**Retrieving order details:**
+<CodeGroup>
+```rust expandable htlc_handler.rs
+pub fn initiate_htlc(
+    &self,
+    private_key: PrivateKey,
+    htlc_addr: bitcoin::Address,
+    amount: i64,
+) -> Result<Transaction> {
+    let public_key = PublicKey::from_private_key(&self.secp, &private_key);
+    let compressed_pubkey = CompressedPublicKey::try_from(public_key).unwrap();
+    let sender_address = Address::p2wpkh(&compressed_pubkey, self.network);
 
-Poll the `/orders/id/:id` endpoint to fetch the latest order status. Once `destination_swap.initiate_tx_hash` is present, the destination HTLC is funded and ready for redemption.
+    let runtime = tokio::runtime::Runtime::new()
+        .map_err(|e| anyhow!("Unable to create runtime: {}", e))?;
 
-**Redemption on EVM chain:**
+    let utxos = runtime.block_on(
+        self.indexer
+            .get_utxos_for_amount(&sender_address.to_string(), amount),
+    )?;
 
-Use the `/relayer/redeem` endpoint to submit the redemption request, including the secret that proves the user can claim the funds.
+    let mut inputs: Vec<TxIn> = Vec::new();
+    let mut input_values: Vec<u64> = Vec::new();
+    for utxo in utxos {
+        let txid = Txid::from_str(&utxo.txid)?;
+        inputs.push(TxIn {
+            previous_output: OutPoint {
+                txid,
+                vout: utxo.vout,
+            },
+            script_sig: ScriptBuf::new(),
+            sequence: Sequence::ENABLE_RBF_NO_LOCKTIME,
+            witness: Witness::new(),
+        });
+        input_values.push(utxo.value);
+    }
 
-```bash
-POST /relayer/redeem
-```
+    let fee = 250 * inputs.len() as u64;
+    let total_input: u64 = input_values.iter().sum();
 
-Example request:
-```json
-{
-    "order_id": "<order_id>",
-    "secret": "<secret>",
-    "perform_on": "Destination"
+    let output = TxOut {
+        value: Amount::from_sat(amount as u64),
+        script_pubkey: htlc_addr.script_pubkey(),
+    };
+
+    let mut outputs = vec![output];
+
+    if total_input > (amount as u64 + fee) {
+        outputs.push(TxOut {
+            value: Amount::from_sat(total_input - amount as u64 - fee),
+            script_pubkey: sender_address.script_pubkey(),
+        });
+    }
+
+    let mut unsigned_tx = Transaction {
+        version: Version::TWO,
+        lock_time: LockTime::ZERO,
+        input: inputs,
+        output: outputs,
+    };
+
+    let mut sighash_cache = SighashCache::new(&mut unsigned_tx);
+
+    for i in 0..input_values.len() {
+        let script_pubkey = ScriptBuf::new_p2wpkh(&public_key.wpubkey_hash()?);
+        let sighash_type = EcdsaSighashType::All;
+        let sighash = sighash_cache.p2wpkh_signature_hash(
+            i,
+            &script_pubkey,
+            Amount::from_sat(input_values[i]),
+            sighash_type,
+        )?;
+
+        let msg = Message::from(sighash);
+        let signature = self.secp.sign_ecdsa(&msg, &private_key.inner);
+
+        let btc_signature = bitcoin::ecdsa::Signature {
+            signature,
+            sighash_type,
+        };
+        let pubkey_bytes = public_key.to_bytes();
+        *sighash_cache.witness_mut(i).unwrap() = Witness::p2wpkh(
+            &btc_signature,
+            &bitcoin::secp256k1::PublicKey::from_slice(&pubkey_bytes)?,
+        )
+    }
+
+    let signed_tx = sighash_cache.into_transaction();
+
+    Ok(signed_tx.clone())
 }
 ```
+</CodeGroup>
 
-Expected response:
-```json
-{
-  "status": "Ok",
-  "result": "<redeem_transaction_hash>"
+#### EVM Initiation
+
+For EVM chains, sign EIP-712 typed data and submit to the relayer:
+
+<CodeGroup>
+```rust expandable order/evm.rs
+// Sign EIP-712 message
+match sign_order_typed_data(&typed_data, &context.wallet.signer) {
+    Ok(signature) => {
+        self.signature = Some(signature.clone());
+
+        // Start initiate process
+        self.progress = OrderProgress::InitiatingTransaction;
+        self.set_status("Initiating transaction...".to_string());
+
+        // Send signature to initiate endpoint
+        match context
+            .api
+            .orders
+            .initiate_order(&order_response.order_id, &signature)
+        {
+            Ok(result) => {
+                self.initiate_result = Some(format!("{result:?}"));
+                self.set_status(
+                    "Transaction initiated successfully!\nFetching order status..."
+                        .to_string(),
+                );
+                // Fetch actual order status from API
+                self.fetch_order_status(context);
+            }
+            Err(e) => {
+                self.progress = OrderProgress::Failed(e.to_string());
+                self.set_status(format!("Initiation failed: {e}"));
+            }
+        }
+    }
+    Err(e) => {
+        self.progress = OrderProgress::Failed(e.to_string());
+        self.set_status(format!("Signing failed: {e}"));
+    }
 }
 ```
+</CodeGroup>
 
-**Redeeming on Bitcoin:**
+### 7. Tracking order status
 
-For Bitcoin-based swaps, redemption involves constructing and signing a transaction with the appropriate witness data.
+Monitor your swap progress in real-time. The order status screen displays detailed information about your swap including transaction hashes, swap amounts, and the current state:
 
-The HTLC on Bitcoin is constructed using the `destination_swap` details from `/orders/id/:id`.
+<Frame caption="Order tracking showing swap progress and transaction details">
+  ![Order Status](../images/api-demo-app/Order_status.png)
+</Frame>
 
-To redeem:
-- Use the secret from order creation
-- Generate the required witness data:
-  - Secret
-  - Redeem leaf bytes
-  - Control block bytes
-- Construct and sign the Bitcoin transaction
-- Use Garden's relayer service for gasless redemption by sending the transaction hex bytes in the specified format
+The status dashboard provides comprehensive information including:
+- Current order status (Created, Initiated, Awaiting Redeem, Redeemed)
+- Swap amounts and asset details
+- Real-time status updates
 
-[Example in Rust on how to construct and sign HTLC transactions](https://github.com/gardenfi/api-cookbook-demo/blob/main/src/service/blockchain/bitcoin/htlc_handler.rs)
+Once the swap completes successfully, you'll see the final status with all transaction details confirmed:
 
-```bash
-POST /bitcoin/redeem
-```
+<Frame caption="Completed swap showing successful redemption">
+  ![Swap Completed](../images/api-demo-app/Swap_completed.png)
+</Frame>
 
-Example request:
-```json
-{
-  "order_id": "<order_id>",
-  "redeem_tx_bytes": "<transaction_hex_of_the_constructed_redeem_txn>"
+<CodeGroup>
+```rust order/actions.rs
+pub(super) fn fetch_order_status(&mut self, context: &mut AppContext) {
+    if let Some(order_id) = context.order.current_order_id.clone() {
+        match context.api.orders.get_order_details(&order_id) {
+            Ok(order_status) => {
+                self.order_id = order_status.order_id.clone();
+
+                let parsed_status = parse_order_status(&order_status);
+                let status_label = get_order_status_label(parsed_status);
+
+                let status_msg = format!(
+                    "Status: {} ({})\nOrder ID: {}\nSource: {} {}\nDest: {} {}\nCreated: {}{}{}",
+                    status_label.as_str(),
+                    parsed_status.as_str(),
+                    order_status.order_id,
+                    order_status.source_swap.amount,
+                    order_status.source_swap.asset,
+                    order_status.destination_swap.amount,
+                    order_status.destination_swap.asset,
+                    order_status.created_at,
+                    if !order_status.source_swap.initiate_tx_hash.is_empty() { format!("\nInitiate Tx: {}", order_status.source_swap.initiate_tx_hash) } else { String::new() },
+                    if order_status.source_swap.current_confirmations > 0 { format!("\nConfirmations: {}/{}", order_status.source_swap.current_confirmations, order_status.source_swap.required_confirmations) } else { String::new() }
+                );
+
+                match parsed_status.as_str() {
+                    "Redeemed" | "Refunded" => {
+                        self.set_status(status_msg);
+                        self.progress = OrderProgress::Completed;
+                    }
+                    "Expired" => {
+                        self.set_status(status_msg);
+                        self.progress = OrderProgress::Failed("Order expired".to_string());
+                    }
+                    "Created" => {
+                        self.update_action_status(&status_msg);
+                    }
+                    _ => {
+                        if order_status.source_swap.initiate_tx_hash.is_empty() {
+                            self.update_action_status(&status_msg);
+                        } else {
+                            self.set_status(status_msg);
+                            self.progress = OrderProgress::CheckingStatus;
+                        }
+                    }
+                }
+            }
+            Err(e) => {
+                self.set_status(format!("Failed to fetch order status: {e}"));
+            }
+        }
+    }
 }
 ```
+</CodeGroup>
 
-Expected response:
-```json
-{
-  "status": "Ok",
-  "result": "<redeem_transaction_hash>"
+**Order status progression:**
+
+1. **Created** - Order submitted to orderbook
+2. **Initiate Detected** - User's deposit transaction detected
+3. **Initiated** - Deposit confirmed on source chain
+4. **Awaiting Redeem** - Solver has filled on destination chain
+5. **Redeem Detected** - Redemption transaction detected
+6. **Redeemed** - Swap completed successfully
+
+The status parser (`src/service/garden/status.rs`) implements the complete logic:
+
+<CodeGroup>
+```rust status.rs
+pub fn parse_order_status(order: &OrderDetails) -> OrderStatusEnum {
+    // Check for redemption
+    if !order.destination_swap.redeem_tx_hash.is_empty() {
+        if order.destination_swap.redeem_block_number != "0" {
+            return OrderStatusEnum::Redeemed;
+        }
+        return if is_bitcoin(&order.destination_swap.chain) {
+            OrderStatusEnum::Redeemed
+        } else {
+            OrderStatusEnum::RedeemDetected
+        };
+    }
+    
+    // Check for refund
+    if !order.source_swap.refund_tx_hash.is_empty() {
+        if order.source_swap.refund_block_number != "0" {
+            return OrderStatusEnum::Refunded;
+        }
+        return OrderStatusEnum::RefundDetected;
+    }
+    
+    // Check for initiation
+    if !order.destination_swap.initiate_tx_hash.is_empty() {
+        return OrderStatusEnum::AwaitingRedeem;
+    }
+    
+    if !order.source_swap.initiate_tx_hash.is_empty() {
+        if order.source_swap.initiate_block_number != "0" {
+            return OrderStatusEnum::Initiated;
+        }
+        return OrderStatusEnum::InitiateDetected;
+    }
+    
+    OrderStatusEnum::Created
 }
 ```
+</CodeGroup>
 
-## Next Steps
+## Key implementation details
+
+### Bitcoin HTLC construction
+
+The app includes a complete Bitcoin HTLC handler (`src/service/blockchain/bitcoin/htlc_handler.rs`) that:
+
+- Fetches UTXOs from Bitcoin indexers
+- Constructs P2WPKH transactions
+- Signs with Schnorr signatures
+- Broadcasts to the network
+- Handles Taproot script paths
+
+### EIP-712 signing
+
+For EVM chains, the app uses Alloy to sign typed data:
+
+<CodeGroup>
+```rust expandable context.rs
+use alloy::signers::local::PrivateKeySigner;
+
+pub struct WalletContext {
+    pub signer: LocalSigner<SigningKey>,
+    pub btc_private_key: bitcoin::PrivateKey,
+    pub btc_address: String,
+    pub provider_urls: HashMap<String, String>,
+}
+
+impl WalletContext {
+    fn new(network: &str, provider_urls: HashMap<String, String>) -> WalletContext {
+        let eth_priv_key = env::var("PRIV_KEY").expect("please provide a valid PRIV_KEY in env");
+        let btc_priv_key = env::var("BTC_PRIV_KEY").unwrap_or(eth_priv_key.clone());
+
+        let signer = PrivateKeySigner::from_str(&eth_priv_key).expect("ERR CREATING ETH SIGNER");
+        let btc_network = match network {
+            "mainnet" => bitcoin::Network::Bitcoin,
+            "testnet" => bitcoin::Network::Testnet4,
+            _ => bitcoin::Network::Regtest,
+        };
+
+        let btc_private_key = if btc_priv_key.len() == 64 {
+            let priv_key_bytes = hex::decode(&btc_priv_key).unwrap();
+            PrivateKey::from_slice(&priv_key_bytes, btc_network).unwrap()
+        } else {
+            PrivateKey::from_wif(&btc_priv_key).unwrap()
+        };
+        let secp = Secp256k1::new();
+        let pubkey = PublicKey::from_private_key(&secp, &btc_private_key);
+        let btc_pubkey = CompressedPublicKey::try_from(pubkey).unwrap();
+        let btc_address = Address::p2wpkh(&btc_pubkey, btc_network).to_string();
+
+        Self {
+            signer,
+            btc_network,
+            btc_private_key,
+            btc_address,
+            provider_urls,
+        }
+    }
+}
+```
+</CodeGroup>
+
+### TUI architecture
+
+The terminal UI is built with `ratatui` and follows a state machine pattern:
+
+```
+NetworkSelector → AssetSelector → SwapInformation → CreateOrder → OrderDashboard
+       ↑                 ↓                 ↓                ↓                ↓
+       └──────────┴───────────┴─────────┴──────────┘
+                                  (back navigation)
+```
+
+Each state implements the `State` trait:
+
+<CodeGroup>
+```rust mod.rs
+pub trait State {
+    fn draw(&mut self, f: &mut Frame, context: Option<&AppContext>);
+    fn handle_key(&mut self, key: KeyEvent, context: Option<&AppContext>) 
+        -> Result<Option<StateType>>;
+    fn as_any(&self) -> &dyn Any;
+}
+```
+</CodeGroup>
+
+## API reference
+
+The app demonstrates usage of Garden's V2 API:
+
+| Endpoint | Purpose |
+|----------|---------|
+| `GET /v2/chains` | Fetch all supported chains and assets |
+| `GET /v2/quote` | Get real-time swap quotes |
+| `POST /v2/orders` | Create a new swap order |
+| `POST /v2/orders/{id}?action=initiate` | Submit EVM initiation signature |
+| `GET /v2/orders/{id}` | Check order status |
+
+All API calls include:
+- `garden-app-id` header for authentication
+- `accept: application/json` header
+- Proper error handling with `anyhow::Result`
+
+<Check>
+  You now have a complete reference implementation for building cross-chain swap applications using Garden's V2 API!
+</Check>
+
+## Next steps
+
+By exploring this cookbook, you've seen how to build a production-ready swap application. Consider extending it with:
+
+- **Multi-order management** to track multiple swaps simultaneously
+- **Web interface** using the same backend logic
+- **Advanced Bitcoin features** like RBF and CPFP
+- **Order history persistence** with a database
+- **Affiliate fee integration** for monetization
 
 <CardGroup cols={2}>
-  <Card title="SDK integration" href="/developers/sdk/sdk">
-    Explore the Garden SDK for easier integration
+  <Card title="API Reference" href="/api-reference/quickstart">
+    View complete V2 API documentation
   </Card>
-  <Card title="API reference" href="/api-reference/quickstart">
-    View complete API documentation
+  <Card title="GitHub Repository" href="https://github.com/gardenfi/api-cookbook-demo">
+    Explore the full source code
   </Card>
 </CardGroup>
-
-You now have everything you need to integrate Garden swaps into your application using our APIs.
