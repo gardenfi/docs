@@ -83,6 +83,12 @@
                 ]
               }
             ]
+          },
+              {
+            "group": "Compliance",
+            "pages": [
+              "home/compliance/address_screening"
+            ]
           }
         ]
       },
@@ -160,7 +166,9 @@
             "group": "Contracts",
             "pages": [
               "contracts/bitcoin",
+              "contracts/litecoin",
               "contracts/evm",
+              "contracts/tron",
               "contracts/solana",
               "contracts/starknet",
               "contracts/sui"
@@ -206,6 +214,12 @@
               "api-reference/endpoint/orders/get-instant-refund-hash",
               "api-reference/endpoint/orders/patch"
             ]
+          },
+          {
+            "group": "Affiliate",
+            "pages": [
+              "api-reference/endpoint/affiliate/get-earnings"
+            ]
           }
         ]
       },
@@ -230,7 +244,7 @@
         },
         {
           "anchor": "Community",
-          "href": "https://discord.gg/dZwSjh9922",
+          "href": "https://discord.gg/B7RczEFuJ5",
           "icon": "discord"
         }
       ]
@@ -244,7 +258,7 @@
     "links": [
       {
         "label": "Support",
-        "href": "https://discord.gg/dZwSjh9922"
+        "href": "https://discord.gg/B7RczEFuJ5"
       }
     ],
     "primary": {
@@ -255,9 +269,9 @@
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/garden_finance",
+      "x": "https://x.com/gardenfi",
       "github": "https://github.com/gardenfi",
-      "discord": "https://discord.gg/dZwSjh9922"
+      "discord": "https://discord.gg/B7RczEFuJ5"
     },
     "links": [
       {
@@ -290,7 +304,8 @@
           },
           {
             "label": "Media Kit",
-            "href": "https://docs.garden.finance/home/guides/brand"
+            "href": "https://drive.google.com/drive/folders/1ZRAxs6jwhO6vLkadb9XOG7XqOQ4XLr0t?usp=sharing",
+            "external": true
           }
         ]
       }

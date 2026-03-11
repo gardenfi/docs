@@ -1,0 +1,13 @@
+---
+title: "Address Screening"
+description: "Overview of Garden’s risk monitoring process"
+---
+
+Garden is a permissionless protocol for peer-to-peer swaps of Bitcoin and other assets through a network of solvers. The protocol is non-custodial and open for anyone to participate as a solver.
+
+Garden integrates **TRM Labs, Bybit** and **Binance** screening APIs to support responsible usage and prevent sanctioned entities from interacting with the protocol.
+
+- Wallet addresses connecting to the Garden interface are automatically screened through the integrated APIs.
+- If an address is identified as sanctioned, the swap functionality is disabled.
+- When a swap involves Bitcoin deposits, the depositing address is also screened. If flagged, solvers are signaled not to initiate the swap. And, the user can refund their Bitcoin once the swap expires.
+- Orders submitted via third-party integrations using Garden’s SDK or APIs follow the same screening process.

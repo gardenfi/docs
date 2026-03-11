@@ -8,12 +8,16 @@ import {
   AssetRow,
   MAINNET_ASSETS_URL,
   TESTNET_ASSETS_URL,
+  MAINNET_CHAINS_STATIC,
+  TESTNET_CHAINS_STATIC,
   getAssets,
   trimAssetName,
   getExplorerUrl,
   titilize,
   CHAIN_NAMES,
   getChainName,
+  shouldUseSquareLogo,
+  SupportedChainsStaticSEO,
 } from "/snippets/supported-assets.jsx";
 
 Garden uses the following contracts to perform swaps on respective chains:
@@ -27,7 +31,12 @@ Garden uses the following contracts to perform swaps on respective chains:
   </Tab>
 </Tabs>
 
+<SupportedChainsStaticSEO
+  mainnetChains={MAINNET_CHAINS_STATIC}
+  testnetChains={TESTNET_CHAINS_STATIC}
+/>
+
 <Tip>
   If you would like to see a chain or asset that isn't listed here, reach out to
-  us in the [Townhall](https://discord.gg/dZwSjh9922).
+  us in the [Townhall](https://discord.gg/B7RczEFuJ5).
 </Tip>

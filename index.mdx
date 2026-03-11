@@ -40,10 +40,10 @@ export function openSearch() {
         <Card title="SDK Quickstart" icon="book-open" href="/developers/sdk/react/quickstart">
             Bring Bitcoin to your app in 30 minutes.
         </Card>
-        <Card title="API Reference" icon="code-simple" href="/api-reference">
+        <Card title="API Reference" icon="code-simple" href="/api-reference/quickstart">
             Dive into our API endpoints.
         </Card>
-        <Card title="Examples" icon="grid-round" iconType="solid" href="/developers/guides">
+        <Card title="Examples" icon="grid-round" iconType="solid" href="/developers/guides/cookbook">
             Hands-on examples of Garden integration.
         </Card>
     </CardGroup>
@@ -55,14 +55,25 @@ export function openSearch() {
         Dive into the atomic swapping contracts powering Garden.
     </div>
 
-    <div className="grid sm:grid-cols-5 gap-x-4 max-w-[600px] mx-auto">
+    <div className="grid sm:grid-cols-7 gap-x-4 max-w-[800px] mx-auto">
         <a className="my-2 ring-2 ring-transparent rounded-2xl bg-white dark:bg-background-dark border border-gray-950/10 dark:border-white/10 cursor-pointer hover:!border-primary dark:hover:!border-primary-light">
             <a className="flex flex-col items-center gap-2 px-6 py-4" href="/contracts/bitcoin">
                 <img
                     className="h-6 w-6"
                     src="/images/chains/btc.svg"
+                    noZoom
                 />
                 <div className="font-semibold text-base text-gray-800 dark:text-white">Bitcoin</div>
+            </a>
+        </a>
+        <a className="my-2 ring-2 ring-transparent rounded-2xl bg-white dark:bg-background-dark border border-gray-950/10 dark:border-white/10 cursor-pointer hover:!border-primary dark:hover:!border-primary-light">
+            <a className="flex flex-col items-center gap-2 px-6 py-4" href="/contracts/litecoin">
+                <img
+                    className="h-6 w-6"
+                    src="/images/chains/litecoin.svg"
+                    noZoom
+                />
+                <div className="font-semibold text-base text-gray-800 dark:text-white">Litecoin</div>
             </a>
         </a>
         <a className="my-2 ring-2 ring-transparent rounded-2xl bg-white dark:bg-background-dark border border-gray-950/10 dark:border-white/10 cursor-pointer hover:!border-primary dark:hover:!border-primary-light">
@@ -70,8 +81,19 @@ export function openSearch() {
                 <img
                     className="h-6 w-6"
                     src="/images/chains/ethereum.svg"
+                    noZoom
                 />
                 <div className="font-semibold text-base text-gray-800 dark:text-white">EVM</div>
+            </a>
+        </a>
+        <a className="my-2 ring-2 ring-transparent rounded-2xl bg-white dark:bg-background-dark border border-gray-950/10 dark:border-white/10 cursor-pointer hover:!border-primary dark:hover:!border-primary-light">
+            <a className="flex flex-col items-center gap-2 px-6 py-4" href="/contracts/tron">
+                <img
+                    className="h-6 w-6"
+                    src="/images/chains/tron.png"
+                    noZoom
+                />
+                <div className="font-semibold text-base text-gray-800 dark:text-white">Tron</div>
             </a>
         </a>
         <a className="my-2 ring-2 ring-transparent rounded-2xl bg-white dark:bg-background-dark border border-gray-950/10 dark:border-white/10 cursor-pointer hover:!border-primary dark:hover:!border-primary-light">
@@ -79,6 +101,7 @@ export function openSearch() {
                 <img
                     className="h-6 w-6"
                     src="/images/chains/solana.png"
+                    noZoom
                 />
                 <div className="font-semibold text-base text-gray-800 dark:text-white">Solana</div>
             </a>
@@ -88,6 +111,7 @@ export function openSearch() {
                 <img
                     className="h-6 w-6"
                     src="/images/chains/starknet.svg"
+                    noZoom
                 />
                 <div className="font-semibold text-base text-gray-800 dark:text-white">Starknet</div>
             </a>
@@ -97,6 +121,7 @@ export function openSearch() {
                 <img
                     className="h-6 w-6"
                     src="/images/chains/sui.png"
+                    noZoom
                 />
                 <div className="font-semibold text-base text-gray-800 dark:text-white">Sui</div>
             </a>

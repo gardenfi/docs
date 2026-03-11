@@ -16,56 +16,57 @@ title: "Quickstart"
             BitcoinProvider,
             BitcoinNetwork,
             BitcoinWallet,
-        } from '@catalogfi/wallets';
+        } from '@gardenfi/core';
+        import { with0x } from '@gardenfi/utils';
         import { createWalletClient, http } from 'viem';
         import { privateKeyToAccount } from 'viem/accounts';
         import { arbitrumSepolia } from 'viem/chains';
         import { RpcProvider, Account } from 'starknet';
+        import * as anchor from '@coral-xyz/anchor';
+        import { web3 } from '@coral-xyz/anchor';
 
         // Ethereum wallet setup
-        const ethereumAccount = privateKeyToAccount('<YOUR_EVM_PRIVATE_KEY>');
+        const ethereumAccount = privateKeyToAccount(with0x('<YOUR_EVM_PRIVATE_KEY>'));
         const ethereumWalletClient = createWalletClient({
-        ethereumAccount,
-        chain: arbitrumSepolia,
-        transport: http(),
+            account: ethereumAccount,
+            chain: arbitrumSepolia,
+            transport: http(),
         });
 
         // Starknet wallet setup
         const starknetProvider = new RpcProvider(); // Using default RPC URL
-        const starknetWallet = new Account(
-            starknetProvider,
-            '<YOUR_STARKNET_ADDRESS>',
-            '<YOUR_STARKNET_PRIVATE_KEY>',
-        );
+        const starknetWallet = new Account({
+            provider: starknetProvider,
+            signer: <YOUR_STARKNET_PRIVATE_KEY>,
+            address: <YOUR_STARKNET_ADDRESS>,
+        });
 
         // Solana wallet setup
-        const solanaPrivKeyBytes = new Uint8Array('<YOUR_SOLANA_PRIVATE_KEY_BYTES>');
+        const solanaPrivKeyBytes = new Uint8Array('<YOUR_SOLANA_PRIVATE_KEY_IN_BYTES>');
         const solanaUser = web3.Keypair.fromSecretKey(solanaPrivKeyBytes);
         const solanaConnection = new web3.Connection(RPC_URL, { commitment: 'confirmed' });
         const solanaWallet = new anchor.Wallet(solanaUser);
         const solanaProvider = new anchor.AnchorProvider(solanaConnection, solanaWallet);
         ```
+
     </Step>
     <Step title="Configure Garden instance">
         <Tip>
-            A digest key is a 32-byte key that serves as a unique identifier, used for generating secrets (preimages for HTLCs). It functions as a Garden account, but it is strictly non-custodial, with no funds ever being associated with it or moved through it.
+            For API key, reach out to us in the [Townhall](https://discord.gg/B7RczEFuJ5) or raise a support ticket.
         </Tip>
-
         <Tabs>
             <Tab title="Default wallet clients">
                 ```js
                 import { Garden } from '@gardenfi/core';
-                import { Environment, DigestKey } from '@gardenfi/utils';
-
-                const digestKey = DigestKey.from('<YOUR_DIGEST_KEY>');
+                import { Network } from '@gardenfi/utils';
 
                 const garden = Garden.fromWallets({
-                    environment: Environment.TESTNET,
-                    digestKey: digestKey.val,
+                    environment: Network.TESTNET,
+                    apiKey: '<YOUR_API_KEY>',
                     wallets: {
                         evm: ethereumWalletClient,
                         starknet: starknetWallet,
-                        solana: solanaProvider,
+                        solana: solanaProvider
                     }
                 });
                 ```
@@ -77,15 +78,15 @@ title: "Quickstart"
 
                 ```js
                 import { Garden } from '@gardenfi/core';
-                import { Environment } from '@gardenfi/utils';
+                import { Network } from '@gardenfi/utils';
 
                 const garden = new Garden({
-                    environment: Environment.TESTNET,
-                    digestKey: digestKey.val,
+                    environment: Network.TESTNET,
+                    apiKey: '<YOUR_API_KEY>',
                     htlc: {
                         evm: <IEVMHTLC>,
                         starknet: <IStarknetHTLC>,
-                        solana: <ISolanaHTLC>,
+                        solana: <ISolanaHTLC>
                     },
                 });
                 ```
@@ -95,103 +96,45 @@ title: "Quickstart"
     <Step title="Create a swap">
         ```js
         import { Quote, SwapParams } from '@gardenfi/core';
-        import { Asset, SupportedAssets } from '@gardenfi/orderbook';
+        import { Assets, ChainAsset } from '@gardenfi/orderbook';
 
-        const fromAsset = SupportedAssets.testnet.ethereum_sepolia_WBTC;
-        const toAsset = SupportedAssets.testnet.bitcoin_testnet_BTC;
+        const fromAsset = ChainAsset.from(Assets.ethereum_sepolia.WBTC);
+        const toAsset = ChainAsset.from(Assets.bitcoin_testnet.BTC);
 
         const sendAmount = '1000000'; // 0.01 WBTC
 
-        // Helper function to construct an order pair
-        const constructOrderpair = (fromAsset: Asset, toAsset: Asset) =>
-            `${fromAsset.chain}:${fromAsset.atomicSwapAddress}::${toAsset.chain}:${toAsset.atomicSwapAddress}`;
-
-        const orderPair = constructOrderpair(
+        // Get the quote for the send amount
+        const quote = await garden.quote.getQuote(
             fromAsset,
             toAsset,
+            sendAmount,
+            false,
+            {},
         );
 
-        // Get the quote for the send amount and order pair
-        const quoteResult = await garden.quote.getQuote(
-            orderPair,
-            Number(sendAmount),
-            false, // Set this to true if you wish to specify the output (receive) amount
-        );
-
-        if (!quoteResult.ok) {
-            throw new Error(quoteResult.error);
-        }
-
-        // Choose a quote
-        const [_strategyId, quoteAmount] = Object.entries(quoteResult.val.quotes)[0];
+        const receiveAmount = quote.val?.[0].destination.amount;
+        const solverId = quote.val?.[0].solver_id;
+        const sourceAddress = ethereumAccount.address;
+        const destinationAddress = '<YOUR_BITCOIN_ADDRESS';
 
         const swapParams: SwapParams = {
             fromAsset,
             toAsset,
             sendAmount,
-            receiveAmount: quoteAmount,
-            additionalData: {
-                strategyId: _strategyId,
-                btcAddress?: '<YOUR_BITCOIN_ADDRESS>',
-            },
+            receiveAmount,
+            solverId,
+            sourceAddress,
+            destinationAddress
         };
 
         // Create the swap
-        const swapResult = await garden.swap(swapParams);
+        const swapResult = await garden.createSwap(swapParams);
 
         if (!swapResult.ok) {
             throw new Error(swapResult.error);
         }
 
-        const order = swapResult.val;
-        console.log('✅ Order created:', order.create_order.create_id);
+        console.log('Order created and initiated ✅', swapResult.val);
         ```
     </Step>
-    <Step title="Initiate the swap">
-        <Tabs>
-            <Tab title="Swapping to Bitcoin">
-                <Warning>
-                    The first swap requires gas for token approval. Subsequent swaps will be gasless.
-                </Warning>
-                ```js
-                const order = swapResult.val;
-                const initRes = await garden.evmHTLC.initiate(order); // `garden.starknetHTLC` for Starknet
-
-                if (!initRes.ok) {
-                    throw new Error(initRes.error);
-                }
-                ```
-            </Tab>
-            <Tab title="Swapping from Bitcoin">
-                <Tip>
-                    When swapping from Bitcoin, you must send funds to the deposit address.
-                </Tip>
-                ```js
-                    const order = swapResult.val;
-                    const depositAddress = order.source_swap.swap_id;
-                ```
-            </Tab>
-        </Tabs>
-    </Step>
-    <Step title="Settle the swap">
-        Garden handles swap settlement automatically. The `execute` function continuously polls for the order status and calls `redeem` when the status becomes redeemable.
-
-        ```js
-        await garden.execute();
-
-        // Subscribe to Garden events to track transaction statuses
-        garden.on('error', (order, error) => {
-            console.error(`Error occurred for order ID ${order.create_order.create_id}:`, error);
-        });
-
-        garden.on('success', (order, action, txHash) => {
-            console.log(`${order} ${action} ${txHash}`);
-        });
-        ```
-
-        <Note>
-            It is important to keep the service running until completion of the swap. If the instance is stopped, restarting it will ensure Garden checks the status of the order and resubmits the redeem if necessary.
-        </Note>
-    </Step>
-
 </Steps>

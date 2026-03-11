@@ -4,27 +4,44 @@ title: "Setup"
 
 <Steps>
     <Step title="Core dependencies">
-        Install the following packages:
+        Install the core Garden Protocol packages:
 
         <CodeGroup>
             ```bash npm
             npm install @gardenfi/core @gardenfi/orderbook @gardenfi/react-hooks @tanstack/react-query wagmi
             ```    
             ```bash yarn
-            yarn add @gardenfi/core @gardenfi/orderbook @gardenfi/react-hooks @tanstack/react-query wagmi @starknet-react/core starknet starknetkit
+            yarn add @gardenfi/core @gardenfi/orderbook @gardenfi/react-hooks @tanstack/react-query wagmi
             ```
         </CodeGroup>
+    </Step>
 
-        In case your app supports Starknet you will also need these:
+    <Step title="Chain-specific dependencies">
+        Install additional packages based on the blockchains your app supports:
 
-        <CodeGroup>
-            ```bash npm
-            npm install @starknet-react/core starknet starknetkit
-            ```
-            ```bash yarn
-            yarn add @starknet-react/core starknet starknetkit
-            ```
-        </CodeGroup>
+        <Tabs>
+            <Tab title="Starknet">
+                <CodeGroup>
+                    ```bash npm
+                    npm install @starknet-react/core starknet starknetkit
+                    ```
+                    ```bash yarn
+                    yarn add @starknet-react/core starknet starknetkit
+                    ```
+                </CodeGroup>
+            </Tab>
+
+            <Tab title="Solana">
+                <CodeGroup>
+                    ```bash npm
+                    npm install @coral-xyz/anchor @solana/wallet-adapter-react
+                    ```
+                    ```bash yarn
+                    yarn add @coral-xyz/anchor @solana/wallet-adapter-react
+                    ```
+                </CodeGroup>
+            </Tab>
+        </Tabs>
     </Step>
     <Step title="Required polyfills">
         <Tabs>
@@ -83,4 +100,3 @@ title: "Setup"
         </Tabs>
     </Step>
 </Steps>
-

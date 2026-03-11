@@ -1,0 +1,190 @@
+---
+title: "Tron"
+description: "Implement atomic swaps on Tron using EVM-compatible smart contracts for TRC20 tokens"
+---
+
+## Contract architecture
+
+<Note>
+Tron uses EVM-compatible smart contracts for atomic swaps. The implementation is identical to the [EVM guide](/contracts/evm), but currently **only supports TRC20 tokens** (native TRX is not supported yet).
+</Note>
+
+Garden uses Hashed Time Lock Contracts (HTLCs) to implement atomic swap functionality on Tron. The contract manages the lifecycle of a swap through four main operations with enhanced signature support and flexible initiation methods:
+
+<CardGroup cols={4}>
+  <Card title="Initiate" icon="play" href="#initiate" />
+  <Card title="Redeem" icon="check" href="#redeem" />
+  <Card title="Refund" icon="rotate-left" href="#refund" />
+  <Card title="Instant refund" icon="bolt" href="#instant-refund" />
+</CardGroup>
+
+## Core functions
+
+### Initiate
+
+The initiate function creates a new HTLC by locking TRC20 tokens in the contract:
+
+#### Basic initiation
+
+<CodeGroup>
+```solidity TRC20
+function initiate(
+    address redeemer,
+    uint256 timelock,
+    uint256 amount,
+    bytes32 secretHash
+) external
+```
+</CodeGroup>
+
+#### Initiation on behalf
+
+<CodeGroup>
+```solidity TRC20
+function initiateOnBehalf(
+    address initiator,
+    address redeemer,
+    uint256 timelock,
+    uint256 amount,
+    bytes32 secretHash
+) external
+```
+</CodeGroup>
+
+#### Signature-based initiation
+
+<CodeGroup>
+```solidity
+function initiateWithSignature(
+    address initiator,
+    address redeemer,
+    uint256 timelock,
+    uint256 amount,
+    bytes32 secretHash,
+    bytes calldata signature
+) external
+```
+</CodeGroup>
+
+<Note>
+Uses EIP712 signatures for off-chain authorization, enabling gasless transactions where authorized third parties can initiate swaps on behalf of users.
+</Note>
+
+### Redeem
+
+The redeem function allows the redeemer to claim the locked TRC20 tokens by providing the secret that hashes to the stored secret hash.
+
+<CodeGroup>
+```solidity TRC20
+function redeem(
+    bytes32 orderID,
+    bytes calldata secret
+) external
+```
+</CodeGroup>
+
+<Info>
+The secret must hash to the exact value stored during initiation using SHA256. Once revealed, this secret enables the counterparty to claim funds on the other chain. No signature required - anyone can execute if they know the secret.
+</Info>
+
+### Refund
+
+The refund function allows the initiator to reclaim their TRC20 tokens after the timelock has expired and the redeemer has not claimed the funds.
+
+<CodeGroup>
+```solidity TRC20
+function refund(bytes32 orderID) external
+```
+</CodeGroup>
+
+<Note>
+Uses absolute block numbers for timelock, which provides predictable settlement windows based on consistent block production times.
+</Note>
+
+### Instant refund
+
+The instant refund function provides a way for the redeemer to consent to canceling the swap before the timelock expires using EIP712 signatures.
+
+<CodeGroup>
+```solidity TRC20
+function instantRefund(
+    bytes32 orderID,
+    bytes calldata signature
+) external
+```
+</CodeGroup>
+
+<Note>
+This requires the redeemer's EIP712 signature to prevent unauthorized instant refunds. This ensures mutual consent before the settlement window expires.
+</Note>
+
+## Tron-specific features
+
+### Order state management
+
+The contract uses a struct to store swap state:
+
+<CodeGroup>
+```solidity TRC20
+struct Order {
+    address initiator;
+    address redeemer;
+    uint256 initiatedAt;
+    uint256 timelock;
+    uint256 amount;
+    uint256 fulfilledAt;
+}
+```
+</CodeGroup>
+
+### Token handling
+
+**TRC20 implementation:**
+- Uses SafeERC20 for secure token transfers.
+- Requires token approval before initiation.
+- Transfers tokens via `transferFrom` and `transfer`.
+
+<Warning>
+Native TRX transfers are not currently supported. Only TRC20 tokens can be used for atomic swaps on Tron.
+</Warning>
+
+### EIP712 signature support
+
+The contract implements EIP712 for secure off-chain message signing:
+
+```solidity
+bytes32 private constant _REFUND_TYPEHASH = keccak256("Refund(bytes32 orderId)");
+
+function instantRefundDigest(bytes32 orderID) public view returns (bytes32) {
+    return _hashTypedDataV4(keccak256(abi.encode(_REFUND_TYPEHASH, orderID)));
+}
+```
+
+### Event logging
+
+The contract emits events for each state transition to enable efficient off-chain monitoring:
+
+```solidity
+event Initiated(bytes32 indexed orderID);
+event Redeemed(bytes32 indexed orderID, bytes secret);
+event Refunded(bytes32 indexed orderID);
+```
+
+### Order ID generation
+
+Unique order identifiers are generated using SHA256 hashing with chain-specific parameters:
+
+```solidity
+bytes32 orderID = sha256(abi.encode(
+    block.chainid, 
+    secretHash, 
+    initiator, 
+    redeemer, 
+    timelock, 
+    amount
+));
+```
+
+<Check>
+Chain ID inclusion prevents cross-chain replay attacks, while the parameter combination ensures each order is uniquely identifiable across the network.
+</Check>
